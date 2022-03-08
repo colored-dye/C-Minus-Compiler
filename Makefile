@@ -8,7 +8,7 @@ lex: lexer.l
 	$(LEX) $<
 
 yacc: parser.y
-	$(YACC) -dy $<
+	$(YACC) -dy $^
 
 .PHONY: clean
 clean:
