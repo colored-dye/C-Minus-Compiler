@@ -4,6 +4,11 @@ YACC = bison
 
 CFLAGS = -g
 
+all: cmmc
+
+cmmc: main.c lex.yy.c y.tab.c node.c
+	$(CC) -o $@ $^
+
 lex: lexer.l
 	$(LEX) $<
 
