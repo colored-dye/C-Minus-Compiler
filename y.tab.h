@@ -49,76 +49,85 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NUM = 258,
-    ID = 259,
+    ID = 258,
+    NUM = 259,
     INT = 260,
     VOID = 261,
-    RETURN = 262,
-    IF = 263,
-    ELSE = 264,
-    WHILE = 265,
-    GT = 266,
-    LT = 267,
-    GE = 268,
-    LE = 269,
-    NE = 270,
-    EQ = 271,
-    LP = 272,
-    RP = 273,
-    LB = 274,
-    RB = 275,
-    LC = 276,
-    RC = 277,
-    SEMI = 278,
-    COMMA = 279,
-    PLUS = 280,
-    SUB = 281,
-    MUL = 282,
-    DIV = 283,
-    ASSIGN = 284,
-    ERROR = 285
+    REAL = 262,
+    CHAR = 263,
+    RETURN = 264,
+    IF = 265,
+    ELSE = 266,
+    WHILE = 267,
+    FOR = 268,
+    GT = 269,
+    LT = 270,
+    GE = 271,
+    LE = 272,
+    NE = 273,
+    EQ = 274,
+    ADD = 275,
+    SUB = 276,
+    MUL = 277,
+    DIV = 278,
+    LP = 279,
+    RP = 280,
+    LB = 281,
+    RB = 282,
+    LC = 283,
+    RC = 284,
+    SEMI = 285,
+    COMMA = 286,
+    ASSIGN = 287,
+    ERROR = 288,
+    LOWER_THAN_ELSE = 289
   };
 #endif
 /* Tokens.  */
-#define NUM 258
-#define ID 259
+#define ID 258
+#define NUM 259
 #define INT 260
 #define VOID 261
-#define RETURN 262
-#define IF 263
-#define ELSE 264
-#define WHILE 265
-#define GT 266
-#define LT 267
-#define GE 268
-#define LE 269
-#define NE 270
-#define EQ 271
-#define LP 272
-#define RP 273
-#define LB 274
-#define RB 275
-#define LC 276
-#define RC 277
-#define SEMI 278
-#define COMMA 279
-#define PLUS 280
-#define SUB 281
-#define MUL 282
-#define DIV 283
-#define ASSIGN 284
-#define ERROR 285
+#define REAL 262
+#define CHAR 263
+#define RETURN 264
+#define IF 265
+#define ELSE 266
+#define WHILE 267
+#define FOR 268
+#define GT 269
+#define LT 270
+#define GE 271
+#define LE 272
+#define NE 273
+#define EQ 274
+#define ADD 275
+#define SUB 276
+#define MUL 277
+#define DIV 278
+#define LP 279
+#define RP 280
+#define LB 281
+#define RB 282
+#define LC 283
+#define RC 284
+#define SEMI 285
+#define COMMA 286
+#define ASSIGN 287
+#define ERROR 288
+#define LOWER_THAN_ELSE 289
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 10 "parser.y"
+#line 17 "parser.y"
 
-  struct treeNode* node;
-  int i;
+  struct Node* node;
+  int integer;
+  float real;
 
-#line 122 "y.tab.h"
+#line 131 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -126,9 +135,23 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+/* Location type.  */
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE YYLTYPE;
+struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+};
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
+
 
 extern YYSTYPE yylval;
-
+extern YYLTYPE yylloc;
 int yyparse (void);
 
 #endif /* !YY_YY_Y_TAB_H_INCLUDED  */
