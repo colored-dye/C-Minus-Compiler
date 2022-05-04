@@ -2,3 +2,14 @@ The language we are dealing with is C-Minus or C-Minus-Minus ?
 I think it's mostly C-Minus with extensions in C-Minus-Minus.
   -- BYT 3/21
 ----------------------------------------------------------
+
+command code as follow:
+
+  cd /src/scanner/
+  .scanner < ../../samples/sample_6_function.c > out.txt
+
+result will be store in the file out.txt
+
+
+  -- LZF 4/19
+----------------------------------------------------------
