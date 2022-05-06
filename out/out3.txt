@@ -1,134 +1,252 @@
-Program
-  GlobalDeclList
-    GlobalDeclList
-      Decl
-        FunDecl
-          TypeSpec
-            INT  [Type: INT]
-          ID  [Id: main]
-          Params
-            VOID  [Type: VOID]
-    Decl
-      FunDecl
-        CompountStmt
-          LocalDecl
-            LocalDecl
-              LocalDecl
-              VarDecl
-                TypeSpec
-                  INT  [Type: INT]
-                ID  [Id: i]
-            VarDecl
-              TypeSpec
-                INT  [Type: INT]
-              ID  [Id: sum]
-          StmtList
-            StmtList
-              StmtList
-                StmtList
-                  StmtList
-                    Stmt
-                      ExprStmt
-                        Expr
-                          Var
-                            ID  [Id: i]
-                          Expr
-                            SimpleExpr
-                              AddExpr
-                                Term
-                                  Factor
-                                    NUM  [Num: 1]
-                  Stmt
-                    ExprStmt
-                      Expr
-                        Var
-                          ID  [Id: sum]
-                        Expr
-                          SimpleExpr
-                            AddExpr
-                              Term
-                                Factor
-                                  NUM  [Num: 0]
-                Stmt
-                  IterStmt
-                    Expr
-                      SimpleExpr
-                        AddExpr
-                          Term
-                            Factor
-                              Var
-                                ID  [Id: i]
-                        RelOp
-                          <=  [Op: 269]
-                        AddExpr
-                          Term
-                            Factor
-                              NUM  [Num: 100]
-                    Stmt
-                      CompountStmt
-                        LocalDecl
-                        StmtList
-                          StmtList
-                            Stmt
-                              ExprStmt
-                                Expr
-                                  Var
-                                    ID  [Id: sum]
-                                  Expr
-                                    SimpleExpr
-                                      AddExpr
-                                        AddExpr
-                                          Term
-                                            Factor
-                                              Var
-                                                ID  [Id: sum]
-                                        AddOp
-                                          +  [Op: 272]
-                                        Term
-                                          Factor
-                                            Var
-                                              ID  [Id: i]
-                          Stmt
-                            ExprStmt
-                              Expr
-                                Var
-                                  ID  [Id: i]
-                                Expr
-                                  SimpleExpr
-                                    AddExpr
-                                      AddExpr
-                                        Term
-                                          Factor
-                                            Var
-                                              ID  [Id: i]
-                                      AddOp
-                                        +  [Op: 272]
-                                      Term
-                                        Factor
-                                          NUM  [Num: 1]
-              Stmt
-                ExprStmt
-                  Expr
-                    SimpleExpr
-                      AddExpr
-                        Term
-                          Factor
-                            Call
-                              ID  [Id: output]
-                              Args
-                                ArgList
-                                  Expr
-                                    SimpleExpr
-                                      AddExpr
-                                        Term
-                                          Factor
-                                            Var
-                                              ID  [Id: sum]
-            Stmt
-              ReturnStmt
-                Expr
-                  SimpleExpr
-                    AddExpr
-                      Term
-                        Factor
-                          NUM  [Num: 0]
+Program (1)
+  GlobalDeclList (1)
+    Decl (1)
+      FunDecl (1)
+        TypeSpec (1)
+          INT (1)  [Type: INT]
+        ID (1)  [Id: main]
+        Params (1)
+          VOID (1)  [Type: VOID]
+    Decl (4)
+      FunDecl (4)
+        CompountStmt (4)
+          LocalDecl (0)
+            VarDecl (3)
+              TypeSpec (3)
+                INT (3)  [Type: INT]
+              ID (3)  [Id: i]
+            VarDecl (3)
+              TypeSpec (3)
+                INT (3)  [Type: INT]
+              ID (3)  [Id: sum]
+            VarDecl (3)
+              TypeSpec (3)
+                REAL (3)  [Type: REAL]
+              ID (3)  [Id: r]
+          StmtList (4)
+            Stmt (4)
+              ExprStmt (4)
+                Expr (4)
+                  Var (4)
+                    ID (4)  [Id: i]
+                  Expr (4)
+                    SimpleExpr (4)
+                      AddExpr (4)
+                        Term (4)
+                          Factor (4)
+                            NUM (4)  [Num: 1]
+            Stmt (4)
+              ExprStmt (4)
+                Expr (4)
+                  Var (4)
+                    ID (4)  [Id: sum]
+                  Expr (4)
+                    SimpleExpr (4)
+                      AddExpr (4)
+                        Term (4)
+                          Factor (4)
+                            NUM (4)  [Num: 0]
+            Stmt (4)
+              ExprStmt (4)
+                Expr (4)
+                  Var (4)
+                    ID (4)  [Id: r]
+                  Expr (4)
+                    SimpleExpr (4)
+                      AddExpr (4)
+                        Term (4)
+                          Factor (4)
+                            NUM (4)  [Num: 10.000]
+            Stmt (6)
+              WhileStmt (6)
+                Expr (6)
+                  SimpleExpr (6)
+                    AddExpr (6)
+                      Term (6)
+                        Factor (6)
+                          Var (6)
+                            ID (6)  [Id: i]
+                    RelOp (6)
+                      <= (6)  [Op: 272]
+                    AddExpr (6)
+                      Term (6)
+                        Factor (6)
+                          NUM (6)  [Num: 100]
+                Stmt (7)
+                  CompountStmt (7)
+                    LocalDecl (0)
+                    StmtList (7)
+                      Stmt (7)
+                        ExprStmt (7)
+                          Expr (7)
+                            Var (7)
+                              ID (7)  [Id: sum]
+                            Expr (7)
+                              SimpleExpr (7)
+                                AddExpr (7)
+                                  AddExpr (7)
+                                    Term (7)
+                                      Factor (7)
+                                        Var (7)
+                                          ID (7)  [Id: sum]
+                                  AddOp (7)
+                                    + (7)  [Op: 275]
+                                  Term (7)
+                                    Factor (7)
+                                      Var (7)
+                                        ID (7)  [Id: i]
+                      Stmt (8)
+                        ExprStmt (8)
+                          Expr (8)
+                            Var (8)
+                              ID (8)  [Id: i]
+                            Expr (8)
+                              SimpleExpr (8)
+                                AddExpr (8)
+                                  AddExpr (8)
+                                    Term (8)
+                                      Factor (8)
+                                        Var (8)
+                                          ID (8)  [Id: i]
+                                  AddOp (8)
+                                    + (8)  [Op: 275]
+                                  Term (8)
+                                    Factor (8)
+                                      NUM (8)  [Num: 1]
+            Stmt (10)
+              ExprStmt (10)
+                Expr (10)
+                  SimpleExpr (10)
+                    AddExpr (10)
+                      Term (10)
+                        Factor (10)
+                          Call (10)
+                            ID (10)  [Id: output]
+                            Args (10)
+                              ArgList (10)
+                                Expr (10)
+                                  SimpleExpr (10)
+                                    AddExpr (10)
+                                      Term (10)
+                                        Factor (10)
+                                          Var (10)
+                                            ID (10)  [Id: sum]
+            Stmt (11)
+              ExprStmt (11)
+                Expr (11)
+                  Var (11)
+                    ID (11)  [Id: sum]
+                  Expr (11)
+                    SimpleExpr (11)
+                      AddExpr (11)
+                        Term (11)
+                          Factor (11)
+                            NUM (11)  [Num: 0]
+            Stmt (12)
+              ForStmt (12)
+                For_param1 (12)
+                  Var (12)
+                    ID (12)  [Id: i]
+                  Expr (12)
+                    SimpleExpr (12)
+                      AddExpr (12)
+                        Term (12)
+                          Factor (12)
+                            NUM (12)  [Num: 0]
+                For_param2 (12)
+                  Expr (12)
+                    SimpleExpr (12)
+                      AddExpr (12)
+                        Term (12)
+                          Factor (12)
+                            Var (12)
+                              ID (12)  [Id: i]
+                      RelOp (12)
+                        < (12)  [Op: 270]
+                      AddExpr (12)
+                        Term (12)
+                          Factor (12)
+                            NUM (12)  [Num: 10]
+                For_param3 (12)
+                  Var (12)
+                    ID (12)  [Id: i]
+                  Expr (12)
+                    SimpleExpr (12)
+                      AddExpr (12)
+                        AddExpr (12)
+                          Term (12)
+                            Factor (12)
+                              Var (12)
+                                ID (12)  [Id: i]
+                        AddOp (12)
+                          + (12)  [Op: 275]
+                        Term (12)
+                          Factor (12)
+                            NUM (12)  [Num: 1]
+                Stmt (13)
+                  CompountStmt (13)
+                    LocalDecl (0)
+                    StmtList (13)
+                      Stmt (13)
+                        ExprStmt (13)
+                          Expr (13)
+                            Var (13)
+                              ID (13)  [Id: sum]
+                            Expr (13)
+                              SimpleExpr (13)
+                                AddExpr (13)
+                                  AddExpr (13)
+                                    Term (13)
+                                      Factor (13)
+                                        Var (13)
+                                          ID (13)  [Id: sum]
+                                  AddOp (13)
+                                    + (13)  [Op: 275]
+                                  Term (13)
+                                    Factor (13)
+                                      Var (13)
+                                        ID (13)  [Id: i]
+            Stmt (15)
+              ExprStmt (15)
+                Expr (15)
+                  SimpleExpr (15)
+                    AddExpr (15)
+                      Term (15)
+                        Factor (15)
+                          Call (15)
+                            ID (15)  [Id: output]
+                            Args (15)
+                              ArgList (15)
+                                Expr (15)
+                                  SimpleExpr (15)
+                                    AddExpr (15)
+                                      Term (15)
+                                        Factor (15)
+                                          Var (15)
+                                            ID (15)  [Id: sum]
+            Stmt (18)
+              ExprStmt (18)
+                Expr (18)
+                  SimpleExpr (18)
+                    AddExpr (18)
+                      Term (18)
+                        Factor (18)
+                          Call (18)
+                            ID (18)  [Id: output]
+                            Args (18)
+                              ArgList (18)
+                                Expr (18)
+                                  SimpleExpr (18)
+                                    AddExpr (18)
+                                      Term (18)
+                                        Factor (18)
+                                          Var (18)
+                                            ID (18)  [Id: r]
+            Stmt (20)
+              ReturnStmt (20)
+                Expr (20)
+                  SimpleExpr (20)
+                    AddExpr (20)
+                      Term (20)
+                        Factor (20)
+                          NUM (20)  [Num: 0]

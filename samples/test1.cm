@@ -5,7 +5,6 @@ int gcd(int u, int v)
 	else
 		return gcd(v, u - u / v * v);
 }
-
 int main(void)
 {
 	int x;
@@ -18,6 +17,7 @@ int main(void)
 			output(123);
 		else
 			output(456);
+	//x[1] = 0;
 
 	return 0;
 }

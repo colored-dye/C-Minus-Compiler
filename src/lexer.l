@@ -149,7 +149,9 @@ ID ({char})+({char}|{digit})*
 "[" {return LC;}
 "]" {return RC;}
 "," {return COMMA;}
-";" {return SEMI;}
+";" {
+  return SEMI;
+  }
 "+" {
   struct Node* tmp = makeNode("+");
   tmp->is_terminal = 1;

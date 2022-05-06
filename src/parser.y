@@ -89,7 +89,7 @@ var_declaration:
   ;
 
 fun_declaration:
-  type_specifier id LP params RP {
+  /* type_specifier id LP params RP {
     $$ = makeNode("FunDecl");
     addChild(3, $$, $1, $2, $4);
     $$->lineno = $1->lineno;
@@ -97,6 +97,11 @@ fun_declaration:
   | compound_stmt {
     $$ = makeNode("FunDecl");
     addChild(1, $$, $1);
+    $$->lineno = $1->lineno;
+  } */
+  type_specifier id LP params RP compound_stmt {
+    $$ = makeNode("FunDecl");
+    addChild(4, $$, $1, $2, $4, $6);
     $$->lineno = $1->lineno;
   }
   ;
