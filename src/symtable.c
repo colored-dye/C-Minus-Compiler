@@ -1,10 +1,9 @@
 #include "symtable.h"
 #include "node.h"
-#include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 
-struct SymNode* SymbolTableBegin = NULL;
-struct SymNode* SymbolTableEnd = NULL;
+// char g_TypeString[STRING_LENGTH];
 
 BasicType str2BasicType(const char* s) {
   BasicType bt;
@@ -45,20 +44,32 @@ struct SymNode* createSymNode(char* name) {
 }
 
 struct SymNode* lookup(char *name) {
-  struct SymNode* p = SymbolTableBegin;
-  while(p && strncmp(name, p->symName, NAME_LENGTH)) {
-    p = p->nextSym;
+  struct SymTable* tablep = g_SymTableStackTop;
+  struct SymNode* symp = NULL;
+  while(tablep) {
+    symp = lookupSymTable(tablep->dummyhead->nextSym, name);
+    if(symp)
+      break;
+    tablep = tablep->nextTable;
   }
-  return p;
+  return symp;
 }
 
-void insert(struct SymNode* node) {
-  if(SymbolTableBegin == NULL && SymbolTableEnd == NULL) {
-    SymbolTableBegin = SymbolTableEnd = node;
-  } else {
-    SymbolTableEnd->nextSym = node;
-    SymbolTableEnd = node;
+struct SymNode* lookupSymTable(struct SymNode* symTable, char* name) {
+  struct SymNode* nodep = symTable;
+  while(nodep) {
+    if(!strncmp(nodep->symName, name, NAME_LENGTH)) {
+      break;
+    }
+    nodep = nodep->nextSym;
   }
+  return nodep;
+}
+
+void insert(struct SymTable* symTable, struct SymNode* node) {
+  // 头插法,在当前的符号表中插入新的符号
+  node->nextSym = symTable->dummyhead->nextSym;
+  symTable->dummyhead->nextSym = node;
 }
 
 int isFuncArgListMatch(struct FuncArgList* funcArgList1, struct FuncArgList* funcArgList2) {
@@ -75,10 +86,7 @@ int isFuncArgListMatch(struct FuncArgList* funcArgList1, struct FuncArgList* fun
   return 1;
 }
 int isFuncArgMatch(struct FuncArgList* funcArg1, struct FuncArgList* funcArg2) {
-  // if(strncmp(funcArg1->argName, funcArg2->argName, NAME_LENGTH)) {
-  //   return 0;
-  // }
-  // 只需要比较类型
+  // 只需要比较参数类型,比较名称没有意义
   if(!isTypeMatch(funcArg1->argType, funcArg2->argType)) {
     return 0;
   }
@@ -118,24 +126,89 @@ int isTypeMatch(struct Type* t1, struct Type* t2) {
 }
 
 char* Type2Str(struct Type* type) {
-  char* ret = NULL;
+  char* ret = (char*)malloc(STRING_LENGTH), *tmp = NULL;
   switch (type->typeKind) {
   case BasicK:
     switch(type->basic) {
-    case Void: ret = "void"; break;
-    case Int: ret = "int"; break;
-    case Real: ret = "real"; break;
+    case Void: sprintf(ret, "void"); break;
+    case Int: sprintf(ret, "int"); break;
+    case Real: sprintf(ret, "real"); break;
     }
+    break;
   case ArrayK:
-    // switch(type->array.arrType) {
-    // case 
-    // }
-    ret = "array"; break;
+    tmp = Type2Str(type->array.arrType);
+    snprintf(ret, STRING_LENGTH, "array[%s]", tmp);
+    free(tmp);
+    break;
   case FuncK:
-    ret = "function"; break;
+    snprintf(ret, STRING_LENGTH, "function(");
+    struct FuncArgList* argp = type->func->nextArg;
+    while(argp) {
+      strncat(ret, Type2Str(argp->argType), STRING_LENGTH);
+      if(argp->nextArg)
+        strncat(ret, ",", STRING_LENGTH);
+      argp = argp->nextArg;
+    }
+    strncat(ret, ") -> ", STRING_LENGTH);
+    strncat(ret, Type2Str(type->func->argType), STRING_LENGTH);
+    break;
   case ErrorK:
-    ret = "Error"; break;
+    sprintf(ret, "Error"); break;
     break;
   }
   return ret;
 }
+
+struct SymTable* createSymTable(void) {
+  struct SymTable* ret = (struct SymTable*)malloc(sizeof(struct SymTable));
+  ret->dummyhead = createSymNode("");
+  ret->nextTable = NULL;
+  return ret;
+}
+
+void pushSymTable(struct SymTable* symTable) {
+  if(!g_SymTableStackTop && !g_SymTableStackBottom) {
+    g_SymTableStackTop = g_SymTableStackBottom = symTable;
+  } else {
+    // 头插法
+    symTable->nextTable = g_SymTableStackTop;
+    g_SymTableStackTop = symTable;
+  }
+}
+
+struct SymTable* popSymTable() {
+  struct SymTable* top = g_SymTableStackTop;
+  if(!g_SymTableStackTop) {
+    fprintf(stderr, "popSymTable(): SymTable stack empty!\n");
+  }
+  g_SymTableStackTop = top->nextTable;
+  top->nextTable = NULL;
+  if(!g_SymTableStackTop)
+    g_SymTableStackBottom = NULL;
+  return top;
+}
+
+#ifdef SEMANTIC_DEBUG
+void printSymTable(struct SymTable* symTable) {
+  puts("---------------------------------");
+  while(symTable) {
+    struct SymNode* nodep = symTable->dummyhead->nextSym;
+    while(nodep) {
+      printSymNode(nodep);
+      nodep = nodep->nextSym;
+    }
+    symTable = symTable->nextTable;
+    puts("---------------------------------");
+  }
+}
+
+void printSymNode(struct SymNode* symNode) {
+  printf("%s: ", symNode->symName);
+  printType(symNode->symType);
+}
+
+void printType(struct Type* type) {
+  printf("%s\n", Type2Str(type));
+}
+
+#endif

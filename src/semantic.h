@@ -4,10 +4,12 @@
 #include "symtable.h"
 #include "node.h"
 
-extern struct SymNode* SymbolTableBegin;
-extern struct SymNode* SymbolTableEnd;
-
-extern const char* g_BuiltinFunction[2];
+// extern const char* g_BuiltinFunction[2];
+typedef enum {
+  SEReturnType, SEConditionNotNum, SEAssignType, SEUsedBeforeDecl,
+  SEInvalidIndex, SENotArray, SEOpTypeNotMatch, SEFuncArgsNotMatch,
+  SEFuncReturnArray,
+} SemanticErrorKind;
 
 void SemanticError(int lineno, int column, SemanticErrorKind errK);
 

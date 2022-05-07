@@ -5,6 +5,9 @@ int gcd(int u, int v)
 	else
 		return gcd(v, u - u / v * v);
 }
+int f(void) {
+	output(456);
+}
 int main(void)
 {
 	int x;
@@ -12,12 +15,15 @@ int main(void)
 	x = input();
 	y = input();
 	output(gcd(x, y));
-	if(1)
+	if(1) {
+		real x[2];
 		if(2)
 			output(123);
 		else
 			output(456);
+	}
 	//x[1] = 0;
+	f();
 
 	return 0;
 }

@@ -7,10 +7,8 @@
 
 #include "node.h"
 
-typedef enum {
-  SEReturnType, SEConditionNotNum, SEAssignType, SEUsedBeforeDecl,
-  SEInvalidIndex, SENotArray, SEOpTypeNotMatch, SEFuncArgsNotMatch
-} SemanticErrorKind;
+extern struct SymTable* g_SymTableStackTop;
+extern struct SymTable* g_SymTableStackBottom;
 
 typedef enum { BasicK, ArrayK, FuncK, ErrorK } TypeKind;
 typedef enum { Void, Int, Real } BasicType;
@@ -20,11 +18,12 @@ struct Type {
   union {
     BasicType basic;
     struct { struct Type *arrType; int size; } array;
-    struct FuncArgList* func; // 函数: 第一个结点为返回值,后面的是参数u
+    struct FuncArgList* func; // 函数: 第一个结点为返回值,后面的是参数
   };
 };
 
 struct Type* createType(TypeKind typeK);
+BasicType str2BasicType(const char* s);
 void setBasic(struct Type* type, BasicType basic);
 int isTypeMatch(struct Type* t1, struct Type* t2);
 char* Type2Str(struct Type* type);
@@ -52,8 +51,26 @@ struct SymNode {
 
 struct SymNode* createSymNode(char* name);
 struct SymNode* lookup(char *name);
-void insert(struct SymNode* node);
+struct SymNode* lookupSymTable(struct SymNode* symTable, char* name);
 
-BasicType str2BasicType(const char* s);
+/***************************************************/
+
+// 单链表实现符号表栈
+struct SymTable {
+  struct SymNode* dummyhead;
+  struct SymTable* nextTable;
+};
+
+struct SymTable* createSymTable(void);
+void addSymTable(struct SymTable* newTable);
+
+void pushSymTable(struct SymTable* symTable);
+struct SymTable* popSymTable();
+void insert(struct SymTable* symTable, struct SymNode* node);
+#ifdef SEMANTIC_DEBUG
+void printSymTable(struct SymTable* symTable);
+void printSymNode(struct SymNode* symNode);
+void printType(struct Type* type);
+#endif
 
 #endif

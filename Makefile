@@ -1,5 +1,5 @@
 all:
-	make -C src
+	make -C src DEBUG=-DSEMANTIC_DEBUG
 
 parser:
 	./cmmc samples/test1.cm > out/out1.txt
@@ -8,7 +8,7 @@ parser:
 	# ./cmmc samples/test4.cm > out/out4.txt
 
 run:
-	./cmmc samples/test1.cm
+	./cmmc samples/test2.cm
 
 .PHONY: clean
 clean:

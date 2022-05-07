@@ -2,7 +2,10 @@ CC = gcc
 LEX = flex
 YACC = bison
 
-CFLAGS := -g -lfl -DSEMANTIC_DEBUG
+CFLAGS := -g -lfl
+ifneq ($(DEBUG), )
+CFLAGS += $(DEBUG)
+endif
 
 TARGET = ../cmmc
 

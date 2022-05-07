@@ -4,10 +4,15 @@
 #include <stdio.h>
 #include <string.h>
 
+struct SymTable* g_SymTableStackTop = NULL;
+struct SymTable* g_SymTableStackBottom = NULL;
+
+// const char* g_BuiltinFunction[2] = {
+//   "input", "output",
+// };
+
 struct Type g_FuncReturnType;
-const char* g_BuiltinFunction[2] = {
-  "input", "output",
-};
+
 struct Node *g_SENode1, *g_SENode2;
 struct Type *g_SEType1, *g_SEType2;
 
@@ -48,10 +53,16 @@ void SemanticError(int lineno, int column, SemanticErrorKind errK) {
   case SEFuncArgsNotMatch:
     snprintf(spec, speclen, "Wrong arguments for function `%s'.", g_SENode1->str_term);
     break;
+  case SEFuncReturnArray:
+    snprintf(spec, speclen, "Array cannot be return value.");
+    break;
   // default:
   //   break;
   }
-  fprintf(stderr, "%s\n", spec);
+  fprintf(stderr, "%s\nSymbol table:\n", spec);
+  #ifdef SEMANTIC_DEBUG
+  printSymTable(g_SymTableStackTop);
+  #endif
 }
 
 void SemanticAnalysis(struct Node* root) {
@@ -71,7 +82,11 @@ void Program(struct Node* node) {
   printf("Program(%d)\n", node->lineno);
   #endif
 
-  // Prepare builtin functions
+  // Build global symbol table
+  struct SymTable* globalTable = createSymTable();
+  pushSymTable(globalTable);
+
+  // Prepare builtin functions; input(), output()
   // int input(void)
   struct SymNode* builtin = createSymNode("input");
   builtin->symType = createType(FuncK);
@@ -81,7 +96,7 @@ void Program(struct Node* node) {
   builtin->symType->func->nextArg = createFuncArg("");
   builtin->symType->func->nextArg->argType = createType(BasicK);
   builtin->symType->func->nextArg->argType->basic = Void; // Arg: void
-  insert(builtin);
+  insert(globalTable, builtin);
 
   // void output(int)
   builtin = createSymNode("output");
@@ -92,7 +107,7 @@ void Program(struct Node* node) {
   builtin->symType->func->nextArg = createFuncArg("");
   builtin->symType->func->nextArg->argType = createType(BasicK);
   builtin->symType->func->nextArg->argType->basic = Int; // Arg: Int
-  insert(builtin);
+  insert(globalTable, builtin);
   
   DeclList(node->child);
 }
@@ -120,7 +135,7 @@ void Decl(struct Node* node) {
   } else if(!strncmp(node->name, "FunDecl", NAME_LENGTH)) {
     FuncDecl(node);
   } else {
-    fprintf(stderr, "Decl(): Unrecognized node.\n");
+    fprintf(stderr, "Fatal error in Decl(): Unrecognized node.\n");
   }
 }
 
@@ -139,7 +154,7 @@ void VarDecl(struct Node* node) {
   }
   struct SymNode* sym = createSymNode(node->child->next_sib->str_term);
   sym->symType = type;
-  insert(sym);
+  insert(g_SymTableStackTop, sym);
 }
 
 struct Type* TypeSpec(struct Node* node) {
@@ -160,6 +175,10 @@ void FuncDecl(struct Node* node) {
   struct Type* type, *rettype = TypeSpec(node->child);
   // Store function return type for ReturnStmt to check
   g_FuncReturnType = *rettype;
+  if(rettype->typeKind == ArrayK) {
+    SemanticError(node->lineno, node->column, SEFuncReturnArray);
+  }
+
   char* id = node->child->next_sib->str_term;
   struct FuncArgList* params = Params(node->child->next_sib->next_sib);
   
@@ -170,18 +189,47 @@ void FuncDecl(struct Node* node) {
   
   struct SymNode* sym = createSymNode(id);
   sym->symType = type;
-  insert(sym);
+  // 函数定义是全局的,对应符号表栈底
+  insert(g_SymTableStackBottom, sym);
 
-  // Check compound_stmt
-  CompoundStmt(node->child->next_sib->next_sib->next_sib);
+  // 函数的参数也要加入函数本地变量的符号表
+  // 不需要创建符号表的情况: 参数为void; 没有定义局部变量
+  if((params->argType->typeKind != BasicK || params->argType->basic != Void) 
+      && (node->child->next_sib->next_sib->child != NULL))
+  {
+    struct SymTable* argTable = createSymTable();
+    pushSymTable(argTable);
+    struct FuncArgList* arg = params;
+    while(arg) {
+      if(arg->argType->typeKind != BasicK || arg->argType->basic != Void) {
+        sym = createSymNode(arg->argName);
+        sym->symType = arg->argType;
+        insert(argTable, sym);
+      }
+      arg = arg->nextArg;
+    }
+
+    // Check compound_stmt
+    CompoundStmt(node->child->next_sib->next_sib->next_sib);
+    // 删除函数的符号表
+    popSymTable();
+  }
 }
 
 struct FuncArgList* Params(struct Node* node) {
-  // params -> param_list | e
+  // params -> param_list | void
   #ifdef SEMANTIC_DEBUG
   printf("Params(%d)\n", node->lineno);
   #endif
-  return ParamList(node->child);
+  node = node->child;
+  if(node->is_terminal && node->termKind == TermKType && !strncmp(node->str_term, "VOID", 4)) {
+    struct FuncArgList* arg = createFuncArg("");
+    arg->argType = createType(BasicK);
+    setBasic(arg->argType, Void);
+    return arg;
+  } else {
+    return ParamList(node);
+  }
 }
 
 struct FuncArgList* ParamList(struct Node* node) {
@@ -208,10 +256,12 @@ struct FuncArgList* Param(struct Node* node) {
   #ifdef SEMANTIC_DEBUG
   printf("Param(%d)\n", node->lineno);
   #endif
-  struct FuncArgList* arg = createFuncArg(node->name);
-  struct Type* type = createType(BasicK);
-  setBasic(type, str2BasicType(node->str_term));
-  if(node->child->next_sib->next_sib) {
+  
+  node = node->child;
+  struct FuncArgList* arg = NULL;
+  struct Type* type = TypeSpec(node);
+  arg = createFuncArg(node->next_sib->str_term);
+  if(node->next_sib->next_sib) {
     // Array
     struct Type* array = createType(ArrayK);
     array->array.arrType = type;
@@ -264,13 +314,18 @@ void Stmt(struct Node* node) {
   #endif
   node = node->child;
   if(!node) {
-    // Error
+    fprintf(stderr, "Fatal error in Stmt(): Empty statement!\n");
+    return;
   }
   switch(node->name[0]) {
   case 'E': // ExprStmt
     ExprStmt(node); break;
   case 'C': // CompoundStmt
+    // Push to symbol table stack
+    pushSymTable(createSymTable());
     CompoundStmt(node); break;
+    // Pop symbol table stack
+    popSymTable();
   case 'S': // SelectionStmt
     SelectionStmt(node); break;
   case 'W': // WhileStmt
@@ -302,7 +357,7 @@ void SelectionStmt(struct Node* node) {
   printf("SelectionStmt(%d)\n", node->lineno);
   #endif
   struct Type* exprType = Expr(node->child);
-  if(exprType->typeKind != BasicK || exprType->basic != Int || exprType->basic != Real) {
+  if(exprType->typeKind != BasicK || exprType->basic == Void) {
     SemanticError(node->child->lineno, node->child->column, SEConditionNotNum);
   }
   Stmt(node->child->next_sib);
@@ -317,7 +372,7 @@ void WhileStmt(struct Node* node) {
   printf("WhileStmt(%d)\n", node->lineno);
   #endif
   struct Type* exprType = Expr(node->child);
-  if(exprType->typeKind != BasicK || exprType->basic != Int || exprType->basic != Real) {
+  if(exprType->typeKind != BasicK || exprType->basic == Void) {
     SemanticError(node->child->lineno, node->child->column, SEConditionNotNum);
   }
   Stmt(node->child->next_sib);
@@ -423,6 +478,8 @@ struct Type* Var(struct Node* node) {
     if(exprType->typeKind != BasicK || exprType->basic != Int) {
       SemanticError(node->lineno, node->column, SEInvalidIndex);
     }
+    
+    varType = varType->array.arrType;
   }
 
   return varType;
