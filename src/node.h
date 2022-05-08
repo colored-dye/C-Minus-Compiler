@@ -7,17 +7,13 @@
 #define NAME_LENGTH 32
 #define STRING_LENGTH 128
 
-// typedef enum { NodeKStmt, NodeKGlobalDecl, NodeKExpr } NodeKind;
-// typedef enum { StmtExpr, StmtCompound, StmtSelection, StmtWhile, StmtFor, StmtReturn } StmtKind;
-// typedef enum { GlobalDeclVar, GlobalDeclFunc } GlobalDeclKind;
-// typedef enum { ExprAssign, ExprSimple } ExprKind;
-
 typedef enum { TermKType, TermKNum, TermKId, TermKOp, TermKBracket } TermKind;
 
 struct Node{
     struct Node* child;//第一个孩子;
     struct Node* next_sib;//兄弟节点
     char name[NAME_LENGTH];//节点名称
+    // int nodeK;
 
     // Non-terminal只需关注其名称或类别
     // 而terminal需要支持所有的原生数据类型

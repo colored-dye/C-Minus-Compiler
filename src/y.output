@@ -4,6 +4,10 @@ Terminals unused in grammar
     ERROR
 
 
+State 35 conflicts: 19 reduce/reduce
+State 97 conflicts: 14 reduce/reduce
+
+
 Grammar
 
     0 $accept: program $end
@@ -52,103 +56,108 @@ Grammar
    29 expression_stmt: expression SEMI
    30                | SEMI
 
-   31 expression: var ASSIGN expression
+   31 expression: assign
    32           | simple_expression
 
-   33 selection_stmt: IF LP expression RP statement
-   34               | IF LP expression RP statement ELSE statement
+   33 assign: var ASSIGN expression
+   34       | error
 
-   35 while_stmt: WHILE LP expression RP statement
+   35 selection_stmt: IF LP expression RP statement
+   36               | IF LP expression RP statement ELSE statement
 
-   36 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP statement
+   37 while_stmt: WHILE LP expression RP statement
 
-   37 for_param1: %empty
-   38           | var ASSIGN expression
+   38 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP statement
 
-   39 for_param2: %empty
-   40           | expression
+   39 for_param1: %empty
+   40           | assign
 
-   41 for_param3: %empty
-   42           | var ASSIGN expression
+   41 for_param2: %empty
+   42           | expression
 
-   43 return_stmt: RETURN SEMI
-   44            | RETURN expression SEMI
+   43 for_param3: %empty
+   44           | assign
 
-   45 var: id
-   46    | id LC expression RC
+   45 return_stmt: RETURN SEMI
+   46            | RETURN expression SEMI
 
-   47 simple_expression: additive_expression relop additive_expression
-   48                  | additive_expression
+   47 var: id
+   48    | id LC expression RC
+   49    | error
 
-   49 additive_expression: additive_expression addop term
-   50                    | term
+   50 simple_expression: additive_expression relop additive_expression
+   51                  | additive_expression
 
-   51 relop: LT
-   52      | LE
-   53      | GT
-   54      | GE
-   55      | EQ
-   56      | NE
+   52 additive_expression: additive_expression addop term
+   53                    | term
 
-   57 addop: ADD
-   58      | SUB
+   54 relop: LT
+   55      | LE
+   56      | GT
+   57      | GE
+   58      | EQ
+   59      | NE
 
-   59 term: term mulop factor
-   60     | factor
+   60 addop: ADD
+   61      | SUB
 
-   61 factor: LP expression RP
-   62       | var
-   63       | call
-   64       | NUM
+   62 term: term mulop factor
+   63     | factor
 
-   65 mulop: MUL
-   66      | DIV
+   64 factor: LP expression RP
+   65       | var
+   66       | call
+   67       | NUM
 
-   67 call: id LP args RP
+   68 mulop: MUL
+   69      | DIV
 
-   68 args: arg_list
-   69     | %empty
+   70 call: id LP args RP
 
-   70 arg_list: arg_list COMMA expression
-   71         | expression
+   71 args: arg_list
+   72     | %empty
 
-   72 id: ID
+   73 arg_list: arg_list COMMA expression
+   74         | expression
+
+   75 id: ID
+   76   | error
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
-    error (256)
-    ID (258) 72
-    NUM (259) 7 64
+    error (256) 34 49 76
+    ID (258) 75
+    NUM (259) 7 67
     INT (260) 9
     VOID (261) 10 13
     REAL (262) 11
     CHAR (263)
-    RETURN (264) 43 44
-    IF (265) 33 34
-    ELSE (266) 34
-    WHILE (267) 35
-    FOR (268) 36
-    GT <integer> (269) 53
-    LT <integer> (270) 51
-    GE <integer> (271) 54
-    LE <integer> (272) 52
-    NE <integer> (273) 56
-    EQ <integer> (274) 55
-    ADD <integer> (275) 57
-    SUB <integer> (276) 58
-    MUL <integer> (277) 65
-    DIV <integer> (278) 66
-    LP (279) 8 33 34 35 36 61 67
-    RP (280) 8 33 34 35 36 61 67
+    RETURN (264) 45 46
+    IF (265) 35 36
+    ELSE (266) 36
+    WHILE (267) 37
+    FOR (268) 38
+    GT <integer> (269) 56
+    LT <integer> (270) 54
+    GE <integer> (271) 57
+    LE <integer> (272) 55
+    NE <integer> (273) 59
+    EQ <integer> (274) 58
+    ADD <integer> (275) 60
+    SUB <integer> (276) 61
+    MUL <integer> (277) 68
+    DIV <integer> (278) 69
+    LP (279) 8 35 36 37 38 64 70
+    RP (280) 8 35 36 37 38 64 70
     LB (281) 18
     RB (282) 18
-    LC (283) 7 17 46
-    RC (284) 7 17 46
-    SEMI (285) 6 7 29 30 36 43 44
-    COMMA (286) 15 70
-    ASSIGN (287) 31 38 42
+    LC (283) 7 17 48
+    RC (284) 7 17 48
+    SEMI (285) 6 7 29 30 38 45 46
+    COMMA (286) 15 73
+    ASSIGN (287) 33
     ERROR (288)
     LOWER_THAN_ELSE (289)
 
@@ -195,70 +204,73 @@ Nonterminals, with rules where they appear
         on right: 18 22
     statement <node> (48)
         on left: 23 24 25 26 27 28
-        on right: 21 22 33 34 35 36
+        on right: 21 22 35 36 37 38
     expression_stmt <node> (49)
         on left: 29 30
         on right: 23
     expression <node> (50)
         on left: 31 32
-        on right: 29 31 33 34 35 38 40 42 44 46 61 70 71
-    selection_stmt <node> (51)
+        on right: 29 33 35 36 37 42 46 48 64 73 74
+    assign <node> (51)
         on left: 33 34
+        on right: 31 40 44
+    selection_stmt <node> (52)
+        on left: 35 36
         on right: 25
-    while_stmt <node> (52)
-        on left: 35
+    while_stmt <node> (53)
+        on left: 37
         on right: 26
-    for_stmt <node> (53)
-        on left: 36
+    for_stmt <node> (54)
+        on left: 38
         on right: 27
-    for_param1 <node> (54)
-        on left: 37 38
-        on right: 36
-    for_param2 <node> (55)
+    for_param1 <node> (55)
         on left: 39 40
-        on right: 36
-    for_param3 <node> (56)
+        on right: 38
+    for_param2 <node> (56)
         on left: 41 42
-        on right: 36
-    return_stmt <node> (57)
+        on right: 38
+    for_param3 <node> (57)
         on left: 43 44
-        on right: 28
-    var <node> (58)
+        on right: 38
+    return_stmt <node> (58)
         on left: 45 46
-        on right: 31 38 42 62
-    simple_expression <node> (59)
-        on left: 47 48
+        on right: 28
+    var <node> (59)
+        on left: 47 48 49
+        on right: 33 65
+    simple_expression <node> (60)
+        on left: 50 51
         on right: 32
-    additive_expression <node> (60)
-        on left: 49 50
-        on right: 47 48 49
-    relop <node> (61)
-        on left: 51 52 53 54 55 56
-        on right: 47
-    addop <node> (62)
-        on left: 57 58
-        on right: 49
-    term <node> (63)
-        on left: 59 60
-        on right: 49 50 59
-    factor <node> (64)
-        on left: 61 62 63 64
-        on right: 59 60
-    mulop <node> (65)
-        on left: 65 66
-        on right: 59
-    call <node> (66)
-        on left: 67
-        on right: 63
-    args <node> (67)
+    additive_expression <node> (61)
+        on left: 52 53
+        on right: 50 51 52
+    relop <node> (62)
+        on left: 54 55 56 57 58 59
+        on right: 50
+    addop <node> (63)
+        on left: 60 61
+        on right: 52
+    term <node> (64)
+        on left: 62 63
+        on right: 52 53 62
+    factor <node> (65)
+        on left: 64 65 66 67
+        on right: 62 63
+    mulop <node> (66)
         on left: 68 69
-        on right: 67
-    arg_list <node> (68)
-        on left: 70 71
-        on right: 68 70
-    id <node> (69)
-        on left: 72
-        on right: 6 7 8 16 17 45 46 67
+        on right: 62
+    call <node> (67)
+        on left: 70
+        on right: 66
+    args <node> (68)
+        on left: 71 72
+        on right: 70
+    arg_list <node> (69)
+        on left: 73 74
+        on right: 71 73
+    id <node> (70)
+        on left: 75 76
+        on right: 6 7 8 16 17 47 48 70
 
 
 State 0
@@ -349,9 +361,10 @@ State 9
     7                | type_specifier . id LC NUM RC SEMI
     8 fun_declaration: type_specifier . id LP params RP compound_stmt
 
-    ID  shift, and go to state 12
+    error  shift, and go to state 12
+    ID     shift, and go to state 13
 
-    id  go to state 13
+    id  go to state 14
 
 
 State 10
@@ -370,51 +383,58 @@ State 11
 
 State 12
 
-   72 id: ID .
+   76 id: error .
 
-    $default  reduce using rule 72 (id)
+    $default  reduce using rule 76 (id)
 
 
 State 13
+
+   75 id: ID .
+
+    $default  reduce using rule 75 (id)
+
+
+State 14
 
     6 var_declaration: type_specifier id . SEMI
     7                | type_specifier id . LC NUM RC SEMI
     8 fun_declaration: type_specifier id . LP params RP compound_stmt
 
-    LP    shift, and go to state 14
-    LC    shift, and go to state 15
-    SEMI  shift, and go to state 16
-
-
-State 14
-
-    8 fun_declaration: type_specifier id LP . params RP compound_stmt
-
-    INT   shift, and go to state 1
-    VOID  shift, and go to state 17
-    REAL  shift, and go to state 3
-
-    type_specifier  go to state 18
-    params          go to state 19
-    param_list      go to state 20
-    param           go to state 21
+    LP    shift, and go to state 15
+    LC    shift, and go to state 16
+    SEMI  shift, and go to state 17
 
 
 State 15
 
-    7 var_declaration: type_specifier id LC . NUM RC SEMI
+    8 fun_declaration: type_specifier id LP . params RP compound_stmt
 
-    NUM  shift, and go to state 22
+    INT   shift, and go to state 1
+    VOID  shift, and go to state 18
+    REAL  shift, and go to state 3
+
+    type_specifier  go to state 19
+    params          go to state 20
+    param_list      go to state 21
+    param           go to state 22
 
 
 State 16
+
+    7 var_declaration: type_specifier id LC . NUM RC SEMI
+
+    NUM  shift, and go to state 23
+
+
+State 17
 
     6 var_declaration: type_specifier id SEMI .
 
     $default  reduce using rule 6 (var_declaration)
 
 
-State 17
+State 18
 
    10 type_specifier: VOID .
    13 params: VOID .
@@ -423,67 +443,68 @@ State 17
     $default  reduce using rule 10 (type_specifier)
 
 
-State 18
+State 19
 
    16 param: type_specifier . id
    17      | type_specifier . id LC RC
 
-    ID  shift, and go to state 12
+    error  shift, and go to state 12
+    ID     shift, and go to state 13
 
-    id  go to state 23
-
-
-State 19
-
-    8 fun_declaration: type_specifier id LP params . RP compound_stmt
-
-    RP  shift, and go to state 24
+    id  go to state 24
 
 
 State 20
 
+    8 fun_declaration: type_specifier id LP params . RP compound_stmt
+
+    RP  shift, and go to state 25
+
+
+State 21
+
    12 params: param_list .
    15 param_list: param_list . COMMA param
 
-    COMMA  shift, and go to state 25
+    COMMA  shift, and go to state 26
 
     $default  reduce using rule 12 (params)
 
 
-State 21
+State 22
 
    14 param_list: param .
 
     $default  reduce using rule 14 (param_list)
 
 
-State 22
+State 23
 
     7 var_declaration: type_specifier id LC NUM . RC SEMI
 
-    RC  shift, and go to state 26
-
-
-State 23
-
-   16 param: type_specifier id .
-   17      | type_specifier id . LC RC
-
-    LC  shift, and go to state 27
-
-    $default  reduce using rule 16 (param)
+    RC  shift, and go to state 27
 
 
 State 24
 
-    8 fun_declaration: type_specifier id LP params RP . compound_stmt
+   16 param: type_specifier id .
+   17      | type_specifier id . LC RC
 
-    LB  shift, and go to state 28
+    LC  shift, and go to state 28
 
-    compound_stmt  go to state 29
+    $default  reduce using rule 16 (param)
 
 
 State 25
+
+    8 fun_declaration: type_specifier id LP params RP . compound_stmt
+
+    LB  shift, and go to state 29
+
+    compound_stmt  go to state 30
+
+
+State 26
 
    15 param_list: param_list COMMA . param
 
@@ -491,1063 +512,1148 @@ State 25
     VOID  shift, and go to state 2
     REAL  shift, and go to state 3
 
-    type_specifier  go to state 18
-    param           go to state 30
-
-
-State 26
-
-    7 var_declaration: type_specifier id LC NUM RC . SEMI
-
-    SEMI  shift, and go to state 31
+    type_specifier  go to state 19
+    param           go to state 31
 
 
 State 27
 
-   17 param: type_specifier id LC . RC
+    7 var_declaration: type_specifier id LC NUM RC . SEMI
 
-    RC  shift, and go to state 32
+    SEMI  shift, and go to state 32
 
 
 State 28
+
+   17 param: type_specifier id LC . RC
+
+    RC  shift, and go to state 33
+
+
+State 29
 
    18 compound_stmt: LB . local_declarations statement_list RB
 
     $default  reduce using rule 20 (local_declarations)
 
-    local_declarations  go to state 33
+    local_declarations  go to state 34
 
 
-State 29
+State 30
 
     8 fun_declaration: type_specifier id LP params RP compound_stmt .
 
     $default  reduce using rule 8 (fun_declaration)
 
 
-State 30
+State 31
 
    15 param_list: param_list COMMA param .
 
     $default  reduce using rule 15 (param_list)
 
 
-State 31
+State 32
 
     7 var_declaration: type_specifier id LC NUM RC SEMI .
 
     $default  reduce using rule 7 (var_declaration)
 
 
-State 32
+State 33
 
    17 param: type_specifier id LC RC .
 
     $default  reduce using rule 17 (param)
 
 
-State 33
+State 34
 
    18 compound_stmt: LB local_declarations . statement_list RB
    19 local_declarations: local_declarations . var_declaration
 
-    ID      shift, and go to state 12
-    NUM     shift, and go to state 34
+    error   shift, and go to state 35
+    ID      shift, and go to state 13
+    NUM     shift, and go to state 36
     INT     shift, and go to state 1
     VOID    shift, and go to state 2
     REAL    shift, and go to state 3
-    RETURN  shift, and go to state 35
-    IF      shift, and go to state 36
-    WHILE   shift, and go to state 37
-    FOR     shift, and go to state 38
-    LP      shift, and go to state 39
-    LB      shift, and go to state 28
-    SEMI    shift, and go to state 40
+    RETURN  shift, and go to state 37
+    IF      shift, and go to state 38
+    WHILE   shift, and go to state 39
+    FOR     shift, and go to state 40
+    LP      shift, and go to state 41
+    LB      shift, and go to state 29
+    SEMI    shift, and go to state 42
 
-    var_declaration      go to state 41
-    type_specifier       go to state 42
-    compound_stmt        go to state 43
-    statement_list       go to state 44
-    statement            go to state 45
-    expression_stmt      go to state 46
-    expression           go to state 47
-    selection_stmt       go to state 48
-    while_stmt           go to state 49
-    for_stmt             go to state 50
-    return_stmt          go to state 51
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
-
-
-State 34
-
-   64 factor: NUM .
-
-    $default  reduce using rule 64 (factor)
+    var_declaration      go to state 43
+    type_specifier       go to state 44
+    compound_stmt        go to state 45
+    statement_list       go to state 46
+    statement            go to state 47
+    expression_stmt      go to state 48
+    expression           go to state 49
+    assign               go to state 50
+    selection_stmt       go to state 51
+    while_stmt           go to state 52
+    for_stmt             go to state 53
+    return_stmt          go to state 54
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 35
 
-   43 return_stmt: RETURN . SEMI
-   44            | RETURN . expression SEMI
+   34 assign: error .
+   49 var: error .
+   76 id: error .
 
-    ID    shift, and go to state 12
-    NUM   shift, and go to state 34
-    LP    shift, and go to state 39
-    SEMI  shift, and go to state 59
-
-    expression           go to state 60
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    GT        reduce using rule 49 (var)
+    GT        [reduce using rule 76 (id)]
+    LT        reduce using rule 49 (var)
+    LT        [reduce using rule 76 (id)]
+    GE        reduce using rule 49 (var)
+    GE        [reduce using rule 76 (id)]
+    LE        reduce using rule 49 (var)
+    LE        [reduce using rule 76 (id)]
+    NE        reduce using rule 49 (var)
+    NE        [reduce using rule 76 (id)]
+    EQ        reduce using rule 49 (var)
+    EQ        [reduce using rule 76 (id)]
+    ADD       reduce using rule 49 (var)
+    ADD       [reduce using rule 76 (id)]
+    SUB       reduce using rule 49 (var)
+    SUB       [reduce using rule 76 (id)]
+    MUL       reduce using rule 49 (var)
+    MUL       [reduce using rule 76 (id)]
+    DIV       reduce using rule 49 (var)
+    DIV       [reduce using rule 76 (id)]
+    LP        reduce using rule 76 (id)
+    RP        reduce using rule 34 (assign)
+    RP        [reduce using rule 49 (var)]
+    RP        [reduce using rule 76 (id)]
+    LC        reduce using rule 76 (id)
+    RC        reduce using rule 34 (assign)
+    RC        [reduce using rule 49 (var)]
+    RC        [reduce using rule 76 (id)]
+    SEMI      reduce using rule 34 (assign)
+    SEMI      [reduce using rule 49 (var)]
+    SEMI      [reduce using rule 76 (id)]
+    COMMA     reduce using rule 34 (assign)
+    COMMA     [reduce using rule 49 (var)]
+    COMMA     [reduce using rule 76 (id)]
+    ASSIGN    reduce using rule 49 (var)
+    ASSIGN    [reduce using rule 76 (id)]
+    $default  reduce using rule 49 (var)
 
 
 State 36
 
-   33 selection_stmt: IF . LP expression RP statement
-   34               | IF . LP expression RP statement ELSE statement
+   67 factor: NUM .
 
-    LP  shift, and go to state 61
+    $default  reduce using rule 67 (factor)
 
 
 State 37
 
-   35 while_stmt: WHILE . LP expression RP statement
+   45 return_stmt: RETURN . SEMI
+   46            | RETURN . expression SEMI
 
-    LP  shift, and go to state 62
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+    SEMI   shift, and go to state 62
+
+    expression           go to state 63
+    assign               go to state 50
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 38
 
-   36 for_stmt: FOR . LP for_param1 SEMI for_param2 SEMI for_param3 RP statement
+   35 selection_stmt: IF . LP expression RP statement
+   36               | IF . LP expression RP statement ELSE statement
 
-    LP  shift, and go to state 63
+    LP  shift, and go to state 64
 
 
 State 39
 
-   61 factor: LP . expression RP
+   37 while_stmt: WHILE . LP expression RP statement
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
-
-    expression           go to state 64
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    LP  shift, and go to state 65
 
 
 State 40
+
+   38 for_stmt: FOR . LP for_param1 SEMI for_param2 SEMI for_param3 RP statement
+
+    LP  shift, and go to state 66
+
+
+State 41
+
+   64 factor: LP . expression RP
+
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+
+    expression           go to state 67
+    assign               go to state 50
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
+
+
+State 42
 
    30 expression_stmt: SEMI .
 
     $default  reduce using rule 30 (expression_stmt)
 
 
-State 41
+State 43
 
    19 local_declarations: local_declarations var_declaration .
 
     $default  reduce using rule 19 (local_declarations)
 
 
-State 42
+State 44
 
     6 var_declaration: type_specifier . id SEMI
     7                | type_specifier . id LC NUM RC SEMI
 
-    ID  shift, and go to state 12
+    error  shift, and go to state 12
+    ID     shift, and go to state 13
 
-    id  go to state 65
+    id  go to state 68
 
 
-State 43
+State 45
 
    24 statement: compound_stmt .
 
     $default  reduce using rule 24 (statement)
 
 
-State 44
+State 46
 
    18 compound_stmt: LB local_declarations statement_list . RB
    22 statement_list: statement_list . statement
 
-    ID      shift, and go to state 12
-    NUM     shift, and go to state 34
-    RETURN  shift, and go to state 35
-    IF      shift, and go to state 36
-    WHILE   shift, and go to state 37
-    FOR     shift, and go to state 38
-    LP      shift, and go to state 39
-    LB      shift, and go to state 28
-    RB      shift, and go to state 66
-    SEMI    shift, and go to state 40
+    error   shift, and go to state 35
+    ID      shift, and go to state 13
+    NUM     shift, and go to state 36
+    RETURN  shift, and go to state 37
+    IF      shift, and go to state 38
+    WHILE   shift, and go to state 39
+    FOR     shift, and go to state 40
+    LP      shift, and go to state 41
+    LB      shift, and go to state 29
+    RB      shift, and go to state 69
+    SEMI    shift, and go to state 42
 
-    compound_stmt        go to state 43
-    statement            go to state 67
-    expression_stmt      go to state 46
-    expression           go to state 47
-    selection_stmt       go to state 48
-    while_stmt           go to state 49
-    for_stmt             go to state 50
-    return_stmt          go to state 51
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    compound_stmt        go to state 45
+    statement            go to state 70
+    expression_stmt      go to state 48
+    expression           go to state 49
+    assign               go to state 50
+    selection_stmt       go to state 51
+    while_stmt           go to state 52
+    for_stmt             go to state 53
+    return_stmt          go to state 54
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
-State 45
+State 47
 
    21 statement_list: statement .
 
     $default  reduce using rule 21 (statement_list)
 
 
-State 46
+State 48
 
    23 statement: expression_stmt .
 
     $default  reduce using rule 23 (statement)
 
 
-State 47
+State 49
 
    29 expression_stmt: expression . SEMI
 
-    SEMI  shift, and go to state 68
+    SEMI  shift, and go to state 71
 
 
-State 48
+State 50
+
+   31 expression: assign .
+
+    $default  reduce using rule 31 (expression)
+
+
+State 51
 
    25 statement: selection_stmt .
 
     $default  reduce using rule 25 (statement)
 
 
-State 49
+State 52
 
    26 statement: while_stmt .
 
     $default  reduce using rule 26 (statement)
 
 
-State 50
+State 53
 
    27 statement: for_stmt .
 
     $default  reduce using rule 27 (statement)
 
 
-State 51
+State 54
 
    28 statement: return_stmt .
 
     $default  reduce using rule 28 (statement)
 
 
-State 52
+State 55
 
-   31 expression: var . ASSIGN expression
-   62 factor: var .
+   33 assign: var . ASSIGN expression
+   65 factor: var .
 
-    ASSIGN  shift, and go to state 69
+    ASSIGN  shift, and go to state 72
 
-    $default  reduce using rule 62 (factor)
+    $default  reduce using rule 65 (factor)
 
 
-State 53
+State 56
 
    32 expression: simple_expression .
 
     $default  reduce using rule 32 (expression)
 
 
-State 54
-
-   47 simple_expression: additive_expression . relop additive_expression
-   48                  | additive_expression .
-   49 additive_expression: additive_expression . addop term
-
-    GT   shift, and go to state 70
-    LT   shift, and go to state 71
-    GE   shift, and go to state 72
-    LE   shift, and go to state 73
-    NE   shift, and go to state 74
-    EQ   shift, and go to state 75
-    ADD  shift, and go to state 76
-    SUB  shift, and go to state 77
-
-    $default  reduce using rule 48 (simple_expression)
-
-    relop  go to state 78
-    addop  go to state 79
-
-
-State 55
-
-   50 additive_expression: term .
-   59 term: term . mulop factor
-
-    MUL  shift, and go to state 80
-    DIV  shift, and go to state 81
-
-    $default  reduce using rule 50 (additive_expression)
-
-    mulop  go to state 82
-
-
-State 56
-
-   60 term: factor .
-
-    $default  reduce using rule 60 (term)
-
-
 State 57
 
-   63 factor: call .
+   50 simple_expression: additive_expression . relop additive_expression
+   51                  | additive_expression .
+   52 additive_expression: additive_expression . addop term
 
-    $default  reduce using rule 63 (factor)
+    GT   shift, and go to state 73
+    LT   shift, and go to state 74
+    GE   shift, and go to state 75
+    LE   shift, and go to state 76
+    NE   shift, and go to state 77
+    EQ   shift, and go to state 78
+    ADD  shift, and go to state 79
+    SUB  shift, and go to state 80
+
+    $default  reduce using rule 51 (simple_expression)
+
+    relop  go to state 81
+    addop  go to state 82
 
 
 State 58
 
-   45 var: id .
-   46    | id . LC expression RC
-   67 call: id . LP args RP
+   53 additive_expression: term .
+   62 term: term . mulop factor
 
-    LP  shift, and go to state 83
-    LC  shift, and go to state 84
+    MUL  shift, and go to state 83
+    DIV  shift, and go to state 84
 
-    $default  reduce using rule 45 (var)
+    $default  reduce using rule 53 (additive_expression)
+
+    mulop  go to state 85
 
 
 State 59
 
-   43 return_stmt: RETURN SEMI .
+   63 term: factor .
 
-    $default  reduce using rule 43 (return_stmt)
+    $default  reduce using rule 63 (term)
 
 
 State 60
 
-   44 return_stmt: RETURN expression . SEMI
+   66 factor: call .
 
-    SEMI  shift, and go to state 85
+    $default  reduce using rule 66 (factor)
 
 
 State 61
 
-   33 selection_stmt: IF LP . expression RP statement
-   34               | IF LP . expression RP statement ELSE statement
+   47 var: id .
+   48    | id . LC expression RC
+   70 call: id . LP args RP
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
+    LP  shift, and go to state 86
+    LC  shift, and go to state 87
 
-    expression           go to state 86
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 47 (var)
 
 
 State 62
 
-   35 while_stmt: WHILE LP . expression RP statement
+   45 return_stmt: RETURN SEMI .
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
-
-    expression           go to state 87
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 45 (return_stmt)
 
 
 State 63
 
-   36 for_stmt: FOR LP . for_param1 SEMI for_param2 SEMI for_param3 RP statement
+   46 return_stmt: RETURN expression . SEMI
 
-    ID  shift, and go to state 12
-
-    $default  reduce using rule 37 (for_param1)
-
-    for_param1  go to state 88
-    var         go to state 89
-    id          go to state 90
+    SEMI  shift, and go to state 88
 
 
 State 64
 
-   61 factor: LP expression . RP
+   35 selection_stmt: IF LP . expression RP statement
+   36               | IF LP . expression RP statement ELSE statement
 
-    RP  shift, and go to state 91
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+
+    expression           go to state 89
+    assign               go to state 50
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 65
 
-    6 var_declaration: type_specifier id . SEMI
-    7                | type_specifier id . LC NUM RC SEMI
+   37 while_stmt: WHILE LP . expression RP statement
 
-    LC    shift, and go to state 15
-    SEMI  shift, and go to state 16
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+
+    expression           go to state 90
+    assign               go to state 50
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 66
+
+   38 for_stmt: FOR LP . for_param1 SEMI for_param2 SEMI for_param3 RP statement
+
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+
+    SEMI  reduce using rule 39 (for_param1)
+
+    assign      go to state 91
+    for_param1  go to state 92
+    var         go to state 93
+    id          go to state 94
+
+
+State 67
+
+   64 factor: LP expression . RP
+
+    RP  shift, and go to state 95
+
+
+State 68
+
+    6 var_declaration: type_specifier id . SEMI
+    7                | type_specifier id . LC NUM RC SEMI
+
+    LC    shift, and go to state 16
+    SEMI  shift, and go to state 17
+
+
+State 69
 
    18 compound_stmt: LB local_declarations statement_list RB .
 
     $default  reduce using rule 18 (compound_stmt)
 
 
-State 67
+State 70
 
    22 statement_list: statement_list statement .
 
     $default  reduce using rule 22 (statement_list)
 
 
-State 68
+State 71
 
    29 expression_stmt: expression SEMI .
 
     $default  reduce using rule 29 (expression_stmt)
 
 
-State 69
-
-   31 expression: var ASSIGN . expression
-
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
-
-    expression           go to state 92
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
-
-
-State 70
-
-   53 relop: GT .
-
-    $default  reduce using rule 53 (relop)
-
-
-State 71
-
-   51 relop: LT .
-
-    $default  reduce using rule 51 (relop)
-
-
 State 72
 
-   54 relop: GE .
+   33 assign: var ASSIGN . expression
 
-    $default  reduce using rule 54 (relop)
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+
+    expression           go to state 96
+    assign               go to state 50
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 73
 
-   52 relop: LE .
-
-    $default  reduce using rule 52 (relop)
-
-
-State 74
-
-   56 relop: NE .
+   56 relop: GT .
 
     $default  reduce using rule 56 (relop)
 
 
+State 74
+
+   54 relop: LT .
+
+    $default  reduce using rule 54 (relop)
+
+
 State 75
 
-   55 relop: EQ .
+   57 relop: GE .
 
-    $default  reduce using rule 55 (relop)
+    $default  reduce using rule 57 (relop)
 
 
 State 76
 
-   57 addop: ADD .
+   55 relop: LE .
 
-    $default  reduce using rule 57 (addop)
+    $default  reduce using rule 55 (relop)
 
 
 State 77
 
-   58 addop: SUB .
+   59 relop: NE .
 
-    $default  reduce using rule 58 (addop)
+    $default  reduce using rule 59 (relop)
 
 
 State 78
 
-   47 simple_expression: additive_expression relop . additive_expression
+   58 relop: EQ .
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
-
-    var                  go to state 93
-    additive_expression  go to state 94
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 58 (relop)
 
 
 State 79
 
-   49 additive_expression: additive_expression addop . term
+   60 addop: ADD .
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
-
-    var     go to state 93
-    term    go to state 95
-    factor  go to state 56
-    call    go to state 57
-    id      go to state 58
+    $default  reduce using rule 60 (addop)
 
 
 State 80
 
-   65 mulop: MUL .
+   61 addop: SUB .
 
-    $default  reduce using rule 65 (mulop)
+    $default  reduce using rule 61 (addop)
 
 
 State 81
 
-   66 mulop: DIV .
+   50 simple_expression: additive_expression relop . additive_expression
 
-    $default  reduce using rule 66 (mulop)
+    error  shift, and go to state 97
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+
+    var                  go to state 98
+    additive_expression  go to state 99
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 82
 
-   59 term: term mulop . factor
+   52 additive_expression: additive_expression addop . term
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
+    error  shift, and go to state 97
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
 
-    var     go to state 93
-    factor  go to state 96
-    call    go to state 57
-    id      go to state 58
+    var     go to state 98
+    term    go to state 100
+    factor  go to state 59
+    call    go to state 60
+    id      go to state 61
 
 
 State 83
 
-   67 call: id LP . args RP
+   68 mulop: MUL .
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
-
-    $default  reduce using rule 69 (args)
-
-    expression           go to state 97
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    args                 go to state 98
-    arg_list             go to state 99
-    id                   go to state 58
+    $default  reduce using rule 68 (mulop)
 
 
 State 84
 
-   46 var: id LC . expression RC
+   69 mulop: DIV .
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
-
-    expression           go to state 100
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 69 (mulop)
 
 
 State 85
 
-   44 return_stmt: RETURN expression SEMI .
+   62 term: term mulop . factor
 
-    $default  reduce using rule 44 (return_stmt)
+    error  shift, and go to state 97
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+
+    var     go to state 98
+    factor  go to state 101
+    call    go to state 60
+    id      go to state 61
 
 
 State 86
 
-   33 selection_stmt: IF LP expression . RP statement
-   34               | IF LP expression . RP statement ELSE statement
+   70 call: id LP . args RP
 
-    RP  shift, and go to state 101
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+
+    RP  reduce using rule 72 (args)
+
+    expression           go to state 102
+    assign               go to state 50
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    args                 go to state 103
+    arg_list             go to state 104
+    id                   go to state 61
 
 
 State 87
 
-   35 while_stmt: WHILE LP expression . RP statement
+   48 var: id LC . expression RC
 
-    RP  shift, and go to state 102
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+
+    expression           go to state 105
+    assign               go to state 50
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 88
 
-   36 for_stmt: FOR LP for_param1 . SEMI for_param2 SEMI for_param3 RP statement
+   46 return_stmt: RETURN expression SEMI .
 
-    SEMI  shift, and go to state 103
+    $default  reduce using rule 46 (return_stmt)
 
 
 State 89
 
-   38 for_param1: var . ASSIGN expression
+   35 selection_stmt: IF LP expression . RP statement
+   36               | IF LP expression . RP statement ELSE statement
 
-    ASSIGN  shift, and go to state 104
+    RP  shift, and go to state 106
 
 
 State 90
 
-   45 var: id .
-   46    | id . LC expression RC
+   37 while_stmt: WHILE LP expression . RP statement
 
-    LC  shift, and go to state 84
-
-    $default  reduce using rule 45 (var)
+    RP  shift, and go to state 107
 
 
 State 91
 
-   61 factor: LP expression RP .
+   40 for_param1: assign .
 
-    $default  reduce using rule 61 (factor)
+    $default  reduce using rule 40 (for_param1)
 
 
 State 92
 
-   31 expression: var ASSIGN expression .
+   38 for_stmt: FOR LP for_param1 . SEMI for_param2 SEMI for_param3 RP statement
 
-    $default  reduce using rule 31 (expression)
+    SEMI  shift, and go to state 108
 
 
 State 93
 
-   62 factor: var .
+   33 assign: var . ASSIGN expression
 
-    $default  reduce using rule 62 (factor)
+    ASSIGN  shift, and go to state 72
 
 
 State 94
 
-   47 simple_expression: additive_expression relop additive_expression .
-   49 additive_expression: additive_expression . addop term
+   47 var: id .
+   48    | id . LC expression RC
 
-    ADD  shift, and go to state 76
-    SUB  shift, and go to state 77
+    LC  shift, and go to state 87
 
-    $default  reduce using rule 47 (simple_expression)
-
-    addop  go to state 79
+    $default  reduce using rule 47 (var)
 
 
 State 95
 
-   49 additive_expression: additive_expression addop term .
-   59 term: term . mulop factor
+   64 factor: LP expression RP .
 
-    MUL  shift, and go to state 80
-    DIV  shift, and go to state 81
-
-    $default  reduce using rule 49 (additive_expression)
-
-    mulop  go to state 82
+    $default  reduce using rule 64 (factor)
 
 
 State 96
 
-   59 term: term mulop factor .
+   33 assign: var ASSIGN expression .
 
-    $default  reduce using rule 59 (term)
+    $default  reduce using rule 33 (assign)
 
 
 State 97
 
-   71 arg_list: expression .
+   49 var: error .
+   76 id: error .
 
-    $default  reduce using rule 71 (arg_list)
+    GT        reduce using rule 49 (var)
+    GT        [reduce using rule 76 (id)]
+    LT        reduce using rule 49 (var)
+    LT        [reduce using rule 76 (id)]
+    GE        reduce using rule 49 (var)
+    GE        [reduce using rule 76 (id)]
+    LE        reduce using rule 49 (var)
+    LE        [reduce using rule 76 (id)]
+    NE        reduce using rule 49 (var)
+    NE        [reduce using rule 76 (id)]
+    EQ        reduce using rule 49 (var)
+    EQ        [reduce using rule 76 (id)]
+    ADD       reduce using rule 49 (var)
+    ADD       [reduce using rule 76 (id)]
+    SUB       reduce using rule 49 (var)
+    SUB       [reduce using rule 76 (id)]
+    MUL       reduce using rule 49 (var)
+    MUL       [reduce using rule 76 (id)]
+    DIV       reduce using rule 49 (var)
+    DIV       [reduce using rule 76 (id)]
+    LP        reduce using rule 76 (id)
+    RP        reduce using rule 49 (var)
+    RP        [reduce using rule 76 (id)]
+    LC        reduce using rule 76 (id)
+    RC        reduce using rule 49 (var)
+    RC        [reduce using rule 76 (id)]
+    SEMI      reduce using rule 49 (var)
+    SEMI      [reduce using rule 76 (id)]
+    COMMA     reduce using rule 49 (var)
+    COMMA     [reduce using rule 76 (id)]
+    $default  reduce using rule 49 (var)
 
 
 State 98
 
-   67 call: id LP args . RP
+   65 factor: var .
 
-    RP  shift, and go to state 105
+    $default  reduce using rule 65 (factor)
 
 
 State 99
 
-   68 args: arg_list .
-   70 arg_list: arg_list . COMMA expression
+   50 simple_expression: additive_expression relop additive_expression .
+   52 additive_expression: additive_expression . addop term
 
-    COMMA  shift, and go to state 106
+    ADD  shift, and go to state 79
+    SUB  shift, and go to state 80
 
-    $default  reduce using rule 68 (args)
+    $default  reduce using rule 50 (simple_expression)
+
+    addop  go to state 82
 
 
 State 100
 
-   46 var: id LC expression . RC
+   52 additive_expression: additive_expression addop term .
+   62 term: term . mulop factor
 
-    RC  shift, and go to state 107
+    MUL  shift, and go to state 83
+    DIV  shift, and go to state 84
+
+    $default  reduce using rule 52 (additive_expression)
+
+    mulop  go to state 85
 
 
 State 101
 
-   33 selection_stmt: IF LP expression RP . statement
-   34               | IF LP expression RP . statement ELSE statement
+   62 term: term mulop factor .
 
-    ID      shift, and go to state 12
-    NUM     shift, and go to state 34
-    RETURN  shift, and go to state 35
-    IF      shift, and go to state 36
-    WHILE   shift, and go to state 37
-    FOR     shift, and go to state 38
-    LP      shift, and go to state 39
-    LB      shift, and go to state 28
-    SEMI    shift, and go to state 40
-
-    compound_stmt        go to state 43
-    statement            go to state 108
-    expression_stmt      go to state 46
-    expression           go to state 47
-    selection_stmt       go to state 48
-    while_stmt           go to state 49
-    for_stmt             go to state 50
-    return_stmt          go to state 51
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 62 (term)
 
 
 State 102
 
-   35 while_stmt: WHILE LP expression RP . statement
+   74 arg_list: expression .
 
-    ID      shift, and go to state 12
-    NUM     shift, and go to state 34
-    RETURN  shift, and go to state 35
-    IF      shift, and go to state 36
-    WHILE   shift, and go to state 37
-    FOR     shift, and go to state 38
-    LP      shift, and go to state 39
-    LB      shift, and go to state 28
-    SEMI    shift, and go to state 40
-
-    compound_stmt        go to state 43
-    statement            go to state 109
-    expression_stmt      go to state 46
-    expression           go to state 47
-    selection_stmt       go to state 48
-    while_stmt           go to state 49
-    for_stmt             go to state 50
-    return_stmt          go to state 51
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 74 (arg_list)
 
 
 State 103
 
-   36 for_stmt: FOR LP for_param1 SEMI . for_param2 SEMI for_param3 RP statement
+   70 call: id LP args . RP
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
-
-    $default  reduce using rule 39 (for_param2)
-
-    expression           go to state 110
-    for_param2           go to state 111
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    RP  shift, and go to state 109
 
 
 State 104
 
-   38 for_param1: var ASSIGN . expression
+   71 args: arg_list .
+   73 arg_list: arg_list . COMMA expression
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
+    COMMA  shift, and go to state 110
 
-    expression           go to state 112
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 71 (args)
 
 
 State 105
 
-   67 call: id LP args RP .
+   48 var: id LC expression . RC
 
-    $default  reduce using rule 67 (call)
+    RC  shift, and go to state 111
 
 
 State 106
 
-   70 arg_list: arg_list COMMA . expression
+   35 selection_stmt: IF LP expression RP . statement
+   36               | IF LP expression RP . statement ELSE statement
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
+    error   shift, and go to state 35
+    ID      shift, and go to state 13
+    NUM     shift, and go to state 36
+    RETURN  shift, and go to state 37
+    IF      shift, and go to state 38
+    WHILE   shift, and go to state 39
+    FOR     shift, and go to state 40
+    LP      shift, and go to state 41
+    LB      shift, and go to state 29
+    SEMI    shift, and go to state 42
 
-    expression           go to state 113
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    compound_stmt        go to state 45
+    statement            go to state 112
+    expression_stmt      go to state 48
+    expression           go to state 49
+    assign               go to state 50
+    selection_stmt       go to state 51
+    while_stmt           go to state 52
+    for_stmt             go to state 53
+    return_stmt          go to state 54
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 107
 
-   46 var: id LC expression RC .
+   37 while_stmt: WHILE LP expression RP . statement
 
-    $default  reduce using rule 46 (var)
+    error   shift, and go to state 35
+    ID      shift, and go to state 13
+    NUM     shift, and go to state 36
+    RETURN  shift, and go to state 37
+    IF      shift, and go to state 38
+    WHILE   shift, and go to state 39
+    FOR     shift, and go to state 40
+    LP      shift, and go to state 41
+    LB      shift, and go to state 29
+    SEMI    shift, and go to state 42
+
+    compound_stmt        go to state 45
+    statement            go to state 113
+    expression_stmt      go to state 48
+    expression           go to state 49
+    assign               go to state 50
+    selection_stmt       go to state 51
+    while_stmt           go to state 52
+    for_stmt             go to state 53
+    return_stmt          go to state 54
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 108
 
-   33 selection_stmt: IF LP expression RP statement .
-   34               | IF LP expression RP statement . ELSE statement
+   38 for_stmt: FOR LP for_param1 SEMI . for_param2 SEMI for_param3 RP statement
 
-    ELSE  shift, and go to state 114
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
 
-    $default  reduce using rule 33 (selection_stmt)
+    SEMI  reduce using rule 41 (for_param2)
+
+    expression           go to state 114
+    assign               go to state 50
+    for_param2           go to state 115
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 109
 
-   35 while_stmt: WHILE LP expression RP statement .
+   70 call: id LP args RP .
 
-    $default  reduce using rule 35 (while_stmt)
+    $default  reduce using rule 70 (call)
 
 
 State 110
 
-   40 for_param2: expression .
+   73 arg_list: arg_list COMMA . expression
 
-    $default  reduce using rule 40 (for_param2)
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+    NUM    shift, and go to state 36
+    LP     shift, and go to state 41
+
+    expression           go to state 116
+    assign               go to state 50
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 111
 
-   36 for_stmt: FOR LP for_param1 SEMI for_param2 . SEMI for_param3 RP statement
+   48 var: id LC expression RC .
 
-    SEMI  shift, and go to state 115
+    $default  reduce using rule 48 (var)
 
 
 State 112
 
-   38 for_param1: var ASSIGN expression .
+   35 selection_stmt: IF LP expression RP statement .
+   36               | IF LP expression RP statement . ELSE statement
 
-    $default  reduce using rule 38 (for_param1)
+    ELSE  shift, and go to state 117
+
+    $default  reduce using rule 35 (selection_stmt)
 
 
 State 113
 
-   70 arg_list: arg_list COMMA expression .
+   37 while_stmt: WHILE LP expression RP statement .
 
-    $default  reduce using rule 70 (arg_list)
+    $default  reduce using rule 37 (while_stmt)
 
 
 State 114
 
-   34 selection_stmt: IF LP expression RP statement ELSE . statement
+   42 for_param2: expression .
 
-    ID      shift, and go to state 12
-    NUM     shift, and go to state 34
-    RETURN  shift, and go to state 35
-    IF      shift, and go to state 36
-    WHILE   shift, and go to state 37
-    FOR     shift, and go to state 38
-    LP      shift, and go to state 39
-    LB      shift, and go to state 28
-    SEMI    shift, and go to state 40
-
-    compound_stmt        go to state 43
-    statement            go to state 116
-    expression_stmt      go to state 46
-    expression           go to state 47
-    selection_stmt       go to state 48
-    while_stmt           go to state 49
-    for_stmt             go to state 50
-    return_stmt          go to state 51
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 42 (for_param2)
 
 
 State 115
 
-   36 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI . for_param3 RP statement
+   38 for_stmt: FOR LP for_param1 SEMI for_param2 . SEMI for_param3 RP statement
 
-    ID  shift, and go to state 12
-
-    $default  reduce using rule 41 (for_param3)
-
-    for_param3  go to state 117
-    var         go to state 118
-    id          go to state 90
+    SEMI  shift, and go to state 118
 
 
 State 116
 
-   34 selection_stmt: IF LP expression RP statement ELSE statement .
+   73 arg_list: arg_list COMMA expression .
 
-    $default  reduce using rule 34 (selection_stmt)
+    $default  reduce using rule 73 (arg_list)
 
 
 State 117
 
-   36 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 . RP statement
+   36 selection_stmt: IF LP expression RP statement ELSE . statement
 
-    RP  shift, and go to state 119
+    error   shift, and go to state 35
+    ID      shift, and go to state 13
+    NUM     shift, and go to state 36
+    RETURN  shift, and go to state 37
+    IF      shift, and go to state 38
+    WHILE   shift, and go to state 39
+    FOR     shift, and go to state 40
+    LP      shift, and go to state 41
+    LB      shift, and go to state 29
+    SEMI    shift, and go to state 42
+
+    compound_stmt        go to state 45
+    statement            go to state 119
+    expression_stmt      go to state 48
+    expression           go to state 49
+    assign               go to state 50
+    selection_stmt       go to state 51
+    while_stmt           go to state 52
+    for_stmt             go to state 53
+    return_stmt          go to state 54
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
 
 
 State 118
 
-   42 for_param3: var . ASSIGN expression
+   38 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI . for_param3 RP statement
 
-    ASSIGN  shift, and go to state 120
+    error  shift, and go to state 35
+    ID     shift, and go to state 13
+
+    RP  reduce using rule 43 (for_param3)
+
+    assign      go to state 120
+    for_param3  go to state 121
+    var         go to state 93
+    id          go to state 94
 
 
 State 119
 
-   36 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP . statement
+   36 selection_stmt: IF LP expression RP statement ELSE statement .
 
-    ID      shift, and go to state 12
-    NUM     shift, and go to state 34
-    RETURN  shift, and go to state 35
-    IF      shift, and go to state 36
-    WHILE   shift, and go to state 37
-    FOR     shift, and go to state 38
-    LP      shift, and go to state 39
-    LB      shift, and go to state 28
-    SEMI    shift, and go to state 40
-
-    compound_stmt        go to state 43
-    statement            go to state 121
-    expression_stmt      go to state 46
-    expression           go to state 47
-    selection_stmt       go to state 48
-    while_stmt           go to state 49
-    for_stmt             go to state 50
-    return_stmt          go to state 51
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 36 (selection_stmt)
 
 
 State 120
 
-   42 for_param3: var ASSIGN . expression
+   44 for_param3: assign .
 
-    ID   shift, and go to state 12
-    NUM  shift, and go to state 34
-    LP   shift, and go to state 39
-
-    expression           go to state 122
-    var                  go to state 52
-    simple_expression    go to state 53
-    additive_expression  go to state 54
-    term                 go to state 55
-    factor               go to state 56
-    call                 go to state 57
-    id                   go to state 58
+    $default  reduce using rule 44 (for_param3)
 
 
 State 121
 
-   36 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP statement .
+   38 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 . RP statement
 
-    $default  reduce using rule 36 (for_stmt)
+    RP  shift, and go to state 122
 
 
 State 122
 
-   42 for_param3: var ASSIGN expression .
+   38 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP . statement
 
-    $default  reduce using rule 42 (for_param3)
+    error   shift, and go to state 35
+    ID      shift, and go to state 13
+    NUM     shift, and go to state 36
+    RETURN  shift, and go to state 37
+    IF      shift, and go to state 38
+    WHILE   shift, and go to state 39
+    FOR     shift, and go to state 40
+    LP      shift, and go to state 41
+    LB      shift, and go to state 29
+    SEMI    shift, and go to state 42
+
+    compound_stmt        go to state 45
+    statement            go to state 123
+    expression_stmt      go to state 48
+    expression           go to state 49
+    assign               go to state 50
+    selection_stmt       go to state 51
+    while_stmt           go to state 52
+    for_stmt             go to state 53
+    return_stmt          go to state 54
+    var                  go to state 55
+    simple_expression    go to state 56
+    additive_expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    id                   go to state 61
+
+
+State 123
+
+   38 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP statement .
+
+    $default  reduce using rule 38 (for_stmt)

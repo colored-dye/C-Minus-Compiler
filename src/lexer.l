@@ -48,6 +48,7 @@ ID ({char})+({char}|{digit})*
 
 {INT} {
   struct Node* tmp = makeNode("INT");
+  // tmp->nodeK = INT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKType;
   strncpy(tmp->str_term, "INT", STRING_LENGTH);
@@ -58,6 +59,7 @@ ID ({char})+({char}|{digit})*
   }
 {VOID} {
   struct Node* tmp = makeNode("VOID");
+  // tmp->nodeK = VOID;
   tmp->is_terminal = 1;
   tmp->termKind = TermKType;
   strncpy(tmp->str_term, "VOID", STRING_LENGTH);
@@ -68,6 +70,7 @@ ID ({char})+({char}|{digit})*
   }
 {REAL} {
   struct Node* tmp = makeNode("REAL");
+  // tmp->nodeK = REAL;
   tmp->is_terminal = 1;
   tmp->termKind = TermKType;
   strncpy(tmp->str_term, "REAL", STRING_LENGTH);
@@ -84,6 +87,7 @@ ID ({char})+({char}|{digit})*
 {FOR} {return FOR;}
 ">" {
   struct Node* tmp = makeNode(">");
+  // tmp->nodeK = GT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = GT;
@@ -94,6 +98,7 @@ ID ({char})+({char}|{digit})*
   }
 "<" {
   struct Node* tmp = makeNode("<");
+  // tmp->nodeK = LT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = LT;
@@ -104,6 +109,7 @@ ID ({char})+({char}|{digit})*
   }
 ">=" {
   struct Node* tmp = makeNode(">=");
+  // tmp->nodeK = GE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = GE;
@@ -114,6 +120,7 @@ ID ({char})+({char}|{digit})*
   }
 "<=" {
   struct Node* tmp = makeNode("<=");
+  // tmp->nodeK = LE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = LE;
@@ -124,6 +131,7 @@ ID ({char})+({char}|{digit})*
   }
 "!=" {
   struct Node* tmp = makeNode("!=");
+  // tmp->nodeK = NE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = NE;
@@ -134,6 +142,7 @@ ID ({char})+({char}|{digit})*
   }
 "==" {
   struct Node* tmp = makeNode("==");
+  // tmp->nodeK = EQ;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = EQ;
@@ -154,6 +163,7 @@ ID ({char})+({char}|{digit})*
   }
 "+" {
   struct Node* tmp = makeNode("+");
+  // tmp->nodeK = ADD;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = ADD;
@@ -164,6 +174,7 @@ ID ({char})+({char}|{digit})*
   }
 "-" {
   struct Node* tmp = makeNode("-");
+  // tmp->nodeK = SUB;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = SUB;
@@ -174,6 +185,7 @@ ID ({char})+({char}|{digit})*
   }
 "*" {
   struct Node* tmp = makeNode("*");
+  // tmp->nodeK = MUL;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = MUL;
@@ -184,6 +196,7 @@ ID ({char})+({char}|{digit})*
   }
 "/" {
   struct Node* tmp = makeNode("/");
+  // tmp->nodeK = DIV;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = DIV;
@@ -193,17 +206,18 @@ ID ({char})+({char}|{digit})*
   return DIV;
   }
 "=" {
-  struct Node* tmp = makeNode("=");
-  tmp->is_terminal = 1;
-  tmp->termKind = TermKOp;
-  tmp->int_term = ASSIGN;
-  tmp->lineno = yylineno;
-  tmp->column = yylloc.first_column;
-  yylval.node = tmp;
+  // struct Node* tmp = makeNode("=");
+  // tmp->is_terminal = 1;
+  // tmp->termKind = TermKOp;
+  // tmp->int_term = ASSIGN;
+  // tmp->lineno = yylineno;
+  // tmp->column = yylloc.first_column;
+  // yylval.node = tmp;
   return ASSIGN;
   }
 {DEC} {
-  struct Node* node = makeNode("NUM");
+  struct Node* node = makeNode(yytext);
+  // node->nodeK = NUM;
   node->is_terminal = 1;
   node->termKind = TermKNum;
   node->is_int = 1;
@@ -214,7 +228,8 @@ ID ({char})+({char}|{digit})*
   return NUM;
 }
 {OCT} {
-  struct Node* node = makeNode("NUM");
+  struct Node* node = makeNode(yytext);
+  // node->nodeK = NUM;
   node->is_terminal = 1;
   node->termKind = TermKNum;
   node->is_int = 1;
@@ -225,7 +240,8 @@ ID ({char})+({char}|{digit})*
   return NUM;
 }
 {HEX} {
-  struct Node* node = makeNode("NUM");
+  struct Node* node = makeNode(yytext);
+  // node->nodeK = NUM;
   node->is_terminal = 1;
   node->termKind = TermKNum;
   node->is_int = 1;
@@ -236,7 +252,8 @@ ID ({char})+({char}|{digit})*
   return NUM;
 }
 {FLOAT} {
-  struct Node* node = makeNode("NUM");
+  struct Node* node = makeNode(yytext);
+  // node->nodeK = NUM;
   node->is_terminal = 1;
   node->termKind = TermKNum;
   node->is_int = 0;
@@ -257,7 +274,8 @@ ID ({char})+({char}|{digit})*
     ;
 }
 {ID} {
-  struct Node* id = makeNode("ID");
+  struct Node* id = makeNode(yytext);
+  // id->nodeK = ID;
   id->is_terminal = 1;
   id->termKind = TermKId;
   strncpy(id->str_term, yytext, STRING_LENGTH);

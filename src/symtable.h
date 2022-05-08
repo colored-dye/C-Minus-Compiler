@@ -51,6 +51,7 @@ struct SymNode {
 
 struct SymNode* createSymNode(char* name);
 struct SymNode* lookup(char *name);
+struct SymNode* lookupCurrent(char* name);
 struct SymNode* lookupSymTable(struct SymNode* symTable, char* name);
 
 /***************************************************/

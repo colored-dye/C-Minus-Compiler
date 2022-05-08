@@ -1,5 +1,0 @@
-make --dry-run --keep-going --print-directory
-make: Entering directory '/home/colored-dye/Documents/compiler-lab/cminus-0'
-make -C src
-make: Leaving directory '/home/colored-dye/Documents/compiler-lab/cminus-0'
- 

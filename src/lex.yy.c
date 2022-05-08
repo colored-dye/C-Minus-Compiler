@@ -862,6 +862,7 @@ YY_RULE_SETUP
 #line 49 "lexer.l"
 {
   struct Node* tmp = makeNode("INT");
+  // tmp->nodeK = INT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKType;
   strncpy(tmp->str_term, "INT", STRING_LENGTH);
@@ -873,9 +874,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 59 "lexer.l"
+#line 60 "lexer.l"
 {
   struct Node* tmp = makeNode("VOID");
+  // tmp->nodeK = VOID;
   tmp->is_terminal = 1;
   tmp->termKind = TermKType;
   strncpy(tmp->str_term, "VOID", STRING_LENGTH);
@@ -887,9 +889,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 69 "lexer.l"
+#line 71 "lexer.l"
 {
   struct Node* tmp = makeNode("REAL");
+  // tmp->nodeK = REAL;
   tmp->is_terminal = 1;
   tmp->termKind = TermKType;
   strncpy(tmp->str_term, "REAL", STRING_LENGTH);
@@ -901,39 +904,40 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 79 "lexer.l"
+#line 82 "lexer.l"
 {return CHAR;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 80 "lexer.l"
+#line 83 "lexer.l"
 {return RETURN;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 81 "lexer.l"
+#line 84 "lexer.l"
 {return IF;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 82 "lexer.l"
+#line 85 "lexer.l"
 {return ELSE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 83 "lexer.l"
+#line 86 "lexer.l"
 {return WHILE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 84 "lexer.l"
+#line 87 "lexer.l"
 {return FOR;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 85 "lexer.l"
+#line 88 "lexer.l"
 {
   struct Node* tmp = makeNode(">");
+  // tmp->nodeK = GT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = GT;
@@ -945,9 +949,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 95 "lexer.l"
+#line 99 "lexer.l"
 {
   struct Node* tmp = makeNode("<");
+  // tmp->nodeK = LT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = LT;
@@ -959,9 +964,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 105 "lexer.l"
+#line 110 "lexer.l"
 {
   struct Node* tmp = makeNode(">=");
+  // tmp->nodeK = GE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = GE;
@@ -973,9 +979,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 115 "lexer.l"
+#line 121 "lexer.l"
 {
   struct Node* tmp = makeNode("<=");
+  // tmp->nodeK = LE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = LE;
@@ -987,9 +994,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 125 "lexer.l"
+#line 132 "lexer.l"
 {
   struct Node* tmp = makeNode("!=");
+  // tmp->nodeK = NE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = NE;
@@ -1001,9 +1009,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 135 "lexer.l"
+#line 143 "lexer.l"
 {
   struct Node* tmp = makeNode("==");
+  // tmp->nodeK = EQ;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = EQ;
@@ -1015,51 +1024,52 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 145 "lexer.l"
+#line 154 "lexer.l"
 {return LP;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 146 "lexer.l"
+#line 155 "lexer.l"
 {return RP;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 147 "lexer.l"
+#line 156 "lexer.l"
 {return LB;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 148 "lexer.l"
+#line 157 "lexer.l"
 {return RB;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 149 "lexer.l"
+#line 158 "lexer.l"
 {return LC;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 150 "lexer.l"
+#line 159 "lexer.l"
 {return RC;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 151 "lexer.l"
+#line 160 "lexer.l"
 {return COMMA;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 152 "lexer.l"
+#line 161 "lexer.l"
 {
   return SEMI;
   }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 155 "lexer.l"
+#line 164 "lexer.l"
 {
   struct Node* tmp = makeNode("+");
+  // tmp->nodeK = ADD;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = ADD;
@@ -1071,9 +1081,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 165 "lexer.l"
+#line 175 "lexer.l"
 {
   struct Node* tmp = makeNode("-");
+  // tmp->nodeK = SUB;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = SUB;
@@ -1085,9 +1096,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 175 "lexer.l"
+#line 186 "lexer.l"
 {
   struct Node* tmp = makeNode("*");
+  // tmp->nodeK = MUL;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = MUL;
@@ -1099,9 +1111,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 185 "lexer.l"
+#line 197 "lexer.l"
 {
   struct Node* tmp = makeNode("/");
+  // tmp->nodeK = DIV;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
   tmp->int_term = DIV;
@@ -1113,23 +1126,24 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 195 "lexer.l"
+#line 208 "lexer.l"
 {
-  struct Node* tmp = makeNode("=");
-  tmp->is_terminal = 1;
-  tmp->termKind = TermKOp;
-  tmp->int_term = ASSIGN;
-  tmp->lineno = yylineno;
-  tmp->column = yylloc.first_column;
-  yylval.node = tmp;
+  // struct Node* tmp = makeNode("=");
+  // tmp->is_terminal = 1;
+  // tmp->termKind = TermKOp;
+  // tmp->int_term = ASSIGN;
+  // tmp->lineno = yylineno;
+  // tmp->column = yylloc.first_column;
+  // yylval.node = tmp;
   return ASSIGN;
   }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 205 "lexer.l"
+#line 218 "lexer.l"
 {
-  struct Node* node = makeNode("NUM");
+  struct Node* node = makeNode(yytext);
+  // node->nodeK = NUM;
   node->is_terminal = 1;
   node->termKind = TermKNum;
   node->is_int = 1;
@@ -1142,9 +1156,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 216 "lexer.l"
+#line 230 "lexer.l"
 {
-  struct Node* node = makeNode("NUM");
+  struct Node* node = makeNode(yytext);
+  // node->nodeK = NUM;
   node->is_terminal = 1;
   node->termKind = TermKNum;
   node->is_int = 1;
@@ -1157,9 +1172,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 227 "lexer.l"
+#line 242 "lexer.l"
 {
-  struct Node* node = makeNode("NUM");
+  struct Node* node = makeNode(yytext);
+  // node->nodeK = NUM;
   node->is_terminal = 1;
   node->termKind = TermKNum;
   node->is_int = 1;
@@ -1172,9 +1188,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 238 "lexer.l"
+#line 254 "lexer.l"
 {
-  struct Node* node = makeNode("NUM");
+  struct Node* node = makeNode(yytext);
+  // node->nodeK = NUM;
   node->is_terminal = 1;
   node->termKind = TermKNum;
   node->is_int = 0;
@@ -1187,7 +1204,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 249 "lexer.l"
+#line 266 "lexer.l"
 { /* Block comment */
   while (1) {
     if (input() == '*' && input() == '/')
@@ -1197,7 +1214,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 255 "lexer.l"
+#line 272 "lexer.l"
 { /* Line comment */
   while(input() != '\n')
     ;
@@ -1205,9 +1222,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 259 "lexer.l"
+#line 276 "lexer.l"
 {
-  struct Node* id = makeNode("ID");
+  struct Node* id = makeNode(yytext);
+  // id->nodeK = ID;
   id->is_terminal = 1;
   id->termKind = TermKId;
   strncpy(id->str_term, yytext, STRING_LENGTH);
@@ -1220,17 +1238,17 @@ YY_RULE_SETUP
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 269 "lexer.l"
+#line 287 "lexer.l"
 { yycolumn = 1; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 270 "lexer.l"
+#line 288 "lexer.l"
 { /* Ignore whitespace */ }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 271 "lexer.l"
+#line 289 "lexer.l"
 {
   fprintf(stderr, "Error at line: %d\n", yylineno);
   return ERROR;
@@ -1238,10 +1256,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 276 "lexer.l"
+#line 294 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1245 "lex.yy.c"
+#line 1263 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2258,7 +2276,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 276 "lexer.l"
+#line 294 "lexer.l"
 
 
 int my_atoi(const char *s, int base) {

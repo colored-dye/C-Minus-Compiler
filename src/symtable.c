@@ -55,6 +55,10 @@ struct SymNode* lookup(char *name) {
   return symp;
 }
 
+struct SymNode* lookupCurrent(char* name) {
+  return lookupSymTable(g_SymTableStackTop->dummyhead->nextSym, name);
+}
+
 struct SymNode* lookupSymTable(struct SymNode* symTable, char* name) {
   struct SymNode* nodep = symTable;
   while(nodep) {
@@ -97,6 +101,9 @@ int isFuncArgMatch(struct FuncArgList* funcArg1, struct FuncArgList* funcArg2) {
 int isTypeMatch(struct Type* t1, struct Type* t2) {
   int match = 1;
 
+  if((!!t1) != (!!t2))
+    return 0;
+
   if(t1->typeKind == t2->typeKind) {
     switch(t1->typeKind) {
     case BasicK:
@@ -105,7 +112,8 @@ int isTypeMatch(struct Type* t1, struct Type* t2) {
       }
       break;
     case ArrayK:
-      if(!isTypeMatch(t1->array.arrType, t2->array.arrType) || t1->array.size != t2->array.size) {
+      // 数组不应该比较大小
+      if(!isTypeMatch(t1->array.arrType, t2->array.arrType)) {
         match = 0;
       }
       break;
@@ -177,6 +185,7 @@ void pushSymTable(struct SymTable* symTable) {
 }
 
 struct SymTable* popSymTable() {
+  // printSymTable(g_SymTableStackTop);
   struct SymTable* top = g_SymTableStackTop;
   if(!g_SymTableStackTop) {
     fprintf(stderr, "popSymTable(): SymTable stack empty!\n");

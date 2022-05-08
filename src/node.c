@@ -30,19 +30,21 @@ void printTree(struct Node *root) {
   }
   for(int i=0; i<indent<<1; i++)
     putchar(' ');
-  printf("%s (%d)", root->name, root->lineno);
+
   if(root->is_terminal) {
     switch(root->termKind) {
     case TermKType:
       printf("  [Type: %s]\n", root->str_term);
       break;
     case TermKNum:
+      printf("NUM");
       if(root->is_int)
         printf("  [Num: %d]\n", root->int_term);
       else
         printf("  [Num: %.3f]\n", root->real_term);
       break;
     case TermKId:
+      printf("ID");
       printf("  [Id: %s]\n", root->str_term);
       break;
     case TermKOp:
@@ -53,7 +55,7 @@ void printTree(struct Node *root) {
       break;
     }
   } else {
-    printf("\n");
+    printf("%s (%d)\n", root->name, root->lineno);
   }
   indent++;
   printTree(root->child);

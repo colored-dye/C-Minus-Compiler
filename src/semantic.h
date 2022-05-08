@@ -4,22 +4,33 @@
 #include "symtable.h"
 #include "node.h"
 
-// extern const char* g_BuiltinFunction[2];
 typedef enum {
-  SEReturnType, SEConditionNotNum, SEAssignType, SEUsedBeforeDecl,
-  SEInvalidIndex, SENotArray, SEOpTypeNotMatch, SEFuncArgsNotMatch,
-  SEFuncReturnArray,
+    SEReturnType // 返回值后表达式类型与函数定义不符
+  , SEConditionNotNum // 条件表达式不是数值
+  , SEAssignType // 赋值表达式左值和右值的类型不符
+  , SEUsedBeforeDecl // 变量或函数使用时未定义
+  , SEInvalidIndex // 数组下标处的表达式类型不是int
+  , SENotArray // 将非数组类型当作数组进行寻址操作
+  , SEOpTypeNotMatch // 运算符两侧表达式的类型不同
+  , SEFuncArgsNotMatch // 函数调用时参数个数或类型错误
+  , SEFuncReturnArray // 函数返回值为数组
+  , SERedefinition // 变量或函数重定义,包括全局变量/函数重定义和局部变量重定义
+  , SENotFunction // 变量被当作函数
+  , SEInvalidLVal // 非法左值
+  , SEInvalidArraySize // 数组定义时size非整型
+  ,
 } SemanticErrorKind;
 
 void SemanticError(int lineno, int column, SemanticErrorKind errK);
 
-void SemanticAnalysis(struct Node* root);
-void Program(struct Node* node);
-void DeclList(struct Node* node);
-void Decl(struct Node* node);
-void VarDecl(struct Node* node);
+int SemanticAnalysis(struct Node* root);
+
+void Program(struct Node* node, int first_pass);
+void DeclList(struct Node* node, int first_pass);
+void Decl(struct Node* node, int first_pass);
+void VarDecl(struct Node* node, int global, int first_pass);
 struct Type* TypeSpec(struct Node* node);
-void FuncDecl(struct Node* node);
+void FuncDecl(struct Node* node, int first_pass);
 struct FuncArgList* Params(struct Node* node);
 struct FuncArgList* ParamList(struct Node* node);
 struct FuncArgList* Param(struct Node* node);

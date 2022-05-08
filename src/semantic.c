@@ -7,14 +7,13 @@
 struct SymTable* g_SymTableStackTop = NULL;
 struct SymTable* g_SymTableStackBottom = NULL;
 
-// const char* g_BuiltinFunction[2] = {
-//   "input", "output",
-// };
-
 struct Type g_FuncReturnType;
 
 struct Node *g_SENode1, *g_SENode2;
 struct Type *g_SEType1, *g_SEType2;
+
+int g_firstPassError = 0;
+int g_secondPassError = 0;
 
 void SemanticError(int lineno, int column, SemanticErrorKind errK) {
   fprintf(stderr, "Error at line %d: ", lineno);
@@ -56,99 +55,165 @@ void SemanticError(int lineno, int column, SemanticErrorKind errK) {
   case SEFuncReturnArray:
     snprintf(spec, speclen, "Array cannot be return value.");
     break;
+  case SERedefinition:
+    snprintf(spec, speclen, "Redefinition of `%s'.", g_SENode1->str_term);
+    break;
+  case SENotFunction:
+    snprintf(spec, speclen, "Variable `%s' used as function.", g_SENode1->str_term);
+    break;
+  case SEInvalidLVal:
+    snprintf(spec, speclen, "Invalid left value: `%s'\n", g_SENode1->str_term);
+    break;
+  case SEInvalidArraySize:
+    snprintf(spec, speclen, "`%s' is not a valid array size.", g_SENode1->name);
+    break;
   // default:
   //   break;
   }
-  fprintf(stderr, "%s\nSymbol table:\n", spec);
+  fprintf(stderr, "%s\n", spec);
   #ifdef SEMANTIC_DEBUG
+  puts("Symbol table:");
   printSymTable(g_SymTableStackTop);
   #endif
 }
 
-void SemanticAnalysis(struct Node* root) {
+int SemanticAnalysis(struct Node* root) {
   #ifdef SEMANTIC_DEBUG
-  puts("Semantic Analysis Started");
+  puts("Semantic Analysis Started\nFirst Pass Started");
   #endif
 
-  Program(root->child);
+  Program(root->child, 1);
+  #ifdef SEMANTIC_DEBUG
+  puts("First Pass Finished");
+  #endif
+  if(!g_firstPassError) {
+    #ifdef SEMANTIC_DEBUG
+    puts("---------------------\nSecond Pass Started");
+    #endif
+    Program(root->child, 0);
+    #ifdef SEMANTIC_DEBUG
+    puts("Second Pass Finished");
+    #endif
+  } else {
+    #ifdef SEMANTIC_DEBUG
+    puts("No Second Pass~");
+    #endif
+  }
 
   #ifdef SEMANTIC_DEBUG
   puts("Semantic Analysis Finished");
   #endif
+
+  return g_firstPassError || g_secondPassError;
 }
 
-void Program(struct Node* node) {
+void Program(struct Node* node, int first_pass) {
   #ifdef SEMANTIC_DEBUG
   printf("Program(%d)\n", node->lineno);
   #endif
 
-  // Build global symbol table
-  struct SymTable* globalTable = createSymTable();
-  pushSymTable(globalTable);
+  if(first_pass) {
+    // Build global symbol table
+    struct SymTable* globalTable = createSymTable();
+    pushSymTable(globalTable);
 
-  // Prepare builtin functions; input(), output()
-  // int input(void)
-  struct SymNode* builtin = createSymNode("input");
-  builtin->symType = createType(FuncK);
-  builtin->symType->func = createFuncArg("");
-  builtin->symType->func->argType = createType(BasicK);
-  builtin->symType->func->argType->basic = Int; // Return: int
-  builtin->symType->func->nextArg = createFuncArg("");
-  builtin->symType->func->nextArg->argType = createType(BasicK);
-  builtin->symType->func->nextArg->argType->basic = Void; // Arg: void
-  insert(globalTable, builtin);
+    // Prepare builtin functions; input(), output()
+    // int input(void)
+    struct SymNode* builtin = createSymNode("input");
+    builtin->symType = createType(FuncK);
+    builtin->symType->func = createFuncArg("");
+    builtin->symType->func->argType = createType(BasicK);
+    setBasic(builtin->symType->func->argType, Int); // Return: int
+    builtin->symType->func->nextArg = createFuncArg("");
+    builtin->symType->func->nextArg->argType = createType(BasicK);
+    setBasic(builtin->symType->func->nextArg->argType, Void); // Arg: void
+    insert(globalTable, builtin);
 
-  // void output(int)
-  builtin = createSymNode("output");
-  builtin->symType = createType(FuncK);
-  builtin->symType->func = createFuncArg("");
-  builtin->symType->func->argType = createType(BasicK);
-  builtin->symType->func->argType->basic = Void; // Return: void
-  builtin->symType->func->nextArg = createFuncArg("");
-  builtin->symType->func->nextArg->argType = createType(BasicK);
-  builtin->symType->func->nextArg->argType->basic = Int; // Arg: Int
-  insert(globalTable, builtin);
+    // void output(int)
+    builtin = createSymNode("output");
+    builtin->symType = createType(FuncK);
+    builtin->symType->func = createFuncArg("");
+    builtin->symType->func->argType = createType(BasicK);
+    setBasic(builtin->symType->func->argType, Void); // Return: void
+    builtin->symType->func->nextArg = createFuncArg("");
+    builtin->symType->func->nextArg->argType = createType(BasicK);
+    setBasic(builtin->symType->func->nextArg->argType, Int); // Arg: Int
+    insert(globalTable, builtin);
+  }
   
-  DeclList(node->child);
+  DeclList(node->child, first_pass);
 }
 
-void DeclList(struct Node* node) {
+void DeclList(struct Node* node, int first_pass) {
   // declaration_list -> declaration | declaration_list declaration
   #ifdef SEMANTIC_DEBUG
   printf("DeclList(%d)\n", node->lineno);
   #endif
   struct Node* p = node;
   while(p) {
-    Decl(p);
+    Decl(p, first_pass);
     p = p->next_sib;
   }
 }
 
-void Decl(struct Node* node) {
+void Decl(struct Node* node, int first_pass) {
   // declaration -> var_declaration | fun_declaration
   #ifdef SEMANTIC_DEBUG
   printf("Declaration(%d)\n", node->lineno);
   #endif
   node = node->child;
   if(!strncmp(node->name, "VarDecl", NAME_LENGTH)) {
-    VarDecl(node);
+    VarDecl(node, 1, first_pass);
   } else if(!strncmp(node->name, "FunDecl", NAME_LENGTH)) {
-    FuncDecl(node);
+    FuncDecl(node, first_pass);
   } else {
     fprintf(stderr, "Fatal error in Decl(): Unrecognized node.\n");
   }
 }
 
-void VarDecl(struct Node* node) {
+void VarDecl(struct Node* node, int global, int first_pass) {
   // var_declaration -> type_specifier id | type_specifier id [NUM]
   #ifdef SEMANTIC_DEBUG
   printf("VarDecl(%d)\n", node->lineno);
   #endif
+
+  // 检查变量重定义
+  if(global && first_pass) {
+    // 第一遍扫描,只需要查看全局符号表
+    if(lookup(node->child->next_sib->str_term)) {
+      g_SENode1 = node->child->next_sib;
+      SemanticError(node->lineno, node->column, SERedefinition);
+      g_firstPassError = 1;
+      return;
+    }
+  } else {
+    // 第二遍扫描不用检查全局变量
+    // 同一作用域内的变量不能重名
+    if(!global) {
+      if(lookupCurrent(node->child->next_sib->str_term)) {
+        g_SENode1 = node->child->next_sib;
+        SemanticError(node->lineno, node->column, SERedefinition);
+        g_secondPassError = 1;
+        return;
+      }
+    } else {
+      return;
+    }
+  }
+
   struct Type* type = TypeSpec(node->child);
   if(node->child->next_sib->next_sib) {
     // 如果id后还有参数，就是array
     struct Type* array = createType(ArrayK);
     array->array.arrType = type;
+
+    if(node->child->next_sib->next_sib->termKind != TermKNum || !node->child->next_sib->next_sib->is_int) {
+      // 非法数组size
+      g_SENode1 = node->child->next_sib->next_sib;
+      SemanticError(node->lineno, node->column, SEInvalidArraySize);
+      g_secondPassError = 1;
+    }
+
     array->array.size = node->child->next_sib->next_sib->int_term;
     type = array;
   }
@@ -167,52 +232,78 @@ struct Type* TypeSpec(struct Node* node) {
   return type;
 }
 
-void FuncDecl(struct Node* node) {
-  // fun_declaration -> type_specifier id (params) compound_stmt
+void FuncDecl(struct Node* node, int first_pass) {
+  // fun_declaration -> type_specifier id ( params ) compound_stmt
   #ifdef SEMANTIC_DEBUG
   printf("FuncDecl(%d)\n", node->lineno);
   #endif
-  struct Type* type, *rettype = TypeSpec(node->child);
-  // Store function return type for ReturnStmt to check
-  g_FuncReturnType = *rettype;
-  if(rettype->typeKind == ArrayK) {
-    SemanticError(node->lineno, node->column, SEFuncReturnArray);
-  }
-
   char* id = node->child->next_sib->str_term;
-  struct FuncArgList* params = Params(node->child->next_sib->next_sib);
-  
-  type = createType(FuncK);
-  type->func = createFuncArg(id);
-  type->func->argType = rettype;
-  type->func->nextArg = params;
-  
-  struct SymNode* sym = createSymNode(id);
-  sym->symType = type;
-  // 函数定义是全局的,对应符号表栈底
-  insert(g_SymTableStackBottom, sym);
+  struct SymNode* sym = NULL;
+  struct FuncArgList* params = NULL;
+  struct Type* type, *rettype = NULL;
 
-  // 函数的参数也要加入函数本地变量的符号表
-  // 不需要创建符号表的情况: 参数为void; 没有定义局部变量
-  if((params->argType->typeKind != BasicK || params->argType->basic != Void) 
-      && (node->child->next_sib->next_sib->child != NULL))
-  {
-    struct SymTable* argTable = createSymTable();
-    pushSymTable(argTable);
-    struct FuncArgList* arg = params;
-    while(arg) {
-      if(arg->argType->typeKind != BasicK || arg->argType->basic != Void) {
-        sym = createSymNode(arg->argName);
-        sym->symType = arg->argType;
-        insert(argTable, sym);
-      }
-      arg = arg->nextArg;
+  if(first_pass) {
+    if(lookupCurrent(node->child->next_sib->str_term)) {
+      g_SENode1 = node->child->next_sib;
+      SemanticError(node->lineno, node->column, SERedefinition);
+      g_firstPassError = 1;
+      return;
     }
+    
+    rettype = TypeSpec(node->child);
+    if(rettype->typeKind == ArrayK) {
+      SemanticError(node->lineno, node->column, SEFuncReturnArray);
+      g_firstPassError = 1;
+    }
+
+    params = Params(node->child->next_sib->next_sib);
+    rettype = TypeSpec(node->child);
+    
+    type = createType(FuncK);
+    type->func = createFuncArg(id);
+    type->func->argType = rettype;
+    type->func->nextArg = params;
+    
+    sym = createSymNode(id);
+    sym->symType = type;
+    // 函数定义是全局的,对应符号表栈底
+    insert(g_SymTableStackBottom, sym);
+  } else {
+    sym = lookup(id);
+    rettype = sym->symType->func->argType;
+    params = sym->symType->func->nextArg;
+    
+    // 函数的参数也要加入函数本地变量的符号表
+    // 不需要创建符号表的情况: 参数为void; 没有定义局部变量
+    int has_symTable = 0;
+    if((params->argType->typeKind != BasicK || params->argType->basic != Void) 
+        || (node->child->next_sib->next_sib->next_sib->child->child != NULL))
+    {
+      has_symTable = 1;
+
+      struct SymTable* argTable = createSymTable();
+      pushSymTable(argTable);
+
+      struct FuncArgList* arg = params;
+      while(arg) {
+        if(arg->argType->typeKind != BasicK || arg->argType->basic != Void) {
+          sym = createSymNode(arg->argName);
+          sym->symType = arg->argType;
+          insert(argTable, sym);
+        }
+        arg = arg->nextArg;
+      }
+    }
+
+    // Store return type for ReturnStmt() to check
+    g_FuncReturnType = *rettype;
 
     // Check compound_stmt
     CompoundStmt(node->child->next_sib->next_sib->next_sib);
-    // 删除函数的符号表
-    popSymTable();
+    if(has_symTable) {
+      // 删除函数的符号表
+      popSymTable();
+    }
   }
 }
 
@@ -289,7 +380,7 @@ void LocalDecl(struct Node* node) {
   #endif
   struct Node* p = node->child;
   while(p) {
-    VarDecl(p);
+    VarDecl(p, 0, 0);
     p = p->next_sib;
   }
 }
@@ -317,15 +408,22 @@ void Stmt(struct Node* node) {
     fprintf(stderr, "Fatal error in Stmt(): Empty statement!\n");
     return;
   }
+  int has_symbolTable = 0;
   switch(node->name[0]) {
   case 'E': // ExprStmt
     ExprStmt(node); break;
   case 'C': // CompoundStmt
-    // Push to symbol table stack
-    pushSymTable(createSymTable());
-    CompoundStmt(node); break;
-    // Pop symbol table stack
-    popSymTable();
+    if(node->child->child != NULL) {
+      // Push to symbol table stack
+      pushSymTable(createSymTable());
+      has_symbolTable = 1;
+    }
+    CompoundStmt(node);
+    if(has_symbolTable) {
+      // Pop symbol table stack
+      popSymTable();
+    }
+    break;
   case 'S': // SelectionStmt
     SelectionStmt(node); break;
   case 'W': // WhileStmt
@@ -359,6 +457,7 @@ void SelectionStmt(struct Node* node) {
   struct Type* exprType = Expr(node->child);
   if(exprType->typeKind != BasicK || exprType->basic == Void) {
     SemanticError(node->child->lineno, node->child->column, SEConditionNotNum);
+    g_secondPassError = 1;
   }
   Stmt(node->child->next_sib);
   if(node->child->next_sib->next_sib) {
@@ -374,6 +473,7 @@ void WhileStmt(struct Node* node) {
   struct Type* exprType = Expr(node->child);
   if(exprType->typeKind != BasicK || exprType->basic == Void) {
     SemanticError(node->child->lineno, node->child->column, SEConditionNotNum);
+    g_secondPassError = 1;
   }
   Stmt(node->child->next_sib);
 }
@@ -412,6 +512,7 @@ void ReturnStmt(struct Node* node) {
       g_SEType1 = createType(BasicK);
       setBasic(g_SEType1, Void);
       SemanticError(node->lineno, node->column, SEReturnType);
+      g_secondPassError = 1;
     }
   } else {
     struct Type* retType = Expr(node->child);
@@ -420,6 +521,7 @@ void ReturnStmt(struct Node* node) {
       g_SEType2 = &g_FuncReturnType;
       g_SEType1 = retType;
       SemanticError(node->lineno, node->column, SEReturnType);
+      g_secondPassError = 1;
     }
   }
 }
@@ -444,12 +546,21 @@ struct Type* Assign(struct Node* node) {
   #ifdef SEMANTIC_DEBUG
   printf("Assign(%d)\n", node->lineno);
   #endif
+  node = node->child;
   struct Type* varType = Var(node);
   struct Type* exprType = Expr(node->next_sib);
+
+  // 非法左值
+  // if(varType->) {
+
+  // }
+
+  // 左值和右值的类型不匹配
   if(!isTypeMatch(varType, exprType)) {
     g_SEType1 = varType;
     g_SEType2 = exprType;
     SemanticError(node->lineno, node->column, SEAssignType);
+    g_secondPassError = 1;
   }
   return varType;
 }
@@ -462,7 +573,9 @@ struct Type* Var(struct Node* node) {
   node = node->child;
   struct SymNode* varSym = lookup(node->str_term);
   if(!varSym) {
+    g_SENode1 = node;
     SemanticError(node->lineno, node->column, SEUsedBeforeDecl);
+    g_secondPassError = 1;
     return NULL;
   }
   struct Type* varType = varSym->symType;
@@ -472,11 +585,13 @@ struct Type* Var(struct Node* node) {
     if(varType->typeKind != ArrayK) {
       g_SENode1 = node;
       SemanticError(node->lineno, node->column, SENotArray);
+      g_secondPassError = 1;
     }
 
     struct Type* exprType = Expr(node->next_sib);
     if(exprType->typeKind != BasicK || exprType->basic != Int) {
       SemanticError(node->lineno, node->column, SEInvalidIndex);
+      g_secondPassError = 1;
     }
     
     varType = varType->array.arrType;
@@ -501,6 +616,7 @@ struct Type* SimpleExpr(struct Node* node) {
       g_SEType2 = addExprType2;
       g_SENode1 = node->next_sib;
       SemanticError(node->lineno, node->column, SEOpTypeNotMatch);
+      g_secondPassError = 1;
     }
   }
   return addExprType1;
@@ -524,6 +640,7 @@ struct Type* AdditiveExpr(struct Node* node) {
       g_SEType2 = type2;
       g_SENode1 = node->next_sib;
       SemanticError(node->lineno, node->column, SEOpTypeNotMatch);
+      g_secondPassError = 1;
     }
   }
   return type1;
@@ -546,6 +663,7 @@ struct Type* Term(struct Node* node) {
       g_SEType2 = type2;
       g_SENode1 = node->next_sib;
       SemanticError(node->lineno, node->column, SEOpTypeNotMatch);
+      g_secondPassError = 1;
     }
   }
   return type1;
@@ -565,7 +683,7 @@ struct Type* Factor(struct Node* node) {
     type = Var(node);
   } else if(!strncmp(node->name, "Call", 4)) {
     type = Call(node);
-  } else if(!strncmp(node->name, "NUM", 3)) {
+  } else if(node->termKind == TermKNum) {
     if(node->termKind == TermKNum) {
       type = createType(BasicK);
       if(node->is_int) {
@@ -588,16 +706,25 @@ struct Type* Call(struct Node* node) {
   
   if(!IDSym) {
     SemanticError(node->lineno, node->column, SEUsedBeforeDecl);
+    g_secondPassError = 1;
     return NULL;
   } else {
-    struct Type* funcType = IDSym->symType;
-    struct FuncArgList* argsType = Args(node->next_sib);
-    if(!isFuncArgListMatch(funcType->func->nextArg, argsType)) {
+    if(IDSym->symType->typeKind != FuncK) {
       g_SENode1 = node;
-      SemanticError(node->lineno, node->column, SEFuncArgsNotMatch);
-    }
+      SemanticError(node->lineno, node->column, SENotFunction);
+      g_secondPassError = 1;
+      return IDSym->symType;
+    } else {
+      struct Type* funcType = IDSym->symType;
+      struct FuncArgList* argsList = Args(node->next_sib);
+      if(!isFuncArgListMatch(funcType->func->nextArg, argsList)) {
+        g_SENode1 = node;
+        SemanticError(node->lineno, node->column, SEFuncArgsNotMatch);
+        g_secondPassError = 1;
+      }
 
-    return funcType->func->argType;
+      return funcType->func->argType;
+    }
   }
 }
 

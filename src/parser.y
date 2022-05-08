@@ -11,6 +11,7 @@
 
   char g_savedId[STRING_LENGTH];
   struct Node* g_root;
+  int g_syntaxError = 0;
 %}
 %locations
 
@@ -34,6 +35,7 @@
   expression_stmt expression selection_stmt while_stmt return_stmt
   var simple_expression additive_expression term factor
   call args arg_list type_specifier relop addop mulop id
+  assign
 
 %start program
 %nonassoc LOWER_THAN_ELSE
@@ -89,16 +91,6 @@ var_declaration:
   ;
 
 fun_declaration:
-  /* type_specifier id LP params RP {
-    $$ = makeNode("FunDecl");
-    addChild(3, $$, $1, $2, $4);
-    $$->lineno = $1->lineno;
-  }
-  | compound_stmt {
-    $$ = makeNode("FunDecl");
-    addChild(1, $$, $1);
-    $$->lineno = $1->lineno;
-  } */
   type_specifier id LP params RP compound_stmt {
     $$ = makeNode("FunDecl");
     addChild(4, $$, $1, $2, $4, $6);
@@ -169,7 +161,7 @@ param:
 
 compound_stmt:
   LB local_declarations statement_list RB {
-    $$ = makeNode("CompountStmt");
+    $$ = makeNode("CompoundStmt");
     addChild(2, $$, $2, $3);
     $$->lineno = ($2->lineno == 0) ? $3->lineno : $2->lineno;
   }
@@ -245,15 +237,27 @@ expression_stmt:
   ;
 
 expression:
-  var ASSIGN expression {
+  assign {
     $$ = makeNode("Expr");
-    addChild(2, $$, $1, $3);
+    addChild(1, $$, $1);
     $$->lineno = $1->lineno;
   }
   | simple_expression {
     $$ = makeNode("Expr");
     addChild(1, $$, $1);
     $$->lineno = $1->lineno;
+  }
+  ;
+
+assign:
+  var ASSIGN expression {
+    $$ = makeNode("Assign");
+    addChild(2, $$, $1, $3);
+    $$->lineno = $1->lineno;
+  }
+  | error {
+    fprintf(stderr, "Error at line %d: Invalid left value.\n", yylval.node->lineno);
+    g_syntaxError++;
   }
   ;
 
@@ -291,9 +295,9 @@ for_param1:
     $$ = makeNode("For_param1");
     $$->lineno = 0;
   }
-  | var ASSIGN expression {
+  | assign {
     $$ = makeNode("For_param1");
-    addChild(2, $$, $1, $3);
+    addChild(1, $$, $1);
     $$->lineno = $1->lineno;
   }
   ;
@@ -315,9 +319,9 @@ for_param3:
     $$ = makeNode("For_param3");
     $$->lineno = 0;
   }
-  | var ASSIGN expression {
+  | assign {
     $$ = makeNode("For_param3");
-    addChild(2, $$, $1, $3);
+    addChild(1, $$, $1);
     $$->lineno = $1->lineno;
   }
   ;
@@ -344,6 +348,10 @@ var:
     $$ = makeNode("Var");
     addChild(2, $$, $1, $3);
     $$->lineno = $1->lineno;
+  }
+  | error {
+    fprintf(stderr, "Error at line %d: `%s' is not a variable\n", yylval.node->lineno, yylval.node->name);
+    g_syntaxError++;
   }
   ;
 
@@ -504,6 +512,10 @@ arg_list:
 id:
   ID {
     $$ = yylval.node;
+  }
+  | error {
+    fprintf(stderr, "Error at line %d: `%s' is not a valid identifier.\n", yylval.node->lineno, yylval.node->name);
+    g_syntaxError++;
   }
   ;
 
