@@ -1,17 +1,11 @@
-The language we are dealing with is C-Minus or C-Minus-Minus ?
-I think it's mostly C-Minus with extensions in C-Minus-Minus.
-  -- BYT 3/21
 ----------------------------------------------------------
 
-command code as follow:
+完成了现有语法规则下的语法分析和语义分析,能够较好地输出错误信息和定位.
+之前提到的two passes也实现了.
+接下来我来做中间代码.接下来的任务再交给YJY.
 
-  cd /src/scanner/
-  .scanner < ../../samples/sample_6_function.c > out.txt
+  -- BYT 5/08
 
-result will be store in the file out.txt
-
-
-  -- LZF 4/19
 ----------------------------------------------------------
 
 (懒得写英文了)
@@ -35,4 +29,20 @@ result will be store in the file out.txt
 
   -- BYT 5/07
 
+----------------------------------------------------------
+
+command code as follow:
+
+  cd /src/scanner/
+  .scanner < ../../samples/sample_6_function.c > out.txt
+
+result will be store in the file out.txt
+
+
+  -- LZF 4/19
+----------------------------------------------------------
+
+The language we are dealing with is C-Minus or C-Minus-Minus ?
+I think it's mostly C-Minus with extensions in C-Minus-Minus.
+  -- BYT 3/21
 ----------------------------------------------------------
