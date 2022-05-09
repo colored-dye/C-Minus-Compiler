@@ -2,7 +2,7 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-09 12:43:08
+ * @LastEditTime: 2022-05-09 13:10:43
  * @FilePath: /C-Minus-Compiler/src/main.c
  * @Description:
  *
@@ -49,16 +49,17 @@ int main(int argc, char *argv[])
     puts("No error found in Syntax Analysis~");
   }
 
+  if (!SemanticAnalysis(g_root))
+  {
+    puts("No error found in Semantic Analysis~");
+  }
+  else
+  {
+    puts("Error found in Semantic Analysis");
+  }
+  
   // 文字形式输出语法树
   printTree(g_root);
 
-  // if (!SemanticAnalysis(g_root))
-  // {
-  //   puts("No error found in Semantic Analysis~");
-  // }
-  // else
-  // {
-  //   puts("Error found in Semantic Analysis");
-  // }
   return 0;
 }
