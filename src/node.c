@@ -2,7 +2,7 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-09 12:41:11
+ * @LastEditTime: 2022-05-09 13:17:21
  * @FilePath: /C-Minus-Compiler/src/node.c
  * @Description:
  *
@@ -15,12 +15,12 @@
 #include <string.h>
 
 const char *NodeNames[] = {
-    "Program",
-    "GlobalDeclList",
-    "Decl",
-    "VarDecl",
-    "FunDecl",
-    "TypeSpec",
+    "Program",        // entire program
+    "GlobalDeclList", // list of global declarations
+    "Decl",           // abstract declarations
+    "VarDecl",        // specific variable declaration
+    "FunDecl",        // specific function declaration
+    "TypeSpec",       // type specification
     "Params",
     "ParamList",
     "Param",

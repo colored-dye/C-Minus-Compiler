@@ -1,0 +1,8 @@
+int n;
+int main(void)
+{
+	n = input();
+	output(n);
+
+	return 0;
+}
