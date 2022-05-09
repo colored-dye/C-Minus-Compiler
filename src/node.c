@@ -1,20 +1,60 @@
+/*
+ * @Author: colored-dye
+ * @Date: 2022-05-08 14:51:44
+ * @LastEditors: SiO-2
+ * @LastEditTime: 2022-05-09 12:41:11
+ * @FilePath: /C-Minus-Compiler/src/node.c
+ * @Description:
+ *
+ * Copyright (c) 2022 by colored-dye, All Rights Reserved.
+ */
+
 #include "node.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
 const char *NodeNames[] = {
-    "Program", "GlobalDeclList", "Decl", "VarDecl", "FunDecl",
-    "TypeSpec", "Params", "ParamList", "Param", "CompountStmt",
-    "LocalDecl", "StmtList", "Stmt", "ExprStmt", "Expr", "SelectionStmt",
-    "WhileStmt", "ForStmt", "For_param1", "For_param2", "For_param3",
-    "ReturnStmt", "Var", "SimpleExpr", "AddExpr", "RelOp", "AddOp",
-    "Term", "Factor", "MulOp", "Call", "Args", "ArgList",
+    "Program",
+    "GlobalDeclList",
+    "Decl",
+    "VarDecl",
+    "FunDecl",
+    "TypeSpec",
+    "Params",
+    "ParamList",
+    "Param",
+    "CompountStmt",
+    "LocalDecl",
+    "StmtList",
+    "Stmt",
+    "ExprStmt",
+    "Expr",
+    "SelectionStmt",
+    "WhileStmt",
+    "ForStmt",
+    "For_param1",
+    "For_param2",
+    "For_param3",
+    "ReturnStmt",
+    "Var",
+    "SimpleExpr",
+    "AddExpr",
+    "RelOp",
+    "AddOp",
+    "Term",
+    "Factor",
+    "MulOp",
+    "Call",
+    "Args",
+    "ArgList",
 };
 
-struct Node *createNode(void) {
-  struct Node* ret = (struct Node*)malloc(sizeof(struct Node));
-  if(!ret) {
+struct Node *createNode(void)
+{
+  struct Node *ret = (struct Node *)malloc(sizeof(struct Node));
+  if (!ret)
+  {
     fprintf(stderr, "createNode(): Out of memory\n");
     return NULL;
   }
@@ -23,22 +63,26 @@ struct Node *createNode(void) {
   return ret;
 }
 
-void printTree(struct Node *root) {
+void printTree(struct Node *root)
+{
   static int indent = 0;
-  if(!root) {
+  if (!root)
+  {
     return;
   }
-  for(int i=0; i<indent<<1; i++)
+  for (int i = 0; i < indent << 1; i++)
     putchar(' ');
 
-  if(root->is_terminal) {
-    switch(root->termKind) {
+  if (root->is_terminal)
+  {
+    switch (root->termKind)
+    {
     case TermKType:
       printf("  [Type: %s]\n", root->str_term);
       break;
     case TermKNum:
       printf("NUM");
-      if(root->is_int)
+      if (root->is_int)
         printf("  [Num: %d]\n", root->int_term);
       else
         printf("  [Num: %.3f]\n", root->real_term);
@@ -54,7 +98,9 @@ void printTree(struct Node *root) {
       printf("  [Bracket: %s]\n", root->str_term);
       break;
     }
-  } else {
+  }
+  else
+  {
     printf("%s (%d)\n", root->name, root->lineno);
   }
   indent++;
@@ -63,34 +109,40 @@ void printTree(struct Node *root) {
   printTree(root->next_sib);
 }
 
-void addChild(int n, struct Node *parent, ...) {
+void addChild(int n, struct Node *parent, ...)
+{
   va_list arg_list;
   va_start(arg_list, parent);
-  struct Node* p, *child;
+  struct Node *p, *child;
   int i = 0;
-  if(!parent->child) {
-    child = va_arg(arg_list, struct Node*);
+  if (!parent->child)
+  {
+    child = va_arg(arg_list, struct Node *);
     parent->child = child;
     p = child;
     i = 1;
-  } else {
+  }
+  else
+  {
     p = parent->child;
-    while (p->next_sib) {
+    while (p->next_sib)
+    {
       p = p->next_sib;
     }
   }
 
-  for(; i<n; i++) {
-    child = va_arg(arg_list, struct Node*);
+  for (; i < n; i++)
+  {
+    child = va_arg(arg_list, struct Node *);
     p->next_sib = child;
     p = child;
   }
   va_end(arg_list);
 }
 
-struct Node* makeNode(const char* name) {
-  struct Node* ret = createNode();
+struct Node *makeNode(const char *name)
+{
+  struct Node *ret = createNode();
   strncpy(ret->name, name, NAME_LENGTH);
   return ret;
 }
-
