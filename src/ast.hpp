@@ -2,9 +2,9 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-09 11:02:12
+ * @LastEditTime: 2022-05-09 12:51:00
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
- * @Description: 将 parse tree 转化为 AST。
+ * @Description: Convert the parse tree to AST for subsequent LLVM operations.
  *
  * Copyright (c) 2022 by SiO-2, All Rights Reserved.
  */
