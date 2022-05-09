@@ -171,7 +171,7 @@ local_declarations:
   local_declarations var_declaration {
     $$ = $1;
     addChild(1, $$, $2);
-    $$->lineno = $1->lineno;
+    $$->lineno = $$->child->lineno;
   }
   | {
     $$ = makeNode("LocalDecl");

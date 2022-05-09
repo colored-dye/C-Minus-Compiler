@@ -50,15 +50,15 @@ int main(int argc, char *argv[])
   }
 
   // 文字形式输出语法树
-  // printTree(g_root);
+  printTree(g_root);
 
-  if (!SemanticAnalysis(g_root))
-  {
-    puts("No error found in Semantic Analysis~");
-  }
-  else
-  {
-    puts("Error found in Semantic Analysis");
-  }
+  // if (!SemanticAnalysis(g_root))
+  // {
+  //   puts("No error found in Semantic Analysis~");
+  // }
+  // else
+  // {
+  //   puts("Error found in Semantic Analysis");
+  // }
   return 0;
 }

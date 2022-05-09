@@ -1769,7 +1769,7 @@ yyreduce:
                                           {
     (yyval.node) = makeNode("CompoundStmt");
     addChild(2, (yyval.node), (yyvsp[-2].node), (yyvsp[-1].node));
-    (yyval.node)->lineno = ((yyvsp[-2].node)->lineno == 0) ? (yyvsp[-1].node)->lineno : (yyvsp[-2].node)->lineno;
+    (yyval.node)->lineno = ((yyvsp[-2].node)->child) ? (yyvsp[-2].node)->child->lineno : (yyvsp[-1].node)->lineno;
   }
 #line 1775 "y.tab.c"
     break;
@@ -1779,7 +1779,7 @@ yyreduce:
                                      {
     (yyval.node) = (yyvsp[-1].node);
     addChild(1, (yyval.node), (yyvsp[0].node));
-    (yyval.node)->lineno = (yyvsp[-1].node)->lineno;
+    (yyval.node)->lineno = (yyval.node)->child->lineno;
   }
 #line 1785 "y.tab.c"
     break;
