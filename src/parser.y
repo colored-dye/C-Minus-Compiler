@@ -163,7 +163,7 @@ compound_stmt:
   LB local_declarations statement_list RB {
     $$ = makeNode("CompoundStmt");
     addChild(2, $$, $2, $3);
-    $$->lineno = ($2->lineno == 0) ? $3->lineno : $2->lineno;
+    $$->lineno = ($2->child) ? $2->child->lineno : $3->lineno;
   }
   ;
 
