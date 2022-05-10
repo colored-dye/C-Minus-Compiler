@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-10 22:06:10
+ * @LastEditTime: 2022-05-10 23:58:11
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: Convert the parse tree to AST for subsequent LLVM operations.
  *
@@ -15,22 +15,54 @@
 #include "node.h"
 
 #include <vector>
+#include <string>
+#include <variant>
 
 using namespace std;
 
 extern const char *NodeNames[];
 
-// ASTNode - Base class for all expression nodes.
+/**
+ * @brief Support three types void, int, real (ie float), respectively ASTVOID = 0, ASTINT = 1, ASTFLOAT = 2.
+ */
+enum TypeSpec
+{
+    ASTVOID = 0,
+    ASTINT,
+    ASTREAL
+};
+
+/**
+ * @brief Number has two types, int and float.
+ */
+union ASTNUM
+{
+    int intNum;
+    float floatNum;
+};
+
+/**
+ * @brief Base class for all expression nodes. Lineno and column are initialized to (-1,-1).
+ */
 class ASTNode
 {
     int lineno, column;
 
 public:
-    ASTNode() {}
+    // Initialized to (-1,-1).
+    ASTNode() : lineno(-1), column(-1) {}
     virtual ~ASTNode() {}
-    int SetLineno(int lineno) {}
+
+    void SetLineno(int setLineno) { lineno = setLineno; }
+    int GetLineno() { return lineno; }
+    void SetColumn(int setColumn) { column = setColumn; }
+    int GetColumn() { return column; }
 };
 
+/**
+ * @brief A program consists of a list (or sequence) of declarations,
+ *  which may be function or variable declarations, in any order.
+ */
 class ProgramNode : public ASTNode
 {
     vector<VarDecl *> VarDeclList;
@@ -44,26 +76,33 @@ public:
 
 class VarDecl : public ASTNode
 {
-    vector<int> test;
+    TypeSpec typeSpec;
+    string id;
+    ASTNUM num;
 
 public:
-    VarDecl() {}
+    VarDecl(TypeSpec typeSpec, string id, int intNum) : typeSpec(typeSpec), id(id) { num.intNum = intNum; }
+    VarDecl(TypeSpec typeSpec, string id, float floatNum) : typeSpec(typeSpec), id(id) { num.floatNum = floatNum; }
 };
 
+/**
+ * @brief By default there are no parameters.
+ */
 class FunDecl : public ASTNode
 {
-    vector<int> test;
+    TypeSpec typeSpec;
+    string id;
+    bool haveParam; // Is there an param.
+    vector<Param *> ParamList;
 
 public:
-    FunDecl() {}
-};
-
-class Params : public ASTNode
-{
-    vector<int> test;
-
-public:
-    Params() {}
+    //
+    FunDecl(TypeSpec typeSpec, string id) : typeSpec(typeSpec), id(id), haveParam(false) {}
+    void AddParam(Param *param)
+    {
+        haveParam = true;
+        ParamList.push_back(param);
+    }
 };
 
 class Param : public ASTNode
