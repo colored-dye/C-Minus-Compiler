@@ -2,90 +2,187 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-09 12:51:00
+ * @LastEditTime: 2022-05-10 22:06:10
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: Convert the parse tree to AST for subsequent LLVM operations.
  *
  * Copyright (c) 2022 by SiO-2, All Rights Reserved.
  */
+
 #ifndef AST_H_
 #define AST_H_
 
-#include <cstdio>
-#include <cstdlib>
-#include <string>
-#include <map>
+#include "node.h"
+
 #include <vector>
 
-/// ExprAST - Base class for all expression nodes.
-class ExprAST
+using namespace std;
+
+extern const char *NodeNames[];
+
+// ASTNode - Base class for all expression nodes.
+class ASTNode
 {
+    int lineno, column;
+
 public:
-    virtual ~ExprAST() {}
+    ASTNode() {}
+    virtual ~ASTNode() {}
+    int SetLineno(int lineno) {}
 };
 
-/// NumberExprAST - Expression class for numeric literals like "1.0".
-class NumberExprAST : public ExprAST
+class ProgramNode : public ASTNode
 {
-    double Val;
+    vector<VarDecl *> VarDeclList;
+    vector<FunDecl *> FunDeclList;
 
 public:
-    NumberExprAST(double val) : Val(val) {}
+    ProgramNode() {}
+    void AddVarDecl(VarDecl *varDecl) { VarDeclList.push_back(varDecl); }
+    void AddFunDecl(FunDecl *funDecl) { FunDeclList.push_back(funDecl); }
 };
 
-/// VariableExprAST - Expression class for referencing a variable, like "a".
-class VariableExprAST : public ExprAST
+class VarDecl : public ASTNode
 {
-    std::string Name;
+    vector<int> test;
 
 public:
-    VariableExprAST(const std::string &name) : Name(name) {}
+    VarDecl() {}
 };
 
-/// BinaryExprAST - Expression class for a binary operator.
-class BinaryExprAST : public ExprAST
+class FunDecl : public ASTNode
 {
-    char Op;
-    ExprAST *LHS, *RHS;
+    vector<int> test;
 
 public:
-    BinaryExprAST(char op, ExprAST *lhs, ExprAST *rhs)
-        : Op(op), LHS(lhs), RHS(rhs) {}
+    FunDecl() {}
 };
 
-/// CallExprAST - Expression class for function calls.
-class CallExprAST : public ExprAST
+class Params : public ASTNode
 {
-    std::string Callee;
-    std::vector<ExprAST *> Args;
+    vector<int> test;
 
 public:
-    CallExprAST(const std::string &callee, std::vector<ExprAST *> &args)
-        : Callee(callee), Args(args) {}
+    Params() {}
 };
 
-/// PrototypeAST - This class represents the "prototype" for a function,
-/// which captures its name, and its argument names (thus implicitly the number
-/// of arguments the function takes).
-class PrototypeAST
+class Param : public ASTNode
 {
-    std::string Name;
-    std::vector<std::string> Args;
+    vector<int> test;
 
 public:
-    PrototypeAST(const std::string &name, const std::vector<std::string> &args)
-        : Name(name), Args(args) {}
+    Param() {}
 };
 
-/// FunctionAST - This class represents a function definition itself.
-class FunctionAST
+class CompoundStmt : public ASTNode
 {
-    PrototypeAST *Proto;
-    ExprAST *Body;
+    vector<int> test;
 
 public:
-    FunctionAST(PrototypeAST *proto, ExprAST *body)
-        : Proto(proto), Body(body) {}
+    CompoundStmt() {}
+};
+
+class LocalDecl : public ASTNode
+{
+    vector<int> test;
+
+public:
+    LocalDecl() {}
+};
+
+class Expr : public ASTNode
+{
+    vector<int> test;
+    bool isAssignStmt; // Is it an assignment statement.
+
+public:
+    Expr() {}
+};
+
+class Var : public ASTNode
+{
+    vector<int> test;
+
+public:
+    Var() {}
+};
+
+class SimpleExpr : public ASTNode
+{
+    vector<int> test;
+    bool isSingleAddrExpr; // Is it an single additive-expression.
+
+public:
+    SimpleExpr() {}
+};
+
+class AddrExpr : public ASTNode
+{
+    vector<int> test;
+
+public:
+    AddrExpr() {}
+};
+
+class Term : public ASTNode
+{
+    vector<int> test;
+
+public:
+    Term() {}
+};
+
+class Factor : public ASTNode
+{
+    vector<int> test;
+
+public:
+    Factor() {}
+};
+
+class Call : public ASTNode
+{
+    vector<int> test;
+
+public:
+    Call() {}
+};
+
+class SelectStmt : public ASTNode
+{
+    vector<int> test;
+    bool haveElse; // Is there an else.
+
+public:
+    SelectStmt() {}
+};
+
+class WhileStmt : public ASTNode
+{
+    vector<int> test;
+
+public:
+    WhileStmt() {}
+};
+
+class ForStmt : public ASTNode
+{
+    vector<int> test;
+    bool haveForParam1; // Is there an For_param1.
+    bool haveForParam2; // Is there an For_param2.
+    bool haveForParam3; // Is there an For_param3.
+
+public:
+    ForStmt() {}
+};
+
+class ReturnStmt : public ASTNode
+{
+    vector<int> test;
+    bool haveExpr; // Is there an Expr.
+
+public:
+    ReturnStmt() {}
 };
 
 #endif
