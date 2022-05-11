@@ -2,15 +2,20 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-10 23:58:11
+ * @LastEditTime: 2022-05-11 11:44:32
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: Convert the parse tree to AST for subsequent LLVM operations.
  *
  * Copyright (c) 2022 by SiO-2, All Rights Reserved.
  */
 
-#ifndef AST_H_
-#define AST_H_
+/**
+ * TODO：
+ *  1. 在使用 vector 记录子节点的 class 中，如何记录节点（语句块）的顺序？
+ */
+
+#ifndef CMinusCompiler_AST_H_
+#define CMinusCompiler_AST_H_
 
 #include "node.h"
 
@@ -42,21 +47,71 @@ union ASTNUM
 };
 
 /**
- * @brief Base class for all expression nodes. Lineno and column are initialized to (-1,-1).
+ * @brief ASTNODE, PROGRAM, VARDECL, FUNDECL, PARAM, COMPOUNDSTMT, LOCALDECL, EXPR, VAR,
+ *  SIMPLEEXPR, ADDEXPR, TERM, FACTOR, CALL, SELECTSTMT, WHILESTMT, FORSTMT, RETURNSTMT.
+ */
+enum ASTNodeType
+{
+    ASTNODE = 0,
+    PROGRAM,
+    VARDECL,
+    FUNDECL,
+    PARAM,
+    COMPOUNDSTMT,
+    LOCALDECL,
+    EXPR,
+    VAR,
+    SIMPLEEXPR,
+    ADDEXPR,
+    TERM,
+    FACTOR,
+    CALL,
+    SELECTSTMT,
+    WHILESTMT,
+    FORSTMT,
+    RETURNSTMT
+};
+
+/**
+ * @brief Base class for all expression nodes. The target AST is a LC-RS binary tree.
+ * @param {int} lineno - initialized to -1.
+ * @param {int} colume - initialized to -1.
+ * @param {ASTNodeType} astNodeType - initialized to ASTNODE.
+ * @param {ASTNode*} leftChild - initialized to NULL.
+ * @param {ASTNode*} rightSibling - initialized to NULL.
  */
 class ASTNode
 {
     int lineno, column;
+    ASTNodeType nodeType;
+    ASTNode *leftChild;
+    ASTNode *rightSibling;
 
 public:
-    // Initialized to (-1,-1).
-    ASTNode() : lineno(-1), column(-1) {}
+    ASTNode()
+    {
+        lineno = -1;
+        column = -1;
+        nodeType = ASTNODE;
+        leftChild = NULL;
+        rightSibling = NULL;
+    }
     virtual ~ASTNode() {}
 
     void SetLineno(int setLineno) { lineno = setLineno; }
     int GetLineno() { return lineno; }
+
     void SetColumn(int setColumn) { column = setColumn; }
     int GetColumn() { return column; }
+
+    void SetNodeType(ASTNodeType setNodeType) { nodeType = setNodeType; }
+    ASTNodeType GetNodeType() { return nodeType; }
+
+    void SetLeftChild(ASTNode *setLeftChild) { leftChild = setLeftChild; }
+    ASTNode *GetLeftChild() { return leftChild; }
+
+    void SetRightSibling(ASTNode *setRightSibling) { rightSibling = setRightSibling; }
+    ASTNode *GetRightSibling() { return rightSibling; }
 };
 
 /**
@@ -65,13 +120,8 @@ public:
  */
 class ProgramNode : public ASTNode
 {
-    vector<VarDecl *> VarDeclList;
-    vector<FunDecl *> FunDeclList;
-
 public:
     ProgramNode() {}
-    void AddVarDecl(VarDecl *varDecl) { VarDeclList.push_back(varDecl); }
-    void AddFunDecl(FunDecl *funDecl) { FunDeclList.push_back(funDecl); }
 };
 
 class VarDecl : public ASTNode
@@ -93,29 +143,38 @@ class FunDecl : public ASTNode
     TypeSpec typeSpec;
     string id;
     bool haveParam; // Is there an param.
-    vector<Param *> ParamList;
+    vector<Param *> paramList;
 
 public:
-    //
-    FunDecl(TypeSpec typeSpec, string id) : typeSpec(typeSpec), id(id), haveParam(false) {}
+    FunDecl(TypeSpec typeSpec, string id, bool haveParam = false) : typeSpec(typeSpec), id(id), haveParam(haveParam) {}
     void AddParam(Param *param)
     {
         haveParam = true;
-        ParamList.push_back(param);
+        paramList.push_back(param);
     }
 };
 
+/**
+ * @brief By default is not an array.
+ */
 class Param : public ASTNode
 {
-    vector<int> test;
+    TypeSpec typeSpec;
+    string id;
+    bool isArray;
 
 public:
-    Param() {}
+    Param(TypeSpec typeSpec, string id, bool isArray = false) : typeSpec(typeSpec), id(id), isArray(isArray) {}
 };
 
 class CompoundStmt : public ASTNode
 {
-    vector<int> test;
+    vector<LocalDecl *> localDeclList;
+    vector<Expr *> exprList;
+    vector<SelectStmt *> selectStmtList;
+    vector<WhileStmt *> whileStmtList;
+    vector<ForStmt *> forStmtList;
+    ReturnStmt *returnStmt;
 
 public:
     CompoundStmt() {}
@@ -155,12 +214,12 @@ public:
     SimpleExpr() {}
 };
 
-class AddrExpr : public ASTNode
+class AddExpr : public ASTNode
 {
     vector<int> test;
 
 public:
-    AddrExpr() {}
+    AddExpr() {}
 };
 
 class Term : public ASTNode
