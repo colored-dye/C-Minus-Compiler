@@ -2,9 +2,9 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-12 22:36:36
+ * @LastEditTime: 2022-05-12 23:34:27
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
- * @Description: Convert the parse tree to AST for subsequent LLVM operations.
+ * @Description: AST for subsequent LLVM operations.
  *
  * Copyright (c) 2022 by SiO-2, All Rights Reserved.
  */
@@ -16,7 +16,6 @@
 
 #include <vector>
 #include <string>
-#include <variant>
 
 using namespace std;
 
