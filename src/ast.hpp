@@ -2,16 +2,11 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-12 21:47:35
+ * @LastEditTime: 2022-05-12 22:36:36
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: Convert the parse tree to AST for subsequent LLVM operations.
  *
  * Copyright (c) 2022 by SiO-2, All Rights Reserved.
- */
-
-/**
- * TODO：
- *  1. 在使用 vector 记录子节点的 class 中，如何记录节点（语句块）的顺序？
  */
 
 #ifndef CMinusCompiler_AST_H_
@@ -113,8 +108,6 @@ class ASTNode
 {
     int lineno, column;
     ASTNodeType nodeType;
-    // ASTNode *leftChild;
-    // ASTNode *rightSibling;
 
 public:
     ASTNode(int lineno = -1, int column = -1, ASTNodeType nodeType = ASTNODE)
@@ -122,10 +115,10 @@ public:
     virtual ~ASTNode() {}
 
     void SetLineno(int setLineno) { lineno = setLineno; }
-    int GetLineno() { return lineno; }
+    int GetLineno() const { return lineno; }
 
     void SetColumn(int setColumn) { column = setColumn; }
-    int GetColumn() { return column; }
+    int GetColumn() const { return column; }
 
     /**
      * @brief ASTNodeType - ASTNODE, ASTPROGRAM, ASTVARDECL, ASTFUNDECL, ASTPARAM, ASTCOMPOUNDSTMT,
@@ -133,7 +126,7 @@ public:
      *  ASTWHILESTMT, ASTFORSTMT, ASTRETURNSTMT;
      */
     void SetNodeType(ASTNodeType setNodeType) { nodeType = setNodeType; }
-    ASTNodeType GetNodeType() { return nodeType; }
+    ASTNodeType GetNodeType() const { return nodeType; }
 
     /**
      * @brief To set the basic information of a node, it needs to be called manually every time a node is created.
@@ -145,16 +138,10 @@ public:
      */
     void SetASTNodeData(int lineno, int column, ASTNodeType nodeType)
     {
-        ASTNode::lineno = lineno;
-        ASTNode::column = column;
-        ASTNode::nodeType = nodeType;
+        SetLineno(lineno);
+        SetColumn(column);
+        SetNodeType(nodeType);
     }
-
-    // void SetLeftChild(ASTNode *setLeftChild) { leftChild = setLeftChild; }
-    // ASTNode *GetLeftChild() { return leftChild; }
-    //
-    // void SetRightSibling(ASTNode *setRightSibling) { rightSibling = setRightSibling; }
-    // ASTNode *GetRightSibling() { return rightSibling; }
 };
 
 /**
@@ -165,11 +152,12 @@ public:
  */
 class Program : public ASTNode
 {
-    vector<ASTNode *> DeclList;
+    vector<ASTNode *> declList;
 
 public:
     Program() {}
-    void AddDecl(ASTNode *decl) { DeclList.push_back(decl); }
+    void AddDecl(ASTNode *decl) { declList.push_back(decl); }
+    const vector<ASTNode *> &GetDeclList() const { return declList; }
 };
 
 /**
@@ -193,6 +181,11 @@ public:
 
     VarDecl(ASTTypeSpec typeSpec, string id, int arrayLength)
         : typeSpec(typeSpec), id(id), isArray(true), arrayLength(arrayLength) {}
+
+    ASTTypeSpec GetTypeSpec() const { return typeSpec; }
+    const string GetId() const { return id; }
+    bool IsArray() const { return isArray; }
+    int GetArrayLength() const { return arrayLength; }
 };
 
 /**
@@ -224,6 +217,12 @@ public:
     }
 
     void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); };
+
+    ASTTypeSpec GetTypeSpec() const { return typeSpec; }
+    const string GetId() const { return id; }
+    bool HaveParam() const { return haveParam; }
+    const vector<Param *> &GetParamList() const { return paramList; }
+    const vector<ASTNode *> &GetCompoundStmt() const { return compoundStmt; }
 };
 
 /**
@@ -245,9 +244,12 @@ class Param : public ASTNode
 public:
     Param(ASTTypeSpec typeSpec, string id, bool isArray = false)
         : typeSpec(typeSpec), id(id), isArray(isArray) {}
+
+    ASTTypeSpec GetTypeSpec() const { return typeSpec; }
+    const string GetId() const { return id; }
+    bool IsArray() const { return isArray; }
 };
 
-//
 /**
  * @brief An expression is a yariable reference followed by an assignment symbol (equal sign)
  *  and an expression, or just a simple expression.
@@ -269,6 +271,11 @@ public:
 
     Expr(Var *var, Expr *expr)
         : isAssignStmt(true), var(var), expr(expr), simpleExpr(NULL) {}
+
+    bool IsAssignStmt() const { return isAssignStmt; }
+    const Var *GetVar() const { return var; }
+    const Expr *GetExpr() const { return expr; }
+    const SimpleExpr *GetSimpleExpr() const { return simpleExpr; }
 };
 
 /**
@@ -287,6 +294,10 @@ class Var : public ASTNode
 public:
     Var(string id) : id(id), haveSubscript(false), subscript(NULL) {}
     Var(string id, Expr *subscript) : id(id), haveSubscript(true), subscript(subscript) {}
+
+    const string GetId() const { return id; }
+    bool HaveSubscript() const { return haveSubscript; }
+    const Expr *GetExpr() const { return subscript; }
 };
 
 /**
@@ -309,6 +320,11 @@ public:
     SimpleExpr(AddExpr *addExpr) : leftAddExpr(addExpr), haveRightAddExpr(false) { rightAddExpr = NULL; }
     SimpleExpr(AddExpr *leftAddExpr, ASTRelOp relOp, AddExpr *rightAddExpr)
         : leftAddExpr(leftAddExpr), haveRightAddExpr(true), relOp(relOp), rightAddExpr(rightAddExpr) {}
+
+    const AddExpr *GetLeftAddExpr() const { return leftAddExpr; }
+    bool HaveRightAddExpr() const { return haveRightAddExpr; }
+    ASTRelOp GetRelOp() const { return relOp; }
+    const AddExpr *GetRightAddExpr() const { return rightAddExpr; }
 };
 
 /**
@@ -335,6 +351,11 @@ public:
         addOpList.push_back(addOp);
         termList.push_back(term);
     }
+
+    const Term *GetFirstTerm() const { return firstTerm; }
+    bool AreMultipleTerms() const { return areMultipleTerms; }
+    const vector<ASTAddOp> &GetAddOpList() const { return addOpList; }
+    const vector<Term *> &GetTermList() const { return termList; }
 };
 
 /**
@@ -362,6 +383,11 @@ public:
         mulOpList.push_back(mulOp);
         factorList.push_back(factor);
     }
+
+    const Factor *GetFirstFactor() const { return firstFactor; }
+    bool AreMultipleFactors() const { return areMultipleFactors; }
+    const vector<ASTMulOp> &GetMulOpList() const { return mulOpList; }
+    const vector<Factor *> &GetFactorList() const { return factorList; }
 };
 
 /**
@@ -387,6 +413,12 @@ public:
     Factor(Var *var) : expr(NULL), var(var), callExpr(NULL), isNum(false) {}
     Factor(Call *callExpr) : expr(NULL), var(NULL), callExpr(callExpr), isNum(false) {}
     Factor(ASTNUM num) : expr(NULL), var(NULL), callExpr(NULL), isNum(true), num(num) {}
+
+    const Expr *GetExpr() const { return expr; }
+    const Var *GetVar() const { return var; }
+    const Call *GetCallExpr() const { return callExpr; }
+    bool IsNum() const { return isNum; }
+    ASTNUM GetNum() const { return num; }
 };
 
 /**
@@ -400,9 +432,11 @@ class Call : public ASTNode
     vector<Expr *> argList;
 
 public:
-    Call() {}
     Call(string id) : id(id) {}
     void AddArg(Expr *arg) { argList.push_back(arg); }
+
+    const string GetId() const { return id; }
+    const vector<Expr *> &GetArgList() const { return argList; }
 };
 
 /**
@@ -429,6 +463,11 @@ public:
         haveElse = true;
         falseCompoundStmt.push_back(stmt);
     }
+
+    const Expr *GetExpr() const { return expr; }
+    const vector<ASTNode *> &GetTrueCompoundStmt() const { return trueCompoundStmt; }
+    bool HaveElse() const { return haveElse; }
+    const vector<ASTNode *> &GetFalseCompoundStmt() const { return falseCompoundStmt; }
 };
 
 /**
@@ -446,15 +485,28 @@ class WhileStmt : public ASTNode
 public:
     WhileStmt(Expr *expr = NULL) : expr(expr) {}
     void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); }
+
+    const Expr *GetExpr() const { return expr; }
+    const vector<ASTNode *> &GetCompoundStmt() const { return compoundStmt; }
 };
 
+/**
+ * @brief The for-statement.
+ * @param {bool} haveForParam1 - false by default.
+ * @param {Var*} var1
+ * @param {Expr*} expr1
+ * @param {Expr*} expr2
+ * @param {bool} haveForParam3 - false by default.
+ * @param {Var*} var3
+ * @param {Expr*} expr3
+ */
 class ForStmt : public ASTNode
 {
     bool haveForParam1; // Is there an For_param1. false by default.
     Var *var1;
     Expr *expr1;
 
-    Expr *forParam2;
+    Expr *expr2;
 
     bool haveForParam3; // Is there an For_param3. false by default.
     Var *var3;
@@ -463,7 +515,7 @@ class ForStmt : public ASTNode
     vector<ASTNode *> compoundStmt;
 
 public:
-    ForStmt() : haveForParam1(false), var1(NULL), expr1(NULL), forParam2(NULL),
+    ForStmt() : haveForParam1(false), var1(NULL), expr1(NULL), expr2(NULL),
                 haveForParam3(false), var3(NULL), expr3(NULL) {}
 
     void AddForParam1(Var *var1, Expr *expr1)
@@ -476,7 +528,7 @@ public:
         }
     }
 
-    void AddForParam2(Expr *forParam2) { ForStmt::forParam2 = forParam2; }
+    void AddForParam2(Expr *expr2) { ForStmt::expr2 = expr2; }
 
     void AddForParam3(Var *var3, Expr *expr3)
     {
@@ -489,11 +541,22 @@ public:
     }
 
     void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); }
+
+    bool HaveForParam1() const { return haveForParam1; }
+    const Var *GetVar1() const { return var1; }
+    const Expr *GetExpr1() const { return expr1; }
+    const Expr *GetExpr2() const { return expr2; }
+    bool HaveForParam3() const { return haveForParam3; }
+    const Var *GetVar3() const { return var3; }
+    const Expr *GetExpr3() const { return expr3; }
 };
 
-//A return statement may either return a value or not. Functions not declared void\
-must return values. Functions declared void must not return values.
-
+/**
+ * @brief A return statement may either return a value or not. Functions not declared void
+ *  must return values. Functions declared void must not return values.
+ * @param {bool} isVoid - true by default.
+ * @param {Expr*} expr
+ */
 class ReturnStmt : public ASTNode
 {
     bool isVoid; // Whether the function type is void. True by default.
@@ -507,6 +570,9 @@ public:
             isVoid = false;
         ReturnStmt::expr = expr;
     }
+
+    bool IsVoid() const { return isVoid; }
+    const Expr *GetExpr() const { return expr; }
 };
 
 #endif
