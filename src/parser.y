@@ -5,7 +5,7 @@
 
   #define YYDEBUG 1
 
-  extern int yylex(void);
+  extern "C" int yylex(void);
   extern int yyerror(const char*);
   extern int yylineno;
 
@@ -255,10 +255,6 @@ assign:
     addChild(2, $$, $1, $3);
     $$->lineno = $1->lineno;
   }
-  | error {
-    fprintf(stderr, "Error at line %d: Invalid left value.\n", yylval.node->lineno);
-    g_syntaxError++;
-  }
   ;
 
 selection_stmt:
@@ -349,10 +345,10 @@ var:
     addChild(2, $$, $1, $3);
     $$->lineno = $1->lineno;
   }
-  | error {
+  /* | error {
     fprintf(stderr, "Error at line %d: `%s' is not a variable\n", yylval.node->lineno, yylval.node->name);
     g_syntaxError++;
-  }
+  } */
   ;
 
 simple_expression:

@@ -12,6 +12,7 @@
         yycolumn += yyleng;
   int my_atoi(const char *s, int base);
   extern char g_savedId[STRING_LENGTH];
+  extern "C" int yylex(void);
 %}
 
 %option noyywrap
@@ -263,16 +264,16 @@ ID ({char})+({char}|{digit})*
   yylval.node = node;
   return NUM;
 }
-"/*" { /* Block comment */
-  while (1) {
-    if (input() == '*' && input() == '/')
-      break;
-  }
+\/\*(.*\n)*.*\*\/ { /* Block comment */
+  // while (1) {
+  //   if (input() == '*' && input() == '/')
+  //     break;
+  // }
 }
-"//" { /* Line comment */
-  char c;
-  while((c = input()) != 0 && c != '\n')
-    ;
+\/\/.* { /* Line comment */
+  // char c;
+  // while((c = input()) != 0 && c != '\n')
+  //   ;
 }
 {ID} {
   struct Node* id = makeNode(yytext);

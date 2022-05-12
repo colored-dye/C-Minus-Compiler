@@ -197,6 +197,7 @@ public:
  * @param {vector<ASTNode*>} compoundStmt - compound statement consists of curly brackets
  *  surrounding a set of declarations and statements.
  */
+class Param;
 class FunDecl : public ASTNode
 {
     ASTTypeSpec typeSpec;
@@ -258,6 +259,8 @@ public:
  * @param {Expr*} expr - pointer to the expression to evaluate.
  * @param {SimpleExpr*} simpleExpr - pointer to the simple expression.
  */
+class Var;
+class SimpleExpr;
 class Expr : public ASTNode
 {
     bool isAssignStmt; // Is it an assignment statement. By default it is not.
@@ -309,6 +312,7 @@ public:
  * @param {ASTRelOp} relOp - relational operator.
  * @param {AddExpr*} rightAddExpr - right additive-expression.
  */
+class AddExpr;
 class SimpleExpr : public ASTNode
 {
     AddExpr *leftAddExpr;
@@ -334,6 +338,7 @@ public:
  * @param {vector<ASTAddOp>} addOpList - addition operator list.
  * @param {vector<Term*>} termList - term list.
  */
+class Term;
 class AddExpr : public ASTNode
 {
     Term *firstTerm;
@@ -365,6 +370,7 @@ public:
  * @param {vector<ASTMulOp>} mulOpList - multiplication operator list.
  * @param {vector<Factor*>} factorList - factor list.
  */
+class Factor;
 class Term : public ASTNode
 {
 
@@ -400,6 +406,7 @@ public:
  * @param {bool} isNum - false if is not num.
  * @param {ASTNUM} num - store the value of num.
  */
+class Call;
 class Factor : public ASTNode
 {
     Expr *expr;

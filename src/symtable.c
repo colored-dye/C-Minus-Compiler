@@ -135,6 +135,7 @@ int isTypeMatch(struct Type* t1, struct Type* t2) {
 
 char* Type2Str(struct Type* type) {
   char* ret = (char*)malloc(STRING_LENGTH), *tmp = NULL;
+  struct FuncArgList* argp = NULL;
   switch (type->typeKind) {
   case BasicK:
     switch(type->basic) {
@@ -150,7 +151,7 @@ char* Type2Str(struct Type* type) {
     break;
   case FuncK:
     snprintf(ret, STRING_LENGTH, "function(");
-    struct FuncArgList* argp = type->func->nextArg;
+    argp = type->func->nextArg;
     while(argp) {
       strncat(ret, Type2Str(argp->argType), STRING_LENGTH);
       if(argp->nextArg)
