@@ -1,0 +1,27 @@
+No error found in Syntax Analysis~
+Error found in Semantic Analysis
+Program (1)
+  GlobalDeclList (1)
+    Decl (1)
+      FunDecl (1)
+        TypeSpec (1)
+            [Type: INT]
+        ID  [Id: test2]
+        Params (1)
+            [Type: VOID]
+        CompoundStmt (3)
+          LocalDecl (3)
+            VarDecl (3)
+              TypeSpec (3)
+                  [Type: REAL]
+              ID  [Id: a]
+          StmtList (4)
+            Stmt (4)
+              ReturnStmt (4)
+                Expr (4)
+                  SimpleExpr (4)
+                    AddExpr (4)
+                      Term (4)
+                        Factor (4)
+                          Var (4)
+                            ID  [Id: a]

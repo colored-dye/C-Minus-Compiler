@@ -25,7 +25,7 @@ void SemanticError(int lineno, int column, SemanticErrorKind errK) {
   case SEReturnType:
     type1 = Type2Str(g_SEType1);
     type2 = Type2Str(g_SEType2);
-    snprintf(spec, speclen, "Return type `%s' does not match `%s' in function: `%s'.", type1, type2, g_SENode1->str_term);
+    snprintf(spec, speclen, "Return type `%s' function's return type `%s'.", type1, type2);
     break;
   case SEConditionNotNum:
     snprintf(spec, speclen, "Condition value should be `int' or `real'.");

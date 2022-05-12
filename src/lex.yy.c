@@ -1216,13 +1216,14 @@ case 34:
 YY_RULE_SETUP
 #line 272 "lexer.l"
 { /* Line comment */
-  while(input() != '\n')
+  char c;
+  while((c = input()) != 0 && c != '\n')
     ;
 }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 276 "lexer.l"
+#line 277 "lexer.l"
 {
   struct Node* id = makeNode(yytext);
   // id->nodeK = ID;
@@ -1238,17 +1239,17 @@ YY_RULE_SETUP
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 287 "lexer.l"
+#line 288 "lexer.l"
 { yycolumn = 1; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 288 "lexer.l"
+#line 289 "lexer.l"
 { /* Ignore whitespace */ }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 289 "lexer.l"
+#line 290 "lexer.l"
 {
   fprintf(stderr, "Error at line: %d\n", yylineno);
   return ERROR;
@@ -1256,10 +1257,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 294 "lexer.l"
+#line 295 "lexer.l"
 ECHO;
 	YY_BREAK
-#line 1263 "lex.yy.c"
+#line 1264 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2276,7 +2277,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 294 "lexer.l"
+#line 295 "lexer.l"
 
 
 int my_atoi(const char *s, int base) {

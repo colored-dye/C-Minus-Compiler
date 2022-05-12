@@ -1,8 +1,7 @@
-int n;
-int main(void)
+int test2(void)
 {
-	n = input();
-	output(n);
-
-	return 0;
+    real a;
+    return a;
+    //报错;
 }
+//

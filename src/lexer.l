@@ -270,7 +270,8 @@ ID ({char})+({char}|{digit})*
   }
 }
 "//" { /* Line comment */
-  while(input() != '\n')
+  char c;
+  while((c = input()) != 0 && c != '\n')
     ;
 }
 {ID} {
