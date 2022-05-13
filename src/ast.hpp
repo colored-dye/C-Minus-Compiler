@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-12 23:34:27
+ * @LastEditTime: 2022-05-13 14:24:25
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -96,6 +96,23 @@ enum ASTMulOp
     ASTMUL = 0,
     ASTDIV
 };
+
+class ASTNode;
+class Program;
+class VarDecl;
+class FunDecl;
+class Param;
+class Expr;
+class SelectionStmt;
+class WhileStmt;
+class ForStmt;
+class ReturnStmt;
+class Var;
+class SimpleExpr;
+class AddExpr;
+class Term;
+class Factor;
+class Call;
 
 /**
  * @brief Base class for all expression nodes. The target AST is a LC-RS binary tree.
@@ -196,7 +213,6 @@ public:
  * @param {vector<ASTNode*>} compoundStmt - compound statement consists of curly brackets
  *  surrounding a set of declarations and statements.
  */
-class Param;
 class FunDecl : public ASTNode
 {
     ASTTypeSpec typeSpec;
@@ -258,8 +274,6 @@ public:
  * @param {Expr*} expr - pointer to the expression to evaluate.
  * @param {SimpleExpr*} simpleExpr - pointer to the simple expression.
  */
-class Var;
-class SimpleExpr;
 class Expr : public ASTNode
 {
     bool isAssignStmt; // Is it an assignment statement. By default it is not.
@@ -311,7 +325,6 @@ public:
  * @param {ASTRelOp} relOp - relational operator.
  * @param {AddExpr*} rightAddExpr - right additive-expression.
  */
-class AddExpr;
 class SimpleExpr : public ASTNode
 {
     AddExpr *leftAddExpr;
@@ -337,7 +350,6 @@ public:
  * @param {vector<ASTAddOp>} addOpList - addition operator list.
  * @param {vector<Term*>} termList - term list.
  */
-class Term;
 class AddExpr : public ASTNode
 {
     Term *firstTerm;
@@ -369,7 +381,6 @@ public:
  * @param {vector<ASTMulOp>} mulOpList - multiplication operator list.
  * @param {vector<Factor*>} factorList - factor list.
  */
-class Factor;
 class Term : public ASTNode
 {
 
@@ -405,7 +416,6 @@ public:
  * @param {bool} isNum - false if is not num.
  * @param {ASTNUM} num - store the value of num.
  */
-class Call;
 class Factor : public ASTNode
 {
     Expr *expr;
