@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-13 15:33:05
+ * @LastEditTime: 2022-05-13 23:01:21
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -99,11 +99,9 @@ enum ASTMulOp
 
 class ASTNode;
 class Program;
-class Decl;
 class VarDecl;
 class FunDecl;
 class Param;
-class Stmt;
 class Expr;
 class SelectionStmt;
 class WhileStmt;
@@ -115,10 +113,6 @@ class AddExpr;
 class Term;
 class Factor;
 class Call;
-
-// TODO: \
-1. Decl 对于 VarDecl, FunDecl 的虚函数接口 \
-2. Stmt 对于 Expr, SelectionStmt, WhileStmt, ForStmt, ReturnStmt 的虚函数接口
 
 /**
  * @brief Base class for all expression nodes. The target AST is a LC-RS binary tree.
@@ -169,38 +163,17 @@ public:
 /**
  * @brief A program consists of a list (or sequence) of declarations,
  *  which may be function or variable declarations, in any order.
- * @param {vector<Decl*>} declList - There must be at least one declaration.
+ * @param {vector<ASTNode*>} Decl - There must be at least one declaration.
  *  The last declaration in a program must be a function declaration of the form void main(void).
  */
 class Program : public ASTNode
 {
-    vector<Decl *> declList;
+    vector<ASTNode *> declList;
 
 public:
     Program() {}
-    void AddDecl(Decl *decl) { declList.push_back(decl); }
-    const vector<Decl *> &GetDeclList() const { return declList; }
-};
-
-/**
- * @brief As the base class of VarDecl, FunDecl, provides virtual function interface.
- */
-class Decl : public ASTNode
-{
-public:
-    virtual ASTTypeSpec GetTypeSpec() const {}
-    virtual const string GetId() const {}
-
-    // for VarDecl
-    virtual bool IsArray() const {}
-    virtual int GetArrayLength() const {}
-
-    // for FunDecl
-    virtual void AddParam(Param *param) {}
-    virtual void AddStmt(ASTNode *stmt) {}
-    virtual bool HaveParam() const {}
-    virtual const vector<Param *> &GetParamList() const {}
-    virtual const vector<Stmt *> &GetCompoundStmt() const {}
+    void AddDecl(ASTNode *decl) { declList.push_back(decl); }
+    const vector<ASTNode *> &GetDeclList() const { return declList; }
 };
 
 /**
@@ -211,7 +184,7 @@ public:
  * @param {bool} isArray - by default is not an array.
  * @param {int} arrayLength - array length.
  */
-class VarDecl : public Decl
+class VarDecl : public ASTNode
 {
     ASTTypeSpec typeSpec;
     string id;
@@ -237,16 +210,16 @@ public:
  * @param {string} id - identifier.
  * @param {bool} haveParam - flag of parameters. By default there are no parameters.
  * @param {vector<Param*>} paramList - comma-separated list of parameters inside parentheses.
- * @param {vector<Stmt*>} compoundStmt - compound statement consists of curly brackets
+ * @param {vector<ASTNode*>} compoundStmt - compound statement consists of curly brackets
  *  surrounding a set of declarations and statements.
  */
-class FunDecl : public Decl
+class FunDecl : public ASTNode
 {
     ASTTypeSpec typeSpec;
     string id;
     bool haveParam; // Is there an param.
     vector<Param *> paramList;
-    vector<Stmt *> compoundStmt;
+    vector<ASTNode *> compoundStmt;
 
 public:
     FunDecl(ASTTypeSpec typeSpec, string id, bool haveParam = false)
@@ -259,13 +232,13 @@ public:
         paramList.push_back(param);
     }
 
-    void AddStmt(Stmt *stmt) { compoundStmt.push_back(stmt); };
+    void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); };
 
     ASTTypeSpec GetTypeSpec() const { return typeSpec; }
     const string GetId() const { return id; }
     bool HaveParam() const { return haveParam; }
     const vector<Param *> &GetParamList() const { return paramList; }
-    const vector<Stmt *> &GetCompoundStmt() const { return compoundStmt; }
+    const vector<ASTNode *> &GetCompoundStmt() const { return compoundStmt; }
 };
 
 /**
@@ -294,47 +267,6 @@ public:
 };
 
 /**
- * @brief Provides virtual function interface as the base class for Expr, SelectionStmt, WhileStmt, ForStmt, ReturnStmt.
- */
-class Stmt : public ASTNode
-{
-public:
-    virtual const Expr *GetExpr() const {}
-    virtual void AddStmt(Stmt *stmt) {}
-    virtual const vector<Stmt *> &GetCompoundStmt() const {}
-
-    // for Expr
-    virtual bool IsAssignStmt() const {}
-    virtual const Var *GetVar() const {}
-    virtual const SimpleExpr *GetSimpleExpr() const {}
-
-    // for SelectStmt
-    virtual void AddTrueStmt(Stmt *stmt) {}
-    virtual void AddFalseStmt(Stmt *stmt) {}
-    virtual const vector<Stmt *> &GetTrueCompoundStmt() const {}
-    virtual bool HaveElse() const {}
-    virtual const vector<Stmt *> &GetFalseCompoundStmt() const {}
-
-    // for WhileStmt
-
-    // for ForStmt
-    virtual void AddForParam1(Var *var1, Expr *expr1) {}
-    virtual void AddForParam2(Expr *expr2) {}
-    virtual void AddForParam3(Var *var3, Expr *expr3) {}
-    virtual bool HaveForParam1() const {}
-    virtual const Var *GetVar1() const {}
-    virtual const Expr *GetExpr1() const {}
-    virtual const Expr *GetExpr2() const {}
-    virtual bool HaveForParam3() const {}
-    virtual const Var *GetVar3() const {}
-    virtual const Expr *GetExpr3() const {}
-
-    // for ReturnStmt
-    virtual void AddExpr(Expr *expr) {}
-    virtual bool IsVoid() const {}
-};
-
-/**
  * @brief An expression is a yariable reference followed by an assignment symbol (equal sign)
  *  and an expression, or just a simple expression.
  * @param {bool} isAssignStmt - false by default. it's assignment or simple expression.
@@ -342,7 +274,7 @@ public:
  * @param {Expr*} expr - pointer to the expression to evaluate.
  * @param {SimpleExpr*} simpleExpr - pointer to the simple expression.
  */
-class Expr : public Stmt
+class Expr : public ASTNode
 {
     bool isAssignStmt; // Is it an assignment statement. By default it is not.
     Var *var;
@@ -367,31 +299,30 @@ public:
  *  value causes execution of the first statement; a zero value causes execution of the
  *  second statement, if it exists.
  * @param {Expr*} expr - the expression to evaluate.
- * @param {vector<Stmt*>} trueCompoundStmt - statement list for true.
+ * @param {vector<ASTNode*>} trueCompoundStmt - statement list for true.
  * @param {bool} haveElse - false by default.
- * @param {vector<Stmt*>} falseCompoundStmt - statement list for false.
+ * @param {vector<ASTNode*>} falseCompoundStmt - statement list for false.
  */
-class SelectStmt : public Stmt
+class SelectStmt : public ASTNode
 {
     Expr *expr;
-    vector<Stmt *> trueCompoundStmt;
+    vector<ASTNode *> trueCompoundStmt;
     bool haveElse;
-    vector<Stmt *> falseCompoundStmt;
+    vector<ASTNode *> falseCompoundStmt;
 
 public:
     SelectStmt(Expr *expr = NULL) : expr(expr) { haveElse = false; }
-
-    void AddTrueStmt(Stmt *stmt) { trueCompoundStmt.push_back(stmt); }
-    void AddFalseStmt(Stmt *stmt)
+    void AddTrueStmt(ASTNode *stmt) { trueCompoundStmt.push_back(stmt); }
+    void AddFalseStmt(ASTNode *stmt)
     {
         haveElse = true;
         falseCompoundStmt.push_back(stmt);
     }
 
     const Expr *GetExpr() const { return expr; }
-    const vector<Stmt *> &GetTrueCompoundStmt() const { return trueCompoundStmt; }
+    const vector<ASTNode *> &GetTrueCompoundStmt() const { return trueCompoundStmt; }
     bool HaveElse() const { return haveElse; }
-    const vector<Stmt *> &GetFalseCompoundStmt() const { return falseCompoundStmt; }
+    const vector<ASTNode *> &GetFalseCompoundStmt() const { return falseCompoundStmt; }
 };
 
 /**
@@ -399,20 +330,19 @@ public:
  *  executing the statement if the expression evaluates to a nonzero value, ending when the
  *  expression evaluates to 0.
  * @param {Expr*} expr - the expression to evaluate.
- * @param {vector<Stmt*>} compoundStmt - statement list.
+ * @param {vector<ASTNode*>} compoundStmt - statement list.
  */
-class WhileStmt : public Stmt
+class WhileStmt : public ASTNode
 {
     Expr *expr;
-    vector<Stmt *> compoundStmt;
+    vector<ASTNode *> compoundStmt;
 
 public:
     WhileStmt(Expr *expr = NULL) : expr(expr) {}
-
-    void AddStmt(Stmt *stmt) { compoundStmt.push_back(stmt); }
+    void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); }
 
     const Expr *GetExpr() const { return expr; }
-    const vector<Stmt *> &GetCompoundStmt() const { return compoundStmt; }
+    const vector<ASTNode *> &GetCompoundStmt() const { return compoundStmt; }
 };
 
 /**
@@ -425,7 +355,7 @@ public:
  * @param {Var*} var3
  * @param {Expr*} expr3
  */
-class ForStmt : public Stmt
+class ForStmt : public ASTNode
 {
     bool haveForParam1; // Is there an For_param1. false by default.
     Var *var1;
@@ -437,7 +367,7 @@ class ForStmt : public Stmt
     Var *var3;
     Expr *expr3;
 
-    vector<Stmt *> compoundStmt;
+    vector<ASTNode *> compoundStmt;
 
 public:
     ForStmt() : haveForParam1(false), var1(NULL), expr1(NULL), expr2(NULL),
@@ -465,7 +395,7 @@ public:
         }
     }
 
-    void AddStmt(Stmt *stmt) { compoundStmt.push_back(stmt); }
+    void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); }
 
     bool HaveForParam1() const { return haveForParam1; }
     const Var *GetVar1() const { return var1; }
@@ -474,7 +404,6 @@ public:
     bool HaveForParam3() const { return haveForParam3; }
     const Var *GetVar3() const { return var3; }
     const Expr *GetExpr3() const { return expr3; }
-    const vector<Stmt *> &GetCompoundStmt() const { return compoundStmt; }
 };
 
 /**
@@ -483,14 +412,13 @@ public:
  * @param {bool} isVoid - true by default.
  * @param {Expr*} expr
  */
-class ReturnStmt : public Stmt
+class ReturnStmt : public ASTNode
 {
     bool isVoid; // Whether the function type is void. True by default.
     Expr *expr;
 
 public:
     ReturnStmt(bool isVoid = true) : isVoid(isVoid), expr(NULL) {}
-
     void AddExpr(Expr *expr)
     {
         if (isVoid)
