@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-13 23:01:21
+ * @LastEditTime: 2022-05-14 00:31:09
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -52,18 +52,17 @@ enum ASTNodeType
     ASTVARDECL,
     ASTFUNDECL,
     ASTPARAM,
-    ASTCOMPOUNDSTMT,
     ASTEXPR,
+    ASTSELECTSTMT,
+    ASTWHILESTMT,
+    ASTFORSTMT,
+    ASTRETURNSTMT,
     ASTVAR,
     ASTSIMPLEEXPR,
     ASTADDEXPR,
     ASTTERM,
     ASTFACTOR,
-    ASTCALL,
-    ASTSELECTSTMT,
-    ASTWHILESTMT,
-    ASTFORSTMT,
-    ASTRETURNSTMT
+    ASTCALL
 };
 
 /**
@@ -103,7 +102,7 @@ class VarDecl;
 class FunDecl;
 class Param;
 class Expr;
-class SelectionStmt;
+class SelectStmt;
 class WhileStmt;
 class ForStmt;
 class ReturnStmt;
@@ -172,6 +171,19 @@ class Program : public ASTNode
 
 public:
     Program() {}
+    ~Program()
+    {
+        vector<ASTNode *>::iterator decl;
+        for (decl = declList.begin(); decl != declList.end(); decl++)
+        {
+            if ((*decl)->GetNodeType() == ASTVARDECL)
+                ((VarDecl *)(*decl))->~VarDecl();
+            else
+                ((FunDecl *)(*decl))->~FunDecl();
+            declList.clear();
+        }
+    }
+
     void AddDecl(ASTNode *decl) { declList.push_back(decl); }
     const vector<ASTNode *> &GetDeclList() const { return declList; }
 };
@@ -197,6 +209,8 @@ public:
 
     VarDecl(ASTTypeSpec typeSpec, string id, int arrayLength)
         : typeSpec(typeSpec), id(id), isArray(true), arrayLength(arrayLength) {}
+
+    ~VarDecl(){};
 
     ASTTypeSpec GetTypeSpec() const { return typeSpec; }
     const string GetId() const { return id; }
@@ -224,6 +238,44 @@ class FunDecl : public ASTNode
 public:
     FunDecl(ASTTypeSpec typeSpec, string id, bool haveParam = false)
         : typeSpec(typeSpec), id(id), haveParam(haveParam) {}
+
+    ~FunDecl()
+    {
+        if (haveParam)
+        {
+            vector<Param *>::iterator param;
+            for (param = paramList.begin(); param != paramList.end(); param++)
+                (*param)->~Param();
+            paramList.clear();
+        }
+
+        vector<ASTNode *>::iterator stmt;
+        for (stmt = compoundStmt.begin(); stmt != compoundStmt.end(); stmt++)
+        {
+            switch ((*stmt)->GetNodeType())
+            {
+            case ASTVARDECL:
+                ((VarDecl *)(*stmt))->~VarDecl();
+                break;
+            case ASTEXPR:
+                ((Expr *)(*stmt))->~Expr();
+                break;
+            case ASTSELECTSTMT:
+                ((SelectStmt *)(*stmt))->~SelectStmt();
+                break;
+            case ASTWHILESTMT:
+                ((WhileStmt *)(*stmt))->~WhileStmt();
+                break;
+            case ASTRETURNSTMT:
+                ((ReturnStmt *)(*stmt))->~ReturnStmt();
+                break;
+
+            default:
+                break;
+            }
+        }
+        compoundStmt.clear();
+    }
 
     void AddParam(Param *param)
     {
@@ -261,6 +313,8 @@ public:
     Param(ASTTypeSpec typeSpec, string id, bool isArray = false)
         : typeSpec(typeSpec), id(id), isArray(isArray) {}
 
+    ~Param(){};
+
     ASTTypeSpec GetTypeSpec() const { return typeSpec; }
     const string GetId() const { return id; }
     bool IsArray() const { return isArray; }
@@ -288,6 +342,17 @@ public:
     Expr(Var *var, Expr *expr)
         : isAssignStmt(true), var(var), expr(expr), simpleExpr(NULL) {}
 
+    ~Expr()
+    {
+        if (isAssignStmt)
+        {
+            var->~Var();
+            expr->~Expr();
+        }
+        else
+            simpleExpr->~SimpleExpr();
+    }
+
     bool IsAssignStmt() const { return isAssignStmt; }
     const Var *GetVar() const { return var; }
     const Expr *GetExpr() const { return expr; }
@@ -312,7 +377,71 @@ class SelectStmt : public ASTNode
 
 public:
     SelectStmt(Expr *expr = NULL) : expr(expr) { haveElse = false; }
-    void AddTrueStmt(ASTNode *stmt) { trueCompoundStmt.push_back(stmt); }
+    ~SelectStmt()
+    {
+        expr->~Expr();
+        vector<ASTNode *>::iterator trueStmt;
+        for (trueStmt = trueCompoundStmt.begin(); trueStmt != trueCompoundStmt.end(); trueStmt++)
+        {
+            switch ((*trueStmt)->GetNodeType())
+            {
+            case ASTVARDECL:
+                ((VarDecl *)(*trueStmt))->~VarDecl();
+                break;
+            case ASTEXPR:
+                ((Expr *)(*trueStmt))->~Expr();
+                break;
+            case ASTSELECTSTMT:
+                ((SelectStmt *)(*trueStmt))->~SelectStmt();
+                break;
+            case ASTWHILESTMT:
+                ((WhileStmt *)(*trueStmt))->~WhileStmt();
+                break;
+            case ASTRETURNSTMT:
+                ((ReturnStmt *)(*trueStmt))->~ReturnStmt();
+                break;
+
+            default:
+                break;
+            }
+        }
+        trueCompoundStmt.clear();
+
+        if (haveElse)
+        {
+            vector<ASTNode *>::iterator falseStmt;
+            for (falseStmt = falseCompoundStmt.begin(); falseStmt != falseCompoundStmt.end(); falseStmt++)
+            {
+                switch ((*falseStmt)->GetNodeType())
+                {
+                case ASTVARDECL:
+                    ((VarDecl *)(*falseStmt))->~VarDecl();
+                    break;
+                case ASTEXPR:
+                    ((Expr *)(*falseStmt))->~Expr();
+                    break;
+                case ASTSELECTSTMT:
+                    ((SelectStmt *)(*falseStmt))->~SelectStmt();
+                    break;
+                case ASTWHILESTMT:
+                    ((WhileStmt *)(*falseStmt))->~WhileStmt();
+                    break;
+                case ASTRETURNSTMT:
+                    ((ReturnStmt *)(*falseStmt))->~ReturnStmt();
+                    break;
+
+                default:
+                    break;
+                }
+            }
+            falseCompoundStmt.clear();
+        }
+    }
+
+    void AddTrueStmt(ASTNode *stmt)
+    {
+        trueCompoundStmt.push_back(stmt);
+    }
     void AddFalseStmt(ASTNode *stmt)
     {
         haveElse = true;
@@ -339,6 +468,38 @@ class WhileStmt : public ASTNode
 
 public:
     WhileStmt(Expr *expr = NULL) : expr(expr) {}
+    ~WhileStmt()
+    {
+        expr->~Expr();
+
+        vector<ASTNode *>::iterator stmt;
+        for (stmt = compoundStmt.begin(); stmt != compoundStmt.end(); stmt++)
+        {
+            switch ((*stmt)->GetNodeType())
+            {
+            case ASTVARDECL:
+                ((VarDecl *)(*stmt))->~VarDecl();
+                break;
+            case ASTEXPR:
+                ((Expr *)(*stmt))->~Expr();
+                break;
+            case ASTSELECTSTMT:
+                ((SelectStmt *)(*stmt))->~SelectStmt();
+                break;
+            case ASTWHILESTMT:
+                ((WhileStmt *)(*stmt))->~WhileStmt();
+                break;
+            case ASTRETURNSTMT:
+                ((ReturnStmt *)(*stmt))->~ReturnStmt();
+                break;
+
+            default:
+                break;
+            }
+        }
+        compoundStmt.clear();
+    }
+
     void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); }
 
     const Expr *GetExpr() const { return expr; }
@@ -372,6 +533,49 @@ class ForStmt : public ASTNode
 public:
     ForStmt() : haveForParam1(false), var1(NULL), expr1(NULL), expr2(NULL),
                 haveForParam3(false), var3(NULL), expr3(NULL) {}
+    ~ForStmt()
+    {
+        if (haveForParam1)
+        {
+            var1->~Var();
+            expr1->~Expr();
+        }
+
+        expr2->~Expr();
+
+        if (haveForParam3)
+        {
+            var3->~Var();
+            expr3->~Expr();
+        }
+
+        vector<ASTNode *>::iterator stmt;
+        for (stmt = compoundStmt.begin(); stmt != compoundStmt.end(); stmt++)
+        {
+            switch ((*stmt)->GetNodeType())
+            {
+            case ASTVARDECL:
+                ((VarDecl *)(*stmt))->~VarDecl();
+                break;
+            case ASTEXPR:
+                ((Expr *)(*stmt))->~Expr();
+                break;
+            case ASTSELECTSTMT:
+                ((SelectStmt *)(*stmt))->~SelectStmt();
+                break;
+            case ASTWHILESTMT:
+                ((WhileStmt *)(*stmt))->~WhileStmt();
+                break;
+            case ASTRETURNSTMT:
+                ((ReturnStmt *)(*stmt))->~ReturnStmt();
+                break;
+
+            default:
+                break;
+            }
+        }
+        compoundStmt.clear();
+    }
 
     void AddForParam1(Var *var1, Expr *expr1)
     {
@@ -404,6 +608,7 @@ public:
     bool HaveForParam3() const { return haveForParam3; }
     const Var *GetVar3() const { return var3; }
     const Expr *GetExpr3() const { return expr3; }
+    const vector<ASTNode *> &GetCompoundStmt() const { return compoundStmt; }
 };
 
 /**
@@ -419,6 +624,12 @@ class ReturnStmt : public ASTNode
 
 public:
     ReturnStmt(bool isVoid = true) : isVoid(isVoid), expr(NULL) {}
+    ~ReturnStmt()
+    {
+        if (!isVoid)
+            expr->~Expr();
+    }
+
     void AddExpr(Expr *expr)
     {
         if (isVoid)
@@ -447,6 +658,12 @@ public:
     Var(string id) : id(id), haveSubscript(false), subscript(NULL) {}
     Var(string id, Expr *subscript) : id(id), haveSubscript(true), subscript(subscript) {}
 
+    ~Var()
+    {
+        if (haveSubscript)
+            subscript->~Expr();
+    }
+
     const string GetId() const { return id; }
     bool HaveSubscript() const { return haveSubscript; }
     const Expr *GetExpr() const { return subscript; }
@@ -472,6 +689,12 @@ public:
     SimpleExpr(AddExpr *addExpr) : leftAddExpr(addExpr), haveRightAddExpr(false) { rightAddExpr = NULL; }
     SimpleExpr(AddExpr *leftAddExpr, ASTRelOp relOp, AddExpr *rightAddExpr)
         : leftAddExpr(leftAddExpr), haveRightAddExpr(true), relOp(relOp), rightAddExpr(rightAddExpr) {}
+    ~SimpleExpr()
+    {
+        leftAddExpr->~AddExpr();
+        if (haveRightAddExpr)
+            rightAddExpr->~AddExpr();
+    }
 
     const AddExpr *GetLeftAddExpr() const { return leftAddExpr; }
     bool HaveRightAddExpr() const { return haveRightAddExpr; }
@@ -495,6 +718,18 @@ class AddExpr : public ASTNode
 
 public:
     AddExpr(Term *firstTerm) : firstTerm(firstTerm), areMultipleTerms(false) {}
+    ~AddExpr()
+    {
+        firstTerm->~Term();
+        if (areMultipleTerms)
+        {
+            addOpList.clear();
+            vector<Term *>::iterator term;
+            for (term = termList.begin(); term != termList.end(); term++)
+                (*term)->~Term();
+            termList.clear();
+        }
+    }
 
     void AddTerm(ASTAddOp addOp, Term *term)
     {
@@ -527,6 +762,18 @@ class Term : public ASTNode
 
 public:
     Term(Factor *firstFactor) : firstFactor(firstFactor), areMultipleFactors(false) {}
+    ~Term()
+    {
+        firstFactor->~Factor();
+        if (areMultipleFactors)
+        {
+            mulOpList.clear();
+            vector<Factor *>::iterator factor;
+            for (factor = factorList.begin(); factor != factorList.end(); factor++)
+                (*factor)->~Factor();
+            factorList.clear();
+        }
+    }
 
     void AddTerm(ASTMulOp mulOp, Factor *factor)
     {
@@ -566,6 +813,16 @@ public:
     Factor(Call *callExpr) : expr(NULL), var(NULL), callExpr(callExpr), isNum(false) {}
     Factor(ASTNUM num) : expr(NULL), var(NULL), callExpr(NULL), isNum(true), num(num) {}
 
+    ~Factor()
+    {
+        if (expr != NULL)
+            expr->~Expr();
+        if (var != NULL)
+            var->~Var();
+        if (callExpr != NULL)
+            callExpr->~Call();
+    }
+
     const Expr *GetExpr() const { return expr; }
     const Var *GetVar() const { return var; }
     const Call *GetCallExpr() const { return callExpr; }
@@ -585,6 +842,14 @@ class Call : public ASTNode
 
 public:
     Call(string id) : id(id) {}
+    ~Call()
+    {
+        vector<Expr *>::iterator arg;
+        for (arg = argList.begin(); arg != argList.end(); arg++)
+            (*arg)->~Expr();
+        argList.clear();
+    }
+
     void AddArg(Expr *arg) { argList.push_back(arg); }
 
     const string GetId() const { return id; }
