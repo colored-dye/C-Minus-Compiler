@@ -2,7 +2,7 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-14 18:09:22
+ * @LastEditTime: 2022-05-14 20:00:24
  * @FilePath: /C-Minus-Compiler/src/main.c
  * @Description:
  *
@@ -27,17 +27,13 @@ int main(int argc, char *argv[])
     FILE *input = fopen(argv[1], "rb");
     yyin = input;
     if (yyparse())
-    {
       printf("Parse failure\n");
-    }
     fclose(input);
   }
   else
   {
     if (yyparse())
-    {
       printf("Parse failure\n");
-    }
   }
 
   if (g_syntaxError)
@@ -57,7 +53,7 @@ int main(int argc, char *argv[])
   {
     puts("Error found in Semantic Analysis");
   }
-  
+
   // 文字形式输出语法树
   printTree(g_root);
 

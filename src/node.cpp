@@ -2,7 +2,7 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-14 09:58:41
+ * @LastEditTime: 2022-05-14 20:46:14
  * @FilePath: /C-Minus-Compiler/src/node.cpp
  * @Description:
  *
@@ -10,45 +10,10 @@
  */
 
 #include "node.hpp"
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-
-const char *NodeNames[] = {
-    "Program",        // entire program
-    "GlobalDeclList", // list of global declarations
-    "Decl",           // abstract declarations
-    "VarDecl",        // specific variable declaration
-    "FunDecl",        // specific function declaration
-    "TypeSpec",       // type specification
-    "Params",
-    "ParamList",
-    "Param",
-    "CompountStmt",
-    "LocalDecl",
-    "StmtList",
-    "Stmt",
-    "ExprStmt",
-    "Expr",
-    "SelectionStmt",
-    "WhileStmt",
-    "ForStmt",
-    "For_param1",
-    "For_param2",
-    "For_param3",
-    "ReturnStmt",
-    "Var",
-    "SimpleExpr",
-    "AddExpr",
-    "RelOp",
-    "AddOp",
-    "Term",
-    "Factor",
-    "MulOp",
-    "Call",
-    "Args",
-    "ArgList",
-};
 
 struct Node *createNode(void)
 {
@@ -146,3 +111,4 @@ struct Node *makeNode(const char *name)
   strncpy(ret->name, name, NAME_LENGTH);
   return ret;
 }
+
