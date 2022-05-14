@@ -1,12 +1,12 @@
 /*
- * @Author: SiO-2
+ * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-15 00:27:23
+ * @LastEditTime: 2022-05-15 00:38:44
  * @FilePath: /C-Minus-Compiler/src/node.hpp
  * @Description:
  *
- * Copyright (c) 2022 by SiO-2, All Rights Reserved.
+ * Copyright (c) 2022 by colored-dye, All Rights Reserved.
  */
 #ifndef _NODE_H_
 #define _NODE_H_
@@ -15,6 +15,8 @@
 #include "ast.hpp"
 
 #include <stdlib.h>
+#include <string.h>
+#include <strings.h>
 
 #define NAME_LENGTH 32
 #define STRING_LENGTH 128
@@ -107,12 +109,12 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
         return;
 
     ASTNode *curASTNode = NULL;
-    /*
-    Program -> GlobalDeclList -> Decl -> VarDecl
-                                      -> FunDecl
-    */
     if (parserNode->name == NodeNames[0]) // Program 0
     {
+        /*
+        Program -> GlobalDeclList -> Decl -> VarDecl
+                                          -> FunDecl
+        */
         curASTNode = new Program();
         curASTNode->SetASTNodeData(parserNode->lineno, parserNode->column, ASTPROGRAM);
         struct Node *decl = parserNode->child->child; // 跳过非 ASTNode 的 GlobalDeclList
@@ -131,13 +133,13 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
             decl = decl->next_sib;
         }
     }
-    /*
-    VarDecl -> TypeSpec -> Type
-            -> ID
-            -> NUM
-    */
     else if (parserNode->name == NodeNames[3]) // VarDecl 3
     {
+        /*
+        VarDecl -> TypeSpec -> Type
+                -> ID
+                -> NUM
+        */
         ASTTypeSpec typeSpec = (parserNode->child->child->str_term == "INT") ? ASTINT : ASTREAL; // VarDecl->TypeSpec->Type
         string id = string(parserNode->child->next_sib->str_term);
         if (parserNode->child->next_sib->next_sib == NULL)
@@ -148,137 +150,191 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
             curASTNode = new VarDecl(typeSpec, id, arrayLength);
         }
     }
-    /*
-    FunDecl -> TypeSpec -> Type
-            -> ID
-            -> Params -> ParamList -> Param
-                      -> Void
-            -> CompoundStmt
-    */
     else if (parserNode->name == NodeNames[4]) // FunDecl 4
     {
+        /*
+        FunDecl -> TypeSpec -> Type
+                -> ID
+                -> Params -> ParamList -> Param
+                          -> Void
+                -> CompoundStmt
+        */
     }
-    /*
-    Param -> TypeSpec -> Type
-          -> ID
-          -> [] ?
-    */
     else if (parserNode->name == NodeNames[8]) // Param 8
     {
+        /*
+        Param -> TypeSpec -> Type
+              -> ID
+              -> [] ?
+        */
     }
-    /*
-    CompoundStmt -> LocalDecl -> VarDecl
-                 -> StmtList -> Stmt - CompoundStmt
-                                     - Expr
-                                     - SelectStmt
-                                     - WhileStmt
-                                     - ForStmt
-                                     - ReturnStmt
-    */
     else if (parserNode->name == NodeNames[9]) // CompoundStmt 9
     {
+        /*
+        CompoundStmt -> LocalDecl -> VarDecl
+                     -> StmtList -> Stmt - CompoundStmt
+                                         - Expr
+                                         - SelectStmt
+                                         - WhileStmt
+                                         - ForStmt
+                                         - ReturnStmt
+        */
     }
-    /*
-    Expr -> SimpleExpr
-         -> Assign -> Var
-                   -> Expr
-    */
     else if (parserNode->name == NodeNames[14]) // Expr 14
     {
+        /*
+        Expr -> SimpleExpr
+             -> Assign -> Var
+                       -> Expr
+        */
     }
-    /*
-    SelectStmt -> Expr
-               -> Stmt - CompoundStmt
-                       - Expr
-                       - SelectStmt
-                       - WhileStmt
-                       - ForStmt
-                       - ReturnStmt
-               -> Stmt
-    */
     else if (parserNode->name == NodeNames[15]) // SelectStmt 15
     {
+        /*
+        SelectStmt -> Expr
+                   -> Stmt - CompoundStmt
+                           - Expr
+                           - SelectStmt
+                           - WhileStmt
+                           - ForStmt
+                           - ReturnStmt
+                   -> Stmt
+        */
     }
-    /*
-    WhileStmt -> Expr
-              -> Stmt - CompoundStmt
-                      - Expr
-                      - SelectStmt
-                      - WhileStmt
-                      - ForStmt
-                      - ReturnStmt
-    */
     else if (parserNode->name == NodeNames[16]) // WhileStmt 16
     {
+        /*
+        WhileStmt -> Expr
+                  -> Stmt - CompoundStmt
+                          - Expr
+                          - SelectStmt
+                          - WhileStmt
+                          - ForStmt
+                          - ReturnStmt
+        */
     }
-    /*
-    ForStmt -> For_param1 -> Var
-                          -> Expr
-            -> For_param2 -> Expr
-            -> For_param3 -> Var
-                          -> Expr
-            -> Stmt - CompoundStmt
-                    - Expr
-                    - SelectStmt
-                    - WhileStmt
-                    - ForStmt
-                    - ReturnStmt
-    */
     else if (parserNode->name == NodeNames[17]) // ForStmt 17
     {
+        /*
+        ForStmt -> For_param1 -> Var
+                            -> Expr
+                -> For_param2 -> Expr
+                -> For_param3 -> Var
+                            -> Expr
+                -> Stmt - CompoundStmt
+                        - Expr
+                        - SelectStmt
+                        - WhileStmt
+                        - ForStmt
+                        - ReturnStmt
+        */
     }
-    /*
-    ReturnStmt -> Expr
-    */
     else if (parserNode->name == NodeNames[21]) // ReturnStmt 21
     {
+        /*
+        ReturnStmt -> Expr
+        */
     }
-    /*
-    Var -> ID
-        -> Expr
-    */
     else if (parserNode->name == NodeNames[22]) // Var 22
     {
+        /*
+        Var -> ID
+            -> Expr
+        */
     }
-    /*
-    SimpleExpr -> AddExpr
-               -> RelOp
-               -> AddExpr
-    */
     else if (parserNode->name == NodeNames[23]) // SimpleExpr 23
     {
+        /*
+        SimpleExpr -> AddExpr
+                   -> RelOp
+                   -> AddExpr
+        */
     }
-    /*
-    AddExpr -> AddExpr
-            -> AddOp
-            -> Term
-    */
     else if (parserNode->name == NodeNames[24]) // AddExpr 24
     {
+        /*
+        AddExpr -> AddExpr
+                -> AddOp
+                -> Term
+        */
     }
-    /*
-    Term -> Term
-         -> MulOp
-         -> Factor
-    */
     else if (parserNode->name == NodeNames[27]) // Term 27
     {
+        /*
+        Term -> Term
+             -> MulOp
+             -> Factor
+        */
+        struct Node *p = parserNode->child;
+        vector<Node *> stack;
+        while (p && strcasecmp(p->name, "Term"))
+        {
+            stack.push_back(p);
+            p = p->child;
+        }
+        curASTNode = new Term((Factor *)ParserTreeToAST(p->child));
+        stack.pop_back();
+        while (!stack.empty())
+        {
+            p = stack.back();
+            stack.pop_back();
+            ASTMulOp mulop;
+            if (p->next_sib->int_term == MUL)
+            {
+                mulop = ASTMUL;
+            }
+            else
+            {
+                mulop = ASTDIV;
+            }
+            ((Term *)curASTNode)->AddTerm(mulop, (Factor *)ParserTreeToAST(p->next_sib->next_sib));
+        }
     }
-    /*
-    Factor - Expr
-           - Var
-           - Call
-           - NUM
-    */
     else if (parserNode->name == NodeNames[28]) // Factor 28
     {
+        /*
+        Factor - Expr
+               - Var
+               - Call
+               - NUM
+        */
+        if (!strncasecmp(parserNode->child->name, "Expr", 4))
+        {
+            curASTNode = new Factor((Expr *)(ParserTreeToAST(parserNode->child)));
+        }
+        else if (!strncasecmp(parserNode->child->name, "Var", 3))
+        {
+            curASTNode = new Factor((Var *)ParserTreeToAST(parserNode->child));
+        }
+        else if (!strncasecmp(parserNode->child->name, "Call", 4))
+        {
+            curASTNode = new Factor((Call *)ParserTreeToAST(parserNode->child));
+        }
+        else if (parserNode->child->termKind == TermKNum)
+        {
+            if (parserNode->child->is_int)
+            {
+                curASTNode = new Factor(parserNode->child->int_term);
+            }
+            else
+            {
+                curASTNode = new Factor(parserNode->child->real_term);
+            }
+        }
     }
-    /*
-    Call -> ID
-         -> Args -> ArgList -> Expr
-    */
     else if (parserNode->name == NodeNames[30]) // Call 30
     {
+        /*
+        Call -> ID
+             -> Args -> ArgList -> Expr
+        */
+        curASTNode = new Call(parserNode->child->str_term);
+        struct Node *p = parserNode->child->next_sib;
+        while (p)
+        {
+            ((Call *)curASTNode)->AddArg((Expr *)ParserTreeToAST(p));
+            p = p->next_sib;
+        }
     }
     else // other node
     {
