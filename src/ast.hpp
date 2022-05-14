@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-14 18:33:09
+ * @LastEditTime: 2022-05-14 22:36:47
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -11,8 +11,6 @@
 
 #ifndef CMinusCompiler_AST_H_
 #define CMinusCompiler_AST_H_
-
-#include "node.hpp"
 
 #include <vector>
 #include <string>
@@ -101,6 +99,7 @@ class Program;
 class VarDecl;
 class FunDecl;
 class Param;
+class CompoundStmt;
 class Expr;
 class SelectStmt;
 class WhileStmt;
@@ -213,7 +212,7 @@ public:
  * @param {string} id - identifier.
  * @param {bool} haveParam - flag of parameters. By default there are no parameters.
  * @param {vector<Param*>} paramList - comma-separated list of parameters inside parentheses.
- * @param {vector<ASTNode*>} compoundStmt - compound statement consists of curly brackets
+ * @param {CompoundStmt*>} compoundStmt - compound statement consists of curly brackets
  *  surrounding a set of declarations and statements.
  */
 class FunDecl : public ASTNode
@@ -222,11 +221,11 @@ class FunDecl : public ASTNode
     string id;
     bool haveParam; // Is there an param.
     vector<Param *> paramList;
-    vector<ASTNode *> compoundStmt;
+    CompoundStmt *compoundStmt;
 
 public:
     FunDecl(ASTTypeSpec typeSpec, string id, bool haveParam = false)
-        : typeSpec(typeSpec), id(id), haveParam(haveParam) {}
+        : typeSpec(typeSpec), id(id), haveParam(haveParam) { compoundStmt = NULL; }
     ~FunDecl() {}
 
     void AddParam(Param *param)
@@ -236,13 +235,13 @@ public:
         paramList.push_back(param);
     }
 
-    void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); };
+    void AddCompoundStmt(CompoundStmt *compoundStmt) { FunDecl::compoundStmt = compoundStmt; };
 
     ASTTypeSpec GetTypeSpec() const { return typeSpec; }
     const string GetId() const { return id; }
     bool HaveParam() const { return haveParam; }
     const vector<Param *> &GetParamList() const { return paramList; }
-    const vector<ASTNode *> &GetCompoundStmt() const { return compoundStmt; }
+    const CompoundStmt *GetCompoundStmt() const { return compoundStmt; }
 };
 
 /**
@@ -270,6 +269,22 @@ public:
     ASTTypeSpec GetTypeSpec() const { return typeSpec; }
     const string GetId() const { return id; }
     bool IsArray() const { return isArray; }
+};
+
+/**
+ * @brief compound statement consists of curly brackets surrounding a set of declarations and statements.
+ * @param {vector<ASTNode*>} declStmtList
+ */
+class CompoundStmt : public ASTNode
+{
+    vector<ASTNode *> declStmtList;
+
+public:
+    CompoundStmt() {}
+    ~CompoundStmt() {}
+
+    void AddDecl(ASTNode *decl) { declStmtList.push_back(decl); };
+    void AddStmt(ASTNode *stmt) { declStmtList.push_back(stmt); };
 };
 
 /**
@@ -307,32 +322,32 @@ public:
  *  value causes execution of the first statement; a zero value causes execution of the
  *  second statement, if it exists.
  * @param {Expr*} expr - the expression to evaluate.
- * @param {vector<ASTNode*>} trueCompoundStmt - statement list for true.
+ * @param {vector<ASTNode*>} trueStmtList - statement list for true.
  * @param {bool} haveElse - false by default.
- * @param {vector<ASTNode*>} falseCompoundStmt - statement list for false.
+ * @param {vector<ASTNode*>} falseStmtList - statement list for false.
  */
 class SelectStmt : public ASTNode
 {
     Expr *expr;
-    vector<ASTNode *> trueCompoundStmt;
+    vector<ASTNode *> trueStmtList;
     bool haveElse;
-    vector<ASTNode *> falseCompoundStmt;
+    vector<ASTNode *> falseStmtList;
 
 public:
     SelectStmt(Expr *expr = NULL) : expr(expr) { haveElse = false; }
     ~SelectStmt() {}
 
-    void AddTrueStmt(ASTNode *stmt) { trueCompoundStmt.push_back(stmt); }
+    void AddTrueStmt(ASTNode *stmt) { trueStmtList.push_back(stmt); }
     void AddFalseStmt(ASTNode *stmt)
     {
         haveElse = true;
-        falseCompoundStmt.push_back(stmt);
+        falseStmtList.push_back(stmt);
     }
 
     const Expr *GetExpr() const { return expr; }
-    const vector<ASTNode *> &GetTrueCompoundStmt() const { return trueCompoundStmt; }
+    const vector<ASTNode *> &GetTrueStmtList() const { return trueStmtList; }
     bool HaveElse() const { return haveElse; }
-    const vector<ASTNode *> &GetFalseCompoundStmt() const { return falseCompoundStmt; }
+    const vector<ASTNode *> &GetFalseStmtList() const { return falseStmtList; }
 };
 
 /**
@@ -340,21 +355,21 @@ public:
  *  executing the statement if the expression evaluates to a nonzero value, ending when the
  *  expression evaluates to 0.
  * @param {Expr*} expr - the expression to evaluate.
- * @param {vector<ASTNode*>} compoundStmt - statement list.
+ * @param {vector<ASTNode*>} stmtList - statement list.
  */
 class WhileStmt : public ASTNode
 {
     Expr *expr;
-    vector<ASTNode *> compoundStmt;
+    vector<ASTNode *> stmtList;
 
 public:
     WhileStmt(Expr *expr = NULL) : expr(expr) {}
     ~WhileStmt() {}
 
-    void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); }
+    void AddStmt(ASTNode *stmt) { stmtList.push_back(stmt); }
 
     const Expr *GetExpr() const { return expr; }
-    const vector<ASTNode *> &GetCompoundStmt() const { return compoundStmt; }
+    const vector<ASTNode *> &GetStmtList() const { return stmtList; }
 };
 
 /**
@@ -379,7 +394,7 @@ class ForStmt : public ASTNode
     Var *var3;
     Expr *expr3;
 
-    vector<ASTNode *> compoundStmt;
+    vector<ASTNode *> stmtList;
 
 public:
     ForStmt() : haveForParam1(false), var1(NULL), expr1(NULL), expr2(NULL),
@@ -408,7 +423,7 @@ public:
         }
     }
 
-    void AddStmt(ASTNode *stmt) { compoundStmt.push_back(stmt); }
+    void AddStmt(ASTNode *stmt) { stmtList.push_back(stmt); }
 
     bool HaveForParam1() const { return haveForParam1; }
     const Var *GetVar1() const { return var1; }
@@ -417,7 +432,7 @@ public:
     bool HaveForParam3() const { return haveForParam3; }
     const Var *GetVar3() const { return var3; }
     const Expr *GetExpr3() const { return expr3; }
-    const vector<ASTNode *> &GetCompoundStmt() const { return compoundStmt; }
+    const vector<ASTNode *> &GetStmtList() const { return stmtList; }
 };
 
 /**
