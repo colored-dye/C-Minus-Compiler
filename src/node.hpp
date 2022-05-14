@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-14 22:10:33
+ * @LastEditTime: 2022-05-14 22:41:08
  * @FilePath: /C-Minus-Compiler/src/node.hpp
  * @Description:
  *
@@ -159,6 +159,9 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     {
     }
     else if (parserNode->name == NodeNames[8]) // Param 8
+    {
+    }
+    else if (parserNode->name == NodeNames[9]) // CompoundStmt 9
     {
     }
     else if (parserNode->name == NodeNames[14]) // Expr 14
