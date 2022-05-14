@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:29
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-14 22:00:29
+ * @LastEditTime: 2022-05-15 03:09:41
  * @FilePath: /C-Minus-Compiler/src/asttest.cpp
  * @Description:
  *
@@ -17,14 +17,14 @@ using namespace std;
 int main()
 {
     Program program1;
-    program1.SetASTNodeData(1, 1, ASTPROGRAM);
+    program1.SetCoordinate(1, 1);
 
     VarDecl varDecl1(ASTINT, "a");
-    varDecl1.SetASTNodeData(2, 1, ASTVARDECL);
+    varDecl1.SetCoordinate(2, 1);
     program1.AddDecl(&varDecl1);
 
     FunDecl funDecl1(ASTINT, "main");
-    funDecl1.SetASTNodeData(4, 1, ASTFUNDECL);
+    funDecl1.SetCoordinate(4, 1);
     program1.AddDecl(&funDecl1);
 
     bool isArray = varDecl1.IsArray();

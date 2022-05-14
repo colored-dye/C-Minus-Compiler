@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-15 02:45:34
+ * @LastEditTime: 2022-05-15 03:52:59
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -120,10 +120,18 @@ public:
         : lineno(lineno), column(column), nodeType(nodeType) {}
     virtual ~ASTNode() {}
 
-    void SetLineno(int setLineno) { lineno = setLineno; }
-    int GetLineno() const { return lineno; }
+    /**
+     * @brief To set the coordinate of a node, it needs to be called manually every time a node is created.
+     * @param {int} lineno
+     * @param {int} column
+     */
+    void SetCoordinate(int lineno, int column)
+    {
+        ASTNode::lineno = lineno;
+        ASTNode::column = column;
+    }
 
-    void SetColumn(int setColumn) { column = setColumn; }
+    int GetLineno() const { return lineno; }
     int GetColumn() const { return column; }
 
     /**
@@ -133,21 +141,6 @@ public:
      */
     void SetNodeType(ASTNodeType setNodeType) { nodeType = setNodeType; }
     ASTNodeType GetNodeType() const { return nodeType; }
-
-    /**
-     * @brief To set the basic information of a node, it needs to be called manually every time a node is created.
-     * @param {int} lineno
-     * @param {int} column
-     * @param {ASTNodeType} nodeType - ASTNODE, ASTPROGRAM, ASTVARDECL, ASTFUNDECL, ASTPARAM,
-     *  ASTCOMPOUNDSTMT, ASTEXPR, ASTVAR, ASTSIMPLEEXPR, ASTADDEXPR, ASTTERM, ASTFACTOR, ASTCALL,
-     *  ASTSELECTSTMT, ASTWHILESTMT, ASTFORSTMT, ASTRETURNSTMT;
-     */
-    void SetASTNodeData(int lineno, int column, ASTNodeType nodeType)
-    {
-        SetLineno(lineno);
-        SetColumn(column);
-        SetNodeType(nodeType);
-    }
 };
 
 /**
@@ -161,7 +154,7 @@ class Program : public ASTNode
     vector<ASTNode *> declList;
 
 public:
-    Program() {}
+    Program() { SetNodeType(ASTPROGRAM); }
     ~Program() {}
 
     void AddDecl(ASTNode *decl) { declList.push_back(decl); }
@@ -185,10 +178,10 @@ class VarDecl : public ASTNode
 
 public:
     VarDecl(ASTTypeSpec typeSpec, string id)
-        : typeSpec(typeSpec), id(id), isArray(false) {}
+        : typeSpec(typeSpec), id(id), isArray(false) { SetNodeType(ASTVARDECL); }
 
     VarDecl(ASTTypeSpec typeSpec, string id, int arrayLength)
-        : typeSpec(typeSpec), id(id), isArray(true), arrayLength(arrayLength) {}
+        : typeSpec(typeSpec), id(id), isArray(true), arrayLength(arrayLength) { SetNodeType(ASTVARDECL); }
 
     ~VarDecl(){};
 
@@ -217,7 +210,12 @@ class FunDecl : public ASTNode
 
 public:
     FunDecl(ASTTypeSpec typeSpec, string id, bool haveParam = false)
-        : typeSpec(typeSpec), id(id), haveParam(haveParam) { compoundStmt = NULL; }
+        : typeSpec(typeSpec), id(id), haveParam(haveParam)
+    {
+        compoundStmt = NULL;
+        SetNodeType(ASTCOMPOUNDSTMT);
+    }
+
     ~FunDecl() {}
 
     void AddParam(Param *param)
@@ -254,7 +252,7 @@ class Param : public ASTNode
 
 public:
     Param(ASTTypeSpec typeSpec, string id, bool isArray = false)
-        : typeSpec(typeSpec), id(id), isArray(isArray) {}
+        : typeSpec(typeSpec), id(id), isArray(isArray) { SetNodeType(ASTPARAM); }
 
     ~Param(){};
 
@@ -272,7 +270,7 @@ class CompoundStmt : public ASTNode
     vector<ASTNode *> declStmtList;
 
 public:
-    CompoundStmt() {}
+    CompoundStmt() { SetNodeType(ASTCOMPOUNDSTMT); }
     ~CompoundStmt() {}
 
     void AddDecl(ASTNode *decl) { declStmtList.push_back(decl); };
@@ -296,10 +294,10 @@ class Expr : public ASTNode
 
 public:
     Expr(SimpleExpr *simpleExpr)
-        : isAssignStmt(false), var(NULL), expr(NULL), simpleExpr(simpleExpr) {}
+        : isAssignStmt(false), var(NULL), expr(NULL), simpleExpr(simpleExpr) { SetNodeType(ASTEXPR); }
 
     Expr(Var *var, Expr *expr)
-        : isAssignStmt(true), var(var), expr(expr), simpleExpr(NULL) {}
+        : isAssignStmt(true), var(var), expr(expr), simpleExpr(NULL) { SetNodeType(ASTEXPR); }
 
     ~Expr() {}
 
@@ -327,9 +325,9 @@ class SelectStmt : public ASTNode
 
 public:
     SelectStmt(Expr *expr, ASTNode *trueStmt)
-        : expr(expr), trueStmt(trueStmt), haveElse(false), falseStmt(NULL) {}
+        : expr(expr), trueStmt(trueStmt), haveElse(false), falseStmt(NULL) { SetNodeType(ASTSELECTSTMT); }
     SelectStmt(Expr *expr, ASTNode *trueStmt, ASTNode *falseStmt)
-        : expr(expr), trueStmt(trueStmt), haveElse(true), falseStmt(falseStmt) {}
+        : expr(expr), trueStmt(trueStmt), haveElse(true), falseStmt(falseStmt) { SetNodeType(ASTSELECTSTMT); }
     ~SelectStmt() {}
 
     const Expr *GetExpr() const { return expr; }
@@ -351,7 +349,7 @@ class WhileStmt : public ASTNode
     ASTNode *stmt;
 
 public:
-    WhileStmt(Expr *expr, ASTNode *stmt) : expr(expr), stmt(stmt) {}
+    WhileStmt(Expr *expr, ASTNode *stmt) : expr(expr), stmt(stmt) { SetNodeType(ASTWHILESTMT); }
     ~WhileStmt() {}
 
     const Expr *GetExpr() const { return expr; }
@@ -386,7 +384,7 @@ class ForStmt : public ASTNode
 public:
     ForStmt(Expr *expr2, ASTNode *stmt)
         : haveForParam1(false), var1(NULL), expr1(NULL), expr2(expr2),
-          haveForParam3(false), var3(NULL), expr3(NULL), stmt(stmt) {}
+          haveForParam3(false), var3(NULL), expr3(NULL), stmt(stmt) { SetNodeType(ASTFORSTMT); }
     ~ForStmt() {}
 
     void AddForParam1(Var *var1, Expr *expr1)
@@ -431,7 +429,7 @@ class ReturnStmt : public ASTNode
     Expr *expr;
 
 public:
-    ReturnStmt(bool isVoid = true) : isVoid(isVoid), expr(NULL) {}
+    ReturnStmt() : isVoid(true), expr(NULL) { SetNodeType(ASTRETURNSTMT); }
     ~ReturnStmt() {}
 
     void AddExpr(Expr *expr)
@@ -459,8 +457,8 @@ class Var : public ASTNode
     Expr *subscript;
 
 public:
-    Var(string id) : id(id), haveSubscript(false), subscript(NULL) {}
-    Var(string id, Expr *subscript) : id(id), haveSubscript(true), subscript(subscript) {}
+    Var(string id) : id(id), haveSubscript(false), subscript(NULL) { SetNodeType(ASTVAR); }
+    Var(string id, Expr *subscript) : id(id), haveSubscript(true), subscript(subscript) { SetNodeType(ASTVAR); }
 
     ~Var() {}
 
@@ -486,9 +484,14 @@ class SimpleExpr : public ASTNode
     AddExpr *rightAddExpr;
 
 public:
-    SimpleExpr(AddExpr *addExpr) : leftAddExpr(addExpr), haveRightAddExpr(false) { rightAddExpr = NULL; }
+    SimpleExpr(AddExpr *addExpr) : leftAddExpr(addExpr), haveRightAddExpr(false)
+    {
+        rightAddExpr = NULL;
+        SetNodeType(ASTSIMPLEEXPR);
+    }
     SimpleExpr(AddExpr *leftAddExpr, ASTRelOp relOp, AddExpr *rightAddExpr)
-        : leftAddExpr(leftAddExpr), haveRightAddExpr(true), relOp(relOp), rightAddExpr(rightAddExpr) {}
+        : leftAddExpr(leftAddExpr), haveRightAddExpr(true), relOp(relOp), rightAddExpr(rightAddExpr) { SetNodeType(ASTSIMPLEEXPR); }
+
     ~SimpleExpr() {}
 
     const AddExpr *GetLeftAddExpr() const { return leftAddExpr; }
@@ -512,7 +515,7 @@ class AddExpr : public ASTNode
     vector<Term *> termList;
 
 public:
-    AddExpr(Term *firstTerm) : firstTerm(firstTerm), areMultipleTerms(false) {}
+    AddExpr(Term *firstTerm) : firstTerm(firstTerm), areMultipleTerms(false) { SetNodeType(ASTADDEXPR); }
     ~AddExpr() {}
 
     void AddTerm(ASTAddOp addOp, Term *term)
@@ -545,10 +548,10 @@ class Term : public ASTNode
     vector<Factor *> factorList;
 
 public:
-    Term(Factor *firstFactor) : firstFactor(firstFactor), areMultipleFactors(false) {}
+    Term(Factor *firstFactor) : firstFactor(firstFactor), areMultipleFactors(false) { SetNodeType(ASTTERM); }
     ~Term() {}
 
-    void AddTerm(ASTMulOp mulOp, Factor *factor)
+    void AddFactor(ASTMulOp mulOp, Factor *factor)
     {
         if (!areMultipleFactors)
             areMultipleFactors = true;
@@ -583,14 +586,27 @@ class Factor : public ASTNode
     float numReal;
 
 public:
-    Factor(Expr *expr) : expr(expr), var(NULL), callExpr(NULL), isInt(false) { isReal = false; }
-    Factor(Var *var) : expr(NULL), var(var), callExpr(NULL), isInt(false) { isReal = false; }
-    Factor(Call *callExpr) : expr(NULL), var(NULL), callExpr(callExpr), isInt(false) { isReal = false; }
-    Factor(int num) : expr(NULL), var(NULL), callExpr(NULL), isInt(true), numInt(num), isReal(false) {}
+    Factor(Expr *expr) : expr(expr), var(NULL), callExpr(NULL), isInt(false)
+    {
+        isReal = false;
+        SetNodeType(ASTFACTOR);
+    }
+    Factor(Var *var) : expr(NULL), var(var), callExpr(NULL), isInt(false)
+    {
+        isReal = false;
+        SetNodeType(ASTFACTOR);
+    }
+    Factor(Call *callExpr) : expr(NULL), var(NULL), callExpr(callExpr), isInt(false)
+    {
+        isReal = false;
+        SetNodeType(ASTFACTOR);
+    }
+    Factor(int num) : expr(NULL), var(NULL), callExpr(NULL), isInt(true), numInt(num), isReal(false) { SetNodeType(ASTFACTOR); }
     Factor(float num) : expr(NULL), var(NULL), callExpr(NULL), isInt(false)
     {
         isReal = true;
         numReal = num;
+        SetNodeType(ASTFACTOR);
     }
 
     ~Factor() {}
@@ -615,7 +631,7 @@ class Call : public ASTNode
     vector<Expr *> argList;
 
 public:
-    Call(string id) : id(id) {}
+    Call(string id) : id(id) { SetNodeType(ASTCALL); }
     ~Call() {}
 
     void AddArg(Expr *arg) { argList.push_back(arg); }
