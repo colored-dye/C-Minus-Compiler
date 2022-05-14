@@ -1,7 +1,7 @@
 %{
   #include <stdio.h>
   #include "y.tab.h"
-  #include "node.h"
+  #include "node.hpp"
   extern YYSTYPE yylval;
   int yycolumn = 1;
 

@@ -1,7 +1,7 @@
 %{
   #include <stdio.h>
   #include <string.h>
-  #include "node.h"
+  #include "node.hpp"
 
   #define YYDEBUG 1
 

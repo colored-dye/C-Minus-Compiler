@@ -5,7 +5,7 @@
  * 单向链表形式的符号表
  */
 
-#include "node.h"
+#include "node.hpp"
 
 extern struct SymTable* g_SymTableStackTop;
 extern struct SymTable* g_SymTableStackBottom;

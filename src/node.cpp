@@ -2,14 +2,14 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-10 11:25:18
- * @FilePath: /C-Minus-Compiler/src/node.c
+ * @LastEditTime: 2022-05-14 09:58:41
+ * @FilePath: /C-Minus-Compiler/src/node.cpp
  * @Description:
  *
  * Copyright (c) 2022 by colored-dye, All Rights Reserved.
  */
 
-#include "node.h"
+#include "node.hpp"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>

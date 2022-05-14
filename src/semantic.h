@@ -2,7 +2,7 @@
 #define _SEMANTIC_H_
 
 #include "symtable.h"
-#include "node.h"
+#include "node.hpp"
 
 typedef enum {
     SEReturnType // 返回值后表达式类型与函数定义不符

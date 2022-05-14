@@ -1,5 +1,5 @@
 #include "symtable.h"
-#include "node.h"
+#include "node.hpp"
 #include <stdio.h>
 #include <string.h>
 

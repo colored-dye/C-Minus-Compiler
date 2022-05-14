@@ -1,6 +1,9 @@
 {
     "C_Cpp.errorSquiggles": "Enabled",
     "files.associations": {
-        "random": "cpp"
+        "random": "cpp",
+        "semantic.h": "c",
+        "node.hpp": "c",
+        "symtable.h": "c"
     }
 }

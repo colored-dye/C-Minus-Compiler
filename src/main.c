@@ -2,7 +2,7 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-09 13:10:43
+ * @LastEditTime: 2022-05-14 18:09:22
  * @FilePath: /C-Minus-Compiler/src/main.c
  * @Description:
  *
@@ -10,7 +10,7 @@
  */
 
 #include <stdio.h>
-#include "node.h"
+#include "node.hpp"
 #include "semantic.h"
 #include "y.tab.h"
 
