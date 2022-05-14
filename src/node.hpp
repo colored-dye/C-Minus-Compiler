@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-14 22:41:08
+ * @LastEditTime: 2022-05-15 00:27:23
  * @FilePath: /C-Minus-Compiler/src/node.hpp
  * @Description:
  *
@@ -151,49 +151,132 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     /*
     FunDecl -> TypeSpec -> Type
             -> ID
-            -> Params -> Params -> ParamList -> Param
-                                -> Void
+            -> Params -> ParamList -> Param
+                      -> Void
             -> CompoundStmt
     */
     else if (parserNode->name == NodeNames[4]) // FunDecl 4
     {
     }
+    /*
+    Param -> TypeSpec -> Type
+          -> ID
+          -> [] ?
+    */
     else if (parserNode->name == NodeNames[8]) // Param 8
     {
     }
+    /*
+    CompoundStmt -> LocalDecl -> VarDecl
+                 -> StmtList -> Stmt - CompoundStmt
+                                     - Expr
+                                     - SelectStmt
+                                     - WhileStmt
+                                     - ForStmt
+                                     - ReturnStmt
+    */
     else if (parserNode->name == NodeNames[9]) // CompoundStmt 9
     {
     }
+    /*
+    Expr -> SimpleExpr
+         -> Assign -> Var
+                   -> Expr
+    */
     else if (parserNode->name == NodeNames[14]) // Expr 14
     {
     }
+    /*
+    SelectStmt -> Expr
+               -> Stmt - CompoundStmt
+                       - Expr
+                       - SelectStmt
+                       - WhileStmt
+                       - ForStmt
+                       - ReturnStmt
+               -> Stmt
+    */
     else if (parserNode->name == NodeNames[15]) // SelectStmt 15
     {
     }
+    /*
+    WhileStmt -> Expr
+              -> Stmt - CompoundStmt
+                      - Expr
+                      - SelectStmt
+                      - WhileStmt
+                      - ForStmt
+                      - ReturnStmt
+    */
     else if (parserNode->name == NodeNames[16]) // WhileStmt 16
     {
     }
+    /*
+    ForStmt -> For_param1 -> Var
+                          -> Expr
+            -> For_param2 -> Expr
+            -> For_param3 -> Var
+                          -> Expr
+            -> Stmt - CompoundStmt
+                    - Expr
+                    - SelectStmt
+                    - WhileStmt
+                    - ForStmt
+                    - ReturnStmt
+    */
     else if (parserNode->name == NodeNames[17]) // ForStmt 17
     {
     }
+    /*
+    ReturnStmt -> Expr
+    */
     else if (parserNode->name == NodeNames[21]) // ReturnStmt 21
     {
     }
+    /*
+    Var -> ID
+        -> Expr
+    */
     else if (parserNode->name == NodeNames[22]) // Var 22
     {
     }
+    /*
+    SimpleExpr -> AddExpr
+               -> RelOp
+               -> AddExpr
+    */
     else if (parserNode->name == NodeNames[23]) // SimpleExpr 23
     {
     }
+    /*
+    AddExpr -> AddExpr
+            -> AddOp
+            -> Term
+    */
     else if (parserNode->name == NodeNames[24]) // AddExpr 24
     {
     }
+    /*
+    Term -> Term
+         -> MulOp
+         -> Factor
+    */
     else if (parserNode->name == NodeNames[27]) // Term 27
     {
     }
+    /*
+    Factor - Expr
+           - Var
+           - Call
+           - NUM
+    */
     else if (parserNode->name == NodeNames[28]) // Factor 28
     {
     }
+    /*
+    Call -> ID
+         -> Args -> ArgList -> Expr
+    */
     else if (parserNode->name == NodeNames[30]) // Call 30
     {
     }

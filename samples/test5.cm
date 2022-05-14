@@ -1,7 +1,5 @@
-int test2(void)
+int test2(int b[])
 {
-    real a;
+    int a;
     return a;
-    //报错;
 }
-//
