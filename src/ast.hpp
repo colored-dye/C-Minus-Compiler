@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-14 22:36:47
+ * @LastEditTime: 2022-05-14 23:37:30
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -18,15 +18,6 @@
 using namespace std;
 
 extern const char *NodeNames[];
-
-/**
- * @brief Number has two types, int and float.
- */
-union ASTNUM
-{
-    int intNum;
-    float floatNum;
-};
 
 /**
  * @brief Support three types void, int, real (ie float), respectively ASTVOID = 0, ASTINT = 1, ASTFLOAT = 2.
@@ -593,22 +584,31 @@ class Factor : public ASTNode
     Expr *expr;
     Var *var;
     Call *callExpr;
-    bool isNum;
-    ASTNUM num;
+    bool isInt;
+    int numInt;
+    bool isReal;
+    float numReal;
 
 public:
-    Factor(Expr *expr) : expr(expr), var(NULL), callExpr(NULL), isNum(false) {}
-    Factor(Var *var) : expr(NULL), var(var), callExpr(NULL), isNum(false) {}
-    Factor(Call *callExpr) : expr(NULL), var(NULL), callExpr(callExpr), isNum(false) {}
-    Factor(ASTNUM num) : expr(NULL), var(NULL), callExpr(NULL), isNum(true), num(num) {}
+    Factor(Expr *expr) : expr(expr), var(NULL), callExpr(NULL), isInt(false) { isReal = false; }
+    Factor(Var *var) : expr(NULL), var(var), callExpr(NULL), isInt(false) { isReal = false; }
+    Factor(Call *callExpr) : expr(NULL), var(NULL), callExpr(callExpr), isInt(false) { isReal = false; }
+    Factor(int num) : expr(NULL), var(NULL), callExpr(NULL), isInt(true), numInt(num), isReal(false) {}
+    Factor(float num) : expr(NULL), var(NULL), callExpr(NULL), isInt(false)
+    {
+        isReal = true;
+        numReal = num;
+    }
 
     ~Factor() {}
 
     const Expr *GetExpr() const { return expr; }
     const Var *GetVar() const { return var; }
     const Call *GetCallExpr() const { return callExpr; }
-    bool IsNum() const { return isNum; }
-    ASTNUM GetNum() const { return num; }
+    bool IsInt() const { return isInt; }
+    int GetNumInt() const { return numInt; }
+    bool IsReal() const { return isReal; }
+    float GetNumReal() const { return numReal; }
 };
 
 /**
