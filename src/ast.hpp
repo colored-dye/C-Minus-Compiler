@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-14 23:37:30
+ * @LastEditTime: 2022-05-15 02:45:34
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -41,6 +41,7 @@ enum ASTNodeType
     ASTVARDECL,
     ASTFUNDECL,
     ASTPARAM,
+    ASTCOMPOUNDSTMT,
     ASTEXPR,
     ASTSELECTSTMT,
     ASTWHILESTMT,
@@ -313,32 +314,28 @@ public:
  *  value causes execution of the first statement; a zero value causes execution of the
  *  second statement, if it exists.
  * @param {Expr*} expr - the expression to evaluate.
- * @param {vector<ASTNode*>} trueStmtList - statement list for true.
+ * @param {ASTNode*} trueStmt - statement for true.
  * @param {bool} haveElse - false by default.
- * @param {vector<ASTNode*>} falseStmtList - statement list for false.
+ * @param {ASTNode*} falseStmt - statement for false.
  */
 class SelectStmt : public ASTNode
 {
     Expr *expr;
-    vector<ASTNode *> trueStmtList;
+    ASTNode *trueStmt;
     bool haveElse;
-    vector<ASTNode *> falseStmtList;
+    ASTNode *falseStmt;
 
 public:
-    SelectStmt(Expr *expr = NULL) : expr(expr) { haveElse = false; }
+    SelectStmt(Expr *expr, ASTNode *trueStmt)
+        : expr(expr), trueStmt(trueStmt), haveElse(false), falseStmt(NULL) {}
+    SelectStmt(Expr *expr, ASTNode *trueStmt, ASTNode *falseStmt)
+        : expr(expr), trueStmt(trueStmt), haveElse(true), falseStmt(falseStmt) {}
     ~SelectStmt() {}
 
-    void AddTrueStmt(ASTNode *stmt) { trueStmtList.push_back(stmt); }
-    void AddFalseStmt(ASTNode *stmt)
-    {
-        haveElse = true;
-        falseStmtList.push_back(stmt);
-    }
-
     const Expr *GetExpr() const { return expr; }
-    const vector<ASTNode *> &GetTrueStmtList() const { return trueStmtList; }
+    const ASTNode *GetTrueStmt() const { return trueStmt; }
     bool HaveElse() const { return haveElse; }
-    const vector<ASTNode *> &GetFalseStmtList() const { return falseStmtList; }
+    const ASTNode *GetFalseStmt() const { return falseStmt; }
 };
 
 /**
@@ -346,21 +343,19 @@ public:
  *  executing the statement if the expression evaluates to a nonzero value, ending when the
  *  expression evaluates to 0.
  * @param {Expr*} expr - the expression to evaluate.
- * @param {vector<ASTNode*>} stmtList - statement list.
+ * @param {ASTNode*} stmt - statement.
  */
 class WhileStmt : public ASTNode
 {
     Expr *expr;
-    vector<ASTNode *> stmtList;
+    ASTNode *stmt;
 
 public:
-    WhileStmt(Expr *expr = NULL) : expr(expr) {}
+    WhileStmt(Expr *expr, ASTNode *stmt) : expr(expr), stmt(stmt) {}
     ~WhileStmt() {}
 
-    void AddStmt(ASTNode *stmt) { stmtList.push_back(stmt); }
-
     const Expr *GetExpr() const { return expr; }
-    const vector<ASTNode *> &GetStmtList() const { return stmtList; }
+    const ASTNode *GetStmt() const { return stmt; }
 };
 
 /**
@@ -372,6 +367,7 @@ public:
  * @param {bool} haveForParam3 - false by default.
  * @param {Var*} var3
  * @param {Expr*} expr3
+ * @param {ASTNode*} stmt
  */
 class ForStmt : public ASTNode
 {
@@ -385,11 +381,12 @@ class ForStmt : public ASTNode
     Var *var3;
     Expr *expr3;
 
-    vector<ASTNode *> stmtList;
+    ASTNode *stmt;
 
 public:
-    ForStmt() : haveForParam1(false), var1(NULL), expr1(NULL), expr2(NULL),
-                haveForParam3(false), var3(NULL), expr3(NULL) {}
+    ForStmt(Expr *expr2, ASTNode *stmt)
+        : haveForParam1(false), var1(NULL), expr1(NULL), expr2(expr2),
+          haveForParam3(false), var3(NULL), expr3(NULL), stmt(stmt) {}
     ~ForStmt() {}
 
     void AddForParam1(Var *var1, Expr *expr1)
@@ -402,8 +399,6 @@ public:
         }
     }
 
-    void AddForParam2(Expr *expr2) { ForStmt::expr2 = expr2; }
-
     void AddForParam3(Var *var3, Expr *expr3)
     {
         if (!haveForParam3)
@@ -414,8 +409,6 @@ public:
         }
     }
 
-    void AddStmt(ASTNode *stmt) { stmtList.push_back(stmt); }
-
     bool HaveForParam1() const { return haveForParam1; }
     const Var *GetVar1() const { return var1; }
     const Expr *GetExpr1() const { return expr1; }
@@ -423,7 +416,7 @@ public:
     bool HaveForParam3() const { return haveForParam3; }
     const Var *GetVar3() const { return var3; }
     const Expr *GetExpr3() const { return expr3; }
-    const vector<ASTNode *> &GetStmtList() const { return stmtList; }
+    const ASTNode *GetStmt() const { return stmt; }
 };
 
 /**
