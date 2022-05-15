@@ -1,5 +1,5 @@
 #include "semantic.h"
-#include "node.h"
+#include "node.hpp"
 #include "symtable.h"
 #include <stdio.h>
 #include <string.h>
