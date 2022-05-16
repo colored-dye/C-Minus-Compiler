@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-16 14:23:33
+ * @LastEditTime: 2022-05-16 14:30:22
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -164,30 +164,30 @@ public:
 /**
  * @brief A variable declaration declares either a simple variable of integer type or an array
  *  variable whose base type is integer or float, and whose indices range from 0 ... num-1.
- * @param {bool} isGlobal - global variables: true; local variables: false
  * @param {ASTTypeSpec} typeSpec - int, real or void.
  * @param {string} id - identifier.
  * @param {bool} isArray - by default is not an array.
  * @param {int} arrayLength - array length.
+ * @param {bool} isGlobal - global variables: true; local variables: false
  */
 class VarDecl : public ASTNode
 {
-    bool isGlobal; // 全局变量: true; 局部变量: false
     ASTTypeSpec typeSpec;
     string id;
     bool isArray;
     int arrayLength;
 
 public:
-    VarDecl(bool isGlobal, ASTTypeSpec typeSpec, string id)
-        : isGlobal(isGlobal), typeSpec(typeSpec), id(id), isArray(false) { SetNodeType(ASTVARDECL); }
+    bool isGlobal; // 全局变量: true; 局部变量: false
 
-    VarDecl(bool isGlobal, ASTTypeSpec typeSpec, string id, int arrayLength)
-        : isGlobal(isGlobal), typeSpec(typeSpec), id(id), isArray(true), arrayLength(arrayLength) { SetNodeType(ASTVARDECL); }
+    VarDecl(ASTTypeSpec typeSpec, string id)
+        : typeSpec(typeSpec), id(id), isArray(false) { SetNodeType(ASTVARDECL); }
+
+    VarDecl(ASTTypeSpec typeSpec, string id, int arrayLength)
+        : typeSpec(typeSpec), id(id), isArray(true), arrayLength(arrayLength) { SetNodeType(ASTVARDECL); }
 
     ~VarDecl(){};
 
-    bool IsGlobal() const { return isGlobal; }
     ASTTypeSpec GetTypeSpec() const { return typeSpec; }
     const string GetId() const { return id; }
     bool IsArray() const { return isArray; }
