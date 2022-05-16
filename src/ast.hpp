@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-16 14:30:22
+ * @LastEditTime: 2022-05-16 20:50:51
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -164,7 +164,7 @@ public:
 /**
  * @brief A variable declaration declares either a simple variable of integer type or an array
  *  variable whose base type is integer or float, and whose indices range from 0 ... num-1.
- * @param {ASTTypeSpec} typeSpec - int, real or void.
+ * @param {ASTTypeSpec} typeSpec - int, real.
  * @param {string} id - identifier.
  * @param {bool} isArray - by default is not an array.
  * @param {int} arrayLength - array length.
@@ -172,7 +172,7 @@ public:
  */
 class VarDecl : public ASTNode
 {
-    ASTTypeSpec typeSpec;
+    ASTTypeSpec typeSpec; // int or real
     string id;
     bool isArray;
     int arrayLength;
