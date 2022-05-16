@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-16 23:19:44
+ * @LastEditTime: 2022-05-16 23:37:07
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -435,7 +435,7 @@ public:
     ASTReturnStmt() : isVoid(true), expr(NULL) { SetNodeType(ASTRETURNSTMT); }
     ~ASTReturnStmt() {}
 
-    void ASTAddExpr(ASTExpr *expr)
+    void AddExpr(ASTExpr *expr)
     {
         if (isVoid)
             isVoid = false;

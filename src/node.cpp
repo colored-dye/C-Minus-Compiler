@@ -2,7 +2,7 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-15 19:09:14
+ * @LastEditTime: 2022-05-16 23:39:09
  * @FilePath: /C-Minus-Compiler/src/node.cpp
  * @Description:
  *
@@ -161,7 +161,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     Program -> GlobalDeclList --> Decl - VarDecl
                                        - FunDecl
      */
-    curASTNode = new Program();
+    curASTNode = new ASTProgram();
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
     struct Node *decl = parserNode->child->child; // Skip GlobalDeclList that is not an ASTNode.
     while (decl != NULL)
@@ -169,13 +169,13 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
       if (!strcasecmp(decl->child->name, NodeNames[3])) // VarDecl 3
       {
         ASTNode *varDecl = ParserTreeToAST(decl->child);
-        ((Program *)curASTNode)->AddDecl(varDecl);
-        ((VarDecl*)varDecl)->isGlobal = true;
+        ((ASTProgram *)curASTNode)->AddDecl(varDecl);
+        ((ASTVarDecl *)varDecl)->isGlobal = true;
       }
       else if (!strcasecmp(decl->child->name, NodeNames[4])) // FunDecl 4
       {
         ASTNode *funDecl = ParserTreeToAST(decl->child);
-        ((Program *)curASTNode)->AddDecl(funDecl);
+        ((ASTProgram *)curASTNode)->AddDecl(funDecl);
       }
       decl = decl->next_sib;
     }
@@ -194,11 +194,11 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     string id = string(pId->str_term);
 
     if (pNum == NULL)
-      curASTNode = new VarDecl(typeSpec, id);
+      curASTNode = new ASTVarDecl(typeSpec, id);
     else
     {
       int arrayLength = pNum->int_term;
-      curASTNode = new VarDecl(typeSpec, id, arrayLength);
+      curASTNode = new ASTVarDecl(typeSpec, id, arrayLength);
     }
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
   }
@@ -224,7 +224,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     else if (!strcasecmp(pType->str_term, "VOID"))
       typeSpec = ASTVOID;
     string id = string(pId->str_term);
-    curASTNode = new FunDecl(typeSpec, id);
+    curASTNode = new ASTFunDecl(typeSpec, id);
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
 
     if (strcasecmp(pParams->child->str_term, "VOID"))
@@ -233,13 +233,13 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
       while (pParam != NULL)
       {
         ASTNode *param = ParserTreeToAST(pParam);
-        ((FunDecl *)curASTNode)->AddParam((Param *)param);
+        ((ASTFunDecl *)curASTNode)->AddParam((ASTParam *)param);
         pParam = pParam->next_sib;
       }
     }
 
-    CompoundStmt *compoundStmt = (CompoundStmt *)ParserTreeToAST(pCompoundStmt);
-    ((FunDecl *)curASTNode)->AddCompoundStmt(compoundStmt);
+    ASTCompoundStmt *compoundStmt = (ASTCompoundStmt *)ParserTreeToAST(pCompoundStmt);
+    ((ASTFunDecl *)curASTNode)->AddCompoundStmt(compoundStmt);
   }
   else if (strncasecmp(parserNode->name, "Param", 5) == 0)
   {
@@ -261,9 +261,9 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
       typeSpec = ASTVOID;
     string id = string(pId->str_term);
     if (pBracket == NULL)
-      curASTNode = new Param(typeSpec, id);
+      curASTNode = new ASTParam(typeSpec, id);
     else
-      curASTNode = new Param(typeSpec, id, true);
+      curASTNode = new ASTParam(typeSpec, id, true);
 
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
   }
@@ -281,20 +281,20 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
 
     struct Node *pVarDecl = parserNode->child->child;
     struct Node *pStmt = parserNode->child->next_sib;
-    curASTNode = new CompoundStmt();
+    curASTNode = new ASTCompoundStmt();
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
 
     while (pVarDecl != NULL)
     {
       ASTNode *varDecl = ParserTreeToAST(pVarDecl);
-      ((CompoundStmt *)curASTNode)->AddDecl(varDecl);
-      ((VarDecl*)varDecl)->isGlobal = false;
+      ((ASTCompoundStmt *)curASTNode)->AddDecl(varDecl);
+      ((ASTVarDecl *)varDecl)->isGlobal = false;
       pVarDecl = pVarDecl->next_sib;
     }
     while (pStmt != NULL)
     {
       ASTNode *stmt = ParserTreeToAST(pStmt->child);
-      ((CompoundStmt *)curASTNode)->AddDecl(stmt);
+      ((ASTCompoundStmt *)curASTNode)->AddDecl(stmt);
       pStmt = pStmt->next_sib;
     }
   }
@@ -309,7 +309,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     {
       struct Node *pSimpleExpr = parserNode->child;
       ASTNode *simpleExpr = ParserTreeToAST(pSimpleExpr);
-      curASTNode = new Expr((SimpleExpr *)simpleExpr);
+      curASTNode = new ASTExpr((ASTSimpleExpr *)simpleExpr);
     }
     else if (strncasecmp(parserNode->child->name, "Assign", 6) == 0)
     {
@@ -317,7 +317,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
       ASTNode *var = ParserTreeToAST(pVar);
       struct Node *pExpr = pVar->next_sib;
       ASTNode *expr = ParserTreeToAST(pExpr);
-      curASTNode = new Expr((Var *)var, (Expr *)expr);
+      curASTNode = new ASTExpr((ASTVar *)var, (ASTExpr *)expr);
     }
 
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
@@ -340,11 +340,11 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     ASTNode *trueStmt = ParserTreeToAST(pTrueStmt->child);
     struct Node *pFalseStmt = pTrueStmt->next_sib;
     if (pFalseStmt == NULL)
-      curASTNode = new SelectStmt((Expr *)expr, (ASTNode *)trueStmt);
+      curASTNode = new ASTSelectStmt((ASTExpr *)expr, (ASTNode *)trueStmt);
     else
     {
       ASTNode *falseStmt = ParserTreeToAST(pFalseStmt->child);
-      curASTNode = new SelectStmt((Expr *)expr, (ASTNode *)trueStmt, (ASTNode *)falseStmt);
+      curASTNode = new ASTSelectStmt((ASTExpr *)expr, (ASTNode *)trueStmt, (ASTNode *)falseStmt);
     }
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
   }
@@ -363,7 +363,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     ASTNode *expr = ParserTreeToAST(pExpr);
     struct Node *pStmt = pExpr->next_sib;
     ASTNode *stmt = ParserTreeToAST(pStmt->child);
-    curASTNode = new WhileStmt((Expr *)expr, (ASTNode *)stmt);
+    curASTNode = new ASTWhileStmt((ASTExpr *)expr, (ASTNode *)stmt);
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
   }
   else if (strncasecmp(parserNode->name, "ForStmt", 7) == 0)
@@ -387,13 +387,13 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     /*
     ReturnStmt -- Expr
      */
-    curASTNode = new ReturnStmt();
+    curASTNode = new ASTReturnStmt();
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
     struct Node *pExpr = parserNode->child;
     if (pExpr != NULL)
     {
       ASTNode *expr = ParserTreeToAST(pExpr);
-      ((ReturnStmt *)curASTNode)->AddExpr((Expr *)expr);
+      ((ASTReturnStmt *)curASTNode)->AddExpr((ASTExpr *)expr);
     }
   }
   else if (strncasecmp(parserNode->name, "Var", 3) == 0)
@@ -407,11 +407,11 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     string id = string(pId->str_term);
     ASTNode *expr = ParserTreeToAST(pExpr);
     if (expr == NULL)
-      curASTNode = new Var(id);
+      curASTNode = new ASTVar(id);
     else
     {
       ASTNode *expr = ParserTreeToAST(pExpr);
-      curASTNode = new Var(id, (Expr *)expr);
+      curASTNode = new ASTVar(id, (ASTExpr *)expr);
     }
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
   }
@@ -426,7 +426,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     ASTNode *leftAddExpr = ParserTreeToAST(pLeftAddExpr);
     struct Node *pRelOp = pLeftAddExpr->next_sib;
     if (pRelOp == NULL)
-      curASTNode = new SimpleExpr((AddExpr *)leftAddExpr);
+      curASTNode = new ASTSimpleExpr((ASTAddExpr *)leftAddExpr);
     else
     {
       ASTRelOp relOp;
@@ -456,7 +456,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
       }
       struct Node *pRightAddExpr = pRelOp->next_sib;
       ASTNode *rightAddExpr = ParserTreeToAST(pRightAddExpr);
-      curASTNode = new SimpleExpr((AddExpr *)leftAddExpr, relOp, (AddExpr *)rightAddExpr);
+      curASTNode = new ASTSimpleExpr((ASTAddExpr *)leftAddExpr, relOp, (ASTAddExpr *)rightAddExpr);
     }
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
   }
@@ -471,19 +471,19 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     {
       struct Node *pTerm = parserNode->child;
       ASTNode *term = ParserTreeToAST(pTerm);
-      curASTNode = new AddExpr((Term *)term);
+      curASTNode = new ASTAddExpr((ASTTerm *)term);
     }
     else if (strncasecmp(parserNode->child->name, "AddExpr", 7) == 0)
     {
       struct Node *pAddExpr = parserNode->child;
       ASTNode *firstTerm = ParserTreeToAST(pAddExpr->child);
-      curASTNode = new AddExpr((Term *)firstTerm);
+      curASTNode = new ASTAddExpr((ASTTerm *)firstTerm);
 
       struct Node *pAddOp = pAddExpr->next_sib;
       ASTAddOp addOp = (pAddOp->int_term == ADD) ? ASTADD : ASTMINUS;
       struct Node *pTerm = parserNode->child;
       ASTNode *term = ParserTreeToAST(pTerm);
-      ((AddExpr *)curASTNode)->AddTerm(addOp, (Term *)term);
+      ((ASTAddExpr *)curASTNode)->AddTerm(addOp, (ASTTerm *)term);
     }
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
   }
@@ -498,19 +498,19 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     {
       struct Node *pFactor = parserNode->child;
       ASTNode *factor = ParserTreeToAST(pFactor);
-      curASTNode = new Term((Factor *)factor);
+      curASTNode = new ASTTerm((ASTFactor *)factor);
     }
     else if (strncasecmp(parserNode->child->name, "Term", 4) == 0)
     {
       struct Node *pTerm = parserNode->child;
       ASTNode *firstFactor = ParserTreeToAST(pTerm->child);
-      curASTNode = new Term((Factor *)firstFactor);
+      curASTNode = new ASTTerm((ASTFactor *)firstFactor);
 
       struct Node *pMulOp = pTerm->next_sib;
       ASTMulOp addOp = (pMulOp->int_term == MUL) ? ASTMUL : ASTDIV;
       struct Node *pFactor = parserNode->child;
       ASTNode *factor = ParserTreeToAST(pFactor);
-      ((Term *)curASTNode)->AddFactor(addOp, (Factor *)factor);
+      ((ASTTerm *)curASTNode)->AddFactor(addOp, (ASTFactor *)factor);
     }
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
   }
@@ -524,25 +524,25 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
      */
     if (!strncasecmp(parserNode->child->name, "Expr", 4))
     {
-      curASTNode = new Factor((Expr *)(ParserTreeToAST(parserNode->child)));
+      curASTNode = new ASTFactor((ASTExpr *)(ParserTreeToAST(parserNode->child)));
     }
     else if (!strncasecmp(parserNode->child->name, "Var", 3))
     {
-      curASTNode = new Factor((Var *)ParserTreeToAST(parserNode->child));
+      curASTNode = new ASTFactor((ASTVar *)ParserTreeToAST(parserNode->child));
     }
     else if (!strncasecmp(parserNode->child->name, "Call", 4))
     {
-      curASTNode = new Factor((Call *)ParserTreeToAST(parserNode->child));
+      curASTNode = new ASTFactor((ASTCall *)ParserTreeToAST(parserNode->child));
     }
     else if (parserNode->child->termKind == TermKNum)
     {
       if (parserNode->child->is_int)
       {
-        curASTNode = new Factor(parserNode->child->int_term);
+        curASTNode = new ASTFactor(parserNode->child->int_term);
       }
       else
       {
-        curASTNode = new Factor(parserNode->child->real_term);
+        curASTNode = new ASTFactor(parserNode->child->real_term);
       }
     }
   }
@@ -552,11 +552,11 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     Call -> ID
          -> Args -- ArgList --> Expr
      */
-    curASTNode = new Call(parserNode->child->str_term);
+    curASTNode = new ASTCall(parserNode->child->str_term);
     struct Node *p = parserNode->child->next_sib;
     while (p)
     {
-      ((Call *)curASTNode)->AddArg((Expr *)ParserTreeToAST(p));
+      ((ASTCall *)curASTNode)->AddArg((ASTExpr *)ParserTreeToAST(p));
       p = p->next_sib;
     }
   }
