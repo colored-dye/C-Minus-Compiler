@@ -10,6 +10,7 @@
  */
 
 #include "node.hpp"
+#include "ast.hpp"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -165,12 +166,13 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     struct Node *decl = parserNode->child->child; // Skip GlobalDeclList that is not an ASTNode.
     while (decl != NULL)
     {
-      if (decl->child->name == NodeNames[3]) // VarDecl 3
+      if (!strcasecmp(decl->child->name, NodeNames[3])) // VarDecl 3
       {
         ASTNode *varDecl = ParserTreeToAST(decl->child);
         ((Program *)curASTNode)->AddDecl(varDecl);
+        ((VarDecl*)varDecl)->isGlobal = true;
       }
-      else if (decl->child->name == NodeNames[4]) // FunDecl 4
+      else if (!strcasecmp(decl->child->name, NodeNames[4])) // FunDecl 4
       {
         ASTNode *funDecl = ParserTreeToAST(decl->child);
         ((Program *)curASTNode)->AddDecl(funDecl);
@@ -178,7 +180,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
       decl = decl->next_sib;
     }
   }
-  else if (strncasecmp(parserNode->name, "VarDecl", 7) == 0)
+  else if (!strncasecmp(parserNode->name, "VarDecl", 7))
   {
     /*
     VarDecl -> TypeSpec -> Type
@@ -188,7 +190,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     struct Node *pType = parserNode->child->child;
     struct Node *pId = parserNode->child->next_sib;
     struct Node *pNum = pId->next_sib;
-    ASTTypeSpec typeSpec = (pType->str_term == "INT") ? ASTINT : ASTREAL;
+    ASTTypeSpec typeSpec = (!strcasecmp(pType->str_term, "INT")) ? ASTINT : ASTREAL;
     string id = string(pId->str_term);
 
     if (pNum == NULL)
@@ -215,17 +217,17 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     struct Node *pCompoundStmt = pParams->next_sib;
 
     ASTTypeSpec typeSpec;
-    if (pType->str_term == "INT")
+    if (!strcasecmp(pType->str_term, "INT"))
       typeSpec = ASTINT;
-    else if (pType->str_term == "REAL")
+    else if (!strcasecmp(pType->str_term, "REAL"))
       typeSpec = ASTREAL;
-    else if (pType->str_term == "VOID")
+    else if (!strcasecmp(pType->str_term, "VOID"))
       typeSpec = ASTVOID;
     string id = string(pId->str_term);
     curASTNode = new FunDecl(typeSpec, id);
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
 
-    if (pParams->child->str_term != "VOID")
+    if (strcasecmp(pParams->child->str_term, "VOID"))
     {
       struct Node *pParam = pParams->child->child; // Skip ParamList that is not an ASTNode.
       while (pParam != NULL)
@@ -251,11 +253,11 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     struct Node *pBracket = pId->next_sib;
 
     ASTTypeSpec typeSpec;
-    if (pType->str_term == "INT")
+    if (!strcasecmp(pType->str_term, "INT"))
       typeSpec = ASTINT;
-    else if (pType->str_term == "REAL")
+    else if (!strcasecmp(pType->str_term, "REAL"))
       typeSpec = ASTREAL;
-    else if (pType->str_term == "VOID")
+    else if (!strcasecmp(pType->str_term, "VOID"))
       typeSpec = ASTVOID;
     string id = string(pId->str_term);
     if (pBracket == NULL)
@@ -286,6 +288,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     {
       ASTNode *varDecl = ParserTreeToAST(pVarDecl);
       ((CompoundStmt *)curASTNode)->AddDecl(varDecl);
+      ((VarDecl*)varDecl)->isGlobal = false;
       pVarDecl = pVarDecl->next_sib;
     }
     while (pStmt != NULL)

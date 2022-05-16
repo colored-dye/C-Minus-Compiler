@@ -177,6 +177,10 @@ class VarDecl : public ASTNode
     int arrayLength;
 
 public:
+    bool isGlobal; // 全局变量: true; 局部变量: false
+    // int depth;
+
+public:
     VarDecl(ASTTypeSpec typeSpec, string id)
         : typeSpec(typeSpec), id(id), isArray(false) { SetNodeType(ASTVARDECL); }
 
