@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:29
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-15 03:09:41
+ * @LastEditTime: 2022-05-16 23:23:18
  * @FilePath: /C-Minus-Compiler/src/asttest.cpp
  * @Description:
  *
@@ -16,21 +16,26 @@ using namespace std;
 
 int main()
 {
-    Program program1;
+    ASTProgram program1;
     program1.SetCoordinate(1, 1);
 
-    VarDecl varDecl1(ASTINT, "a");
+    ASTVarDecl varDecl1(ASTINT, "a", 10);
     varDecl1.SetCoordinate(2, 1);
     program1.AddDecl(&varDecl1);
 
-    FunDecl funDecl1(ASTINT, "main");
+    ASTFunDecl funDecl1(ASTINT, "main");
     funDecl1.SetCoordinate(4, 1);
     program1.AddDecl(&funDecl1);
 
-    bool isArray = varDecl1.IsArray();
-    bool haveParam = funDecl1.HaveParam();
+    ASTParam param1(ASTINT, "b", true);
+    param1.SetCoordinate(4, 1);
+    funDecl1.AddParam(&param1);
 
-    cout << "isArray = " << isArray << endl;
-    cout << "haveParam = " << haveParam << endl;
-    cout << "finished" << endl;
+    // bool isArray = varDecl1.IsArray();
+    // bool haveParam = funDecl1.HaveParam();
+    // cout << varDecl1.GetId() << " isArray = " << isArray << endl;
+    // cout << funDecl1.GetId() << " haveParam = " << haveParam << endl;
+    // cout << "finished" << endl;
+
+    PrintASTNode(&program1);
 }
