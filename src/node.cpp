@@ -476,22 +476,22 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
       ASTRelOp relOp;
       switch (pRelOp->child->int_term)
       {
-      case LE:
+      case MYLE:
         relOp = ASTLE;
         break;
-      case LT:
+      case MYLT:
         relOp = ASTLT;
         break;
-      case GT:
+      case MYGT:
         relOp = ASTGT;
         break;
-      case GE:
+      case MYGE:
         relOp = ASTGE;
         break;
-      case EQ:
+      case MYEQ:
         relOp = ASTEQ;
         break;
-      case NE:
+      case MYNE:
         relOp = ASTNE;
         break;
 
@@ -523,7 +523,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     {
       p = stack.back();
       stack.pop_back();
-      ASTAddOp addOp = (p->next_sib->int_term == ADD) ? ASTADD : ASTMINUS;
+      ASTAddOp addOp = (p->next_sib->int_term == MYADD) ? ASTADD : ASTMINUS;
       ((ASTAddExpr *)curASTNode)->AddTerm(addOp, (ASTTerm *)ParserTreeToAST(p->next_sib->next_sib));
     }
   }
@@ -547,7 +547,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     {
       p = stack.back();
       stack.pop_back();
-      ASTMulOp mulop = (p->child->next_sib->child->int_term == MUL) ? ASTMUL : ASTDIV;
+      ASTMulOp mulop = (p->child->next_sib->child->int_term == MYMUL) ? ASTMUL : ASTDIV;
       ((ASTTerm *)curASTNode)->AddFactor(mulop, (ASTFactor *)ParserTreeToAST(p->child->next_sib->next_sib));
     }
   }

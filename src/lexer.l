@@ -56,7 +56,7 @@ ID ({char})+({char}|{digit})*
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return INT;
+  return MYINT;
   }
 {VOID} {
   struct Node* tmp = makeNode("VOID");
@@ -67,7 +67,7 @@ ID ({char})+({char}|{digit})*
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return VOID;
+  return MYVOID;
   }
 {REAL} {
   struct Node* tmp = makeNode("REAL");
@@ -78,133 +78,133 @@ ID ({char})+({char}|{digit})*
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return REAL;
+  return MYREAL;
   }
-{CHAR} {return CHAR;}
-{RETURN} {return RETURN;}
-{IF} {return IF;}
-{ELSE} {return ELSE;}
-{WHILE} {return WHILE;}
-{FOR} {return FOR;}
+{CHAR} {return MYCHAR;}
+{RETURN} {return MYRETURN;}
+{IF} {return MYIF;}
+{ELSE} {return MYELSE;}
+{WHILE} {return MYWHILE;}
+{FOR} {return MYFOR;}
 ">" {
   struct Node* tmp = makeNode(">");
   // tmp->nodeK = GT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = GT;
+  tmp->int_term = MYGT;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return GT;
+  return MYGT;
   }
 "<" {
   struct Node* tmp = makeNode("<");
   // tmp->nodeK = LT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = LT;
+  tmp->int_term = MYLT;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return LT;
+  return MYLT;
   }
 ">=" {
   struct Node* tmp = makeNode(">=");
   // tmp->nodeK = GE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = GE;
+  tmp->int_term = MYGE;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return GE;
+  return MYGE;
   }
 "<=" {
   struct Node* tmp = makeNode("<=");
   // tmp->nodeK = LE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = LE;
+  tmp->int_term = MYLE;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return LE;
+  return MYLE;
   }
 "!=" {
   struct Node* tmp = makeNode("!=");
   // tmp->nodeK = NE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = NE;
+  tmp->int_term = MYNE;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return NE;
+  return MYNE;
   }
 "==" {
   struct Node* tmp = makeNode("==");
   // tmp->nodeK = EQ;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = EQ;
+  tmp->int_term = MYEQ;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return EQ;
+  return MYEQ;
   }
-"(" {return LP;}
-")" {return RP;}
-"{" {return LB;}
-"}" {return RB;}
-"[" {return LC;}
-"]" {return RC;}
-"," {return COMMA;}
+"(" {return MYLP;}
+")" {return MYRP;}
+"{" {return MYLB;}
+"}" {return MYRB;}
+"[" {return MYLC;}
+"]" {return MYRC;}
+"," {return MYCOMMA;}
 ";" {
-  return SEMI;
+  return MYSEMI;
   }
 "+" {
   struct Node* tmp = makeNode("+");
   // tmp->nodeK = ADD;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = ADD;
+  tmp->int_term = MYADD;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return ADD;
+  return MYADD;
   }
 "-" {
   struct Node* tmp = makeNode("-");
   // tmp->nodeK = SUB;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = SUB;
+  tmp->int_term = MYSUB;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return SUB;
+  return MYSUB;
   }
 "*" {
   struct Node* tmp = makeNode("*");
   // tmp->nodeK = MUL;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = MUL;
+  tmp->int_term = MYMUL;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return MUL;
+  return MYMUL;
   }
 "/" {
   struct Node* tmp = makeNode("/");
   // tmp->nodeK = DIV;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = DIV;
+  tmp->int_term = MYDIV;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return DIV;
+  return MYDIV;
   }
 "=" {
   // struct Node* tmp = makeNode("=");
@@ -214,7 +214,7 @@ ID ({char})+({char}|{digit})*
   // tmp->lineno = yylineno;
   // tmp->column = yylloc.first_column;
   // yylval.node = tmp;
-  return ASSIGN;
+  return MYASSIGN;
   }
 {DEC} {
   struct Node* node = makeNode(yytext);
@@ -226,7 +226,7 @@ ID ({char})+({char}|{digit})*
   node->column = yylloc.first_column;
   node->lineno = yylineno;
   yylval.node = node;
-  return NUM;
+  return MYNUM;
 }
 {OCT} {
   struct Node* node = makeNode(yytext);
@@ -238,7 +238,7 @@ ID ({char})+({char}|{digit})*
   node->column = yylloc.first_column;
   node->lineno = yylineno;
   yylval.node = node;
-  return NUM;
+  return MYNUM;
 }
 {HEX} {
   struct Node* node = makeNode(yytext);
@@ -250,7 +250,7 @@ ID ({char})+({char}|{digit})*
   node->column = yylloc.first_column;
   node->lineno = yylineno;
   yylval.node = node;
-  return NUM;
+  return MYNUM;
 }
 {FLOAT} {
   struct Node* node = makeNode(yytext);
@@ -262,7 +262,7 @@ ID ({char})+({char}|{digit})*
   node->column = yylloc.first_column;
   node->lineno = yylineno;
   yylval.node = node;
-  return NUM;
+  return MYNUM;
 }
 \/\*(.*\n)*.*\*\/ { /* Block comment */
   // while (1) {
@@ -284,13 +284,13 @@ ID ({char})+({char}|{digit})*
   id->column = yylloc.first_column;
   id->lineno = yylineno;
   yylval.node = id;
-  return ID;
+  return MYID;
   }
 {LF} { yycolumn = 1; }
 {WHITESPACE} { /* Ignore whitespace */ }
 . {
   fprintf(stderr, "Error at line: %d\n", yylineno);
-  return ERROR;
+  return MYERROR;
   }
 
 %%

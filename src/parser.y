@@ -21,12 +21,12 @@
   float real;
 }
 
-%token ID NUM INT VOID REAL CHAR
-%token RETURN IF ELSE WHILE FOR
-%token <integer> GT LT GE LE NE EQ
-%token <integer> ADD SUB MUL DIV
-%token LP RP LB RB LC RC SEMI COMMA ASSIGN
-%token ERROR
+%token MYID MYNUM MYINT MYVOID MYREAL MYCHAR
+%token MYRETURN MYIF MYELSE MYWHILE MYFOR
+%token <integer> MYGT MYLT MYGE MYLE MYNE MYEQ
+%token <integer> MYADD MYSUB MYMUL MYDIV
+%token MYLP MYRP MYLB MYRB MYLC MYRC MYSEMI MYCOMMA MYASSIGN
+%token MYERROR
 %type 
   <node> 
   program declaration_list declaration var_declaration fun_declaration
@@ -78,12 +78,12 @@ declaration:
   ;
 
 var_declaration:
-  type_specifier id SEMI {
+  type_specifier id MYSEMI {
     $$ = makeNode("VarDecl");
     addChild(2, $$, $1, $2);
     $$->lineno = $1->lineno;
   }
-  | type_specifier id LC NUM RC SEMI {
+  | type_specifier id MYLC MYNUM MYRC MYSEMI {
     $$ = makeNode("VarDecl");
     addChild(3, $$, $1, $2, yylval.node);
     $$->lineno = $1->lineno;
@@ -91,7 +91,7 @@ var_declaration:
   ;
 
 fun_declaration:
-  type_specifier id LP params RP compound_stmt {
+  type_specifier id MYLP params MYRP compound_stmt {
     $$ = makeNode("FunDecl");
     addChild(4, $$, $1, $2, $4, $6);
     $$->lineno = $1->lineno;
@@ -99,17 +99,17 @@ fun_declaration:
   ;
 
 type_specifier:
-  INT {
+  MYINT {
     $$ = makeNode("TypeSpec");
     addChild(1, $$, yylval.node);
     $$->lineno = yylval.node->lineno;
   }
-  | VOID {
+  | MYVOID {
     $$ = makeNode("TypeSpec");
     addChild(1, $$, yylval.node);
     $$->lineno = yylval.node->lineno;
   }
-  | REAL {
+  | MYREAL {
     $$ = makeNode("TypeSpec");
     addChild(1, $$, yylval.node);
     $$->lineno = yylval.node->lineno;
@@ -122,7 +122,7 @@ params:
     addChild(1, $$, $1);
     $$->lineno = $1->lineno;
   }
-  | VOID {
+  | MYVOID {
     $$ = makeNode("Params");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
@@ -135,7 +135,7 @@ param_list:
     addChild(1, $$, $1);
     $$->lineno = $1->lineno;
   }
-  | param_list COMMA param {
+  | param_list MYCOMMA param {
     $$ = $1;
     addChild(1, $$, $3);
   }
@@ -147,7 +147,7 @@ param:
     addChild(2, $$, $1, $2);
     $$->lineno = $1->lineno;
   }
-  | type_specifier id LC RC {
+  | type_specifier id MYLC MYRC {
     $$ = makeNode("Param");
 
     struct Node* tmp = makeNode("[]");
@@ -160,7 +160,7 @@ param:
   ;
 
 compound_stmt:
-  LB local_declarations statement_list RB {
+  MYLB local_declarations statement_list MYRB {
     $$ = makeNode("CompoundStmt");
     addChild(2, $$, $2, $3);
     $$->lineno = ($2->child) ? $2->child->lineno : $3->lineno;
@@ -225,12 +225,12 @@ statement:
   ;
 
 expression_stmt:
-  expression SEMI {
+  expression MYSEMI {
     $$ = makeNode("ExprStmt");
     addChild(1, $$, $1);
     $$->lineno = $1->lineno;
   }
-  | SEMI {
+  | MYSEMI {
     $$ = makeNode("ExprStmt");
     $$->lineno = yylineno;
   }
@@ -250,7 +250,7 @@ expression:
   ;
 
 assign:
-  var ASSIGN expression {
+  var MYASSIGN expression {
     $$ = makeNode("Assign");
     addChild(2, $$, $1, $3);
     $$->lineno = $1->lineno;
@@ -258,12 +258,12 @@ assign:
   ;
 
 selection_stmt:
-  IF LP expression RP statement %prec LOWER_THAN_ELSE {
+  MYIF MYLP expression MYRP statement %prec LOWER_THAN_ELSE {
     $$ = makeNode("SelectionStmt");
     addChild(2, $$, $3, $5);
     $$->lineno = $3->lineno;
   }
-  | IF LP expression RP statement ELSE statement {
+  | MYIF MYLP expression MYRP statement ELSE statement {
     $$ = makeNode("SelectionStmt");
     addChild(3, $$, $3, $5, $7);
     $$->lineno = $3->lineno;
@@ -271,7 +271,7 @@ selection_stmt:
   ;
 
 while_stmt:
-  WHILE LP expression RP statement {
+  MYWHILE MYLP expression MYRP statement {
     $$ = makeNode("WhileStmt");
     addChild(2, $$, $3, $5);
     $$->lineno = $3->lineno;
@@ -279,7 +279,7 @@ while_stmt:
   ;
 
 for_stmt:
-  FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP statement {
+  MYFOR MYLP for_param1 MYSEMI for_param2 MYSEMI for_param3 MYRP statement {
     $$ = makeNode("ForStmt");
     addChild(4, $$, $3, $5, $7, $9);
     $$->lineno = $3->lineno;
@@ -323,11 +323,11 @@ for_param3:
   ;
 
 return_stmt:
-  RETURN SEMI {
+  MYRETURN MYSEMI {
     $$ = makeNode("ReturnStmt");
     $$->lineno = yylval.integer;
   }
-  | RETURN expression SEMI {
+  | MYRETURN expression MYSEMI {
     $$ = makeNode("ReturnStmt");
     addChild(1, $$, $2);
     $$->lineno = $2->lineno;
@@ -340,7 +340,7 @@ var:
     addChild(1, $$, $1);
     $$->lineno = $1->lineno;
   }
-  | id LC expression RC {
+  | id MYLC expression MYRC {
     $$ = makeNode("Var");
     addChild(2, $$, $1, $3);
     $$->lineno = $1->lineno;
@@ -378,32 +378,32 @@ additive_expression:
   ;
 
 relop:
-  LT {
+  MYLT {
     $$ = makeNode("RelOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
   }
-  | LE {
+  | MYLE {
     $$ = makeNode("RelOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
   }
-  | GT {
+  | MYGT {
     $$ = makeNode("RelOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
   }
-  | GE {
+  | MYGE {
     $$ = makeNode("RelOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
   }
-  | EQ {
+  | MYEQ {
     $$ = makeNode("RelOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
   }
-  | NE {
+  | MYNE {
     $$ = makeNode("RelOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
@@ -411,12 +411,12 @@ relop:
   ;
 
 addop:
-  ADD {
+  MYADD {
     $$ = makeNode("AddOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
   }
-  | SUB {
+  | MYSUB {
     $$ = makeNode("AddOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
@@ -437,7 +437,7 @@ term:
   ;
 
 factor:
-  LP expression RP {
+  MYLP expression MYRP {
     $$ = makeNode("Factor");
     addChild(1, $$, $2);
     $$->lineno = $2->lineno;
@@ -452,7 +452,7 @@ factor:
     addChild(1, $$, $1);
     $$->lineno = $1->lineno;
   }
-  | NUM {
+  | MYNUM {
     $$ = makeNode("Factor");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
@@ -460,12 +460,12 @@ factor:
   ;
 
 mulop:
-  MUL {
+  MYMUL {
     $$ = makeNode("MulOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
   }
-  | DIV {
+  | MYDIV {
     $$ = makeNode("MulOp");
     addChild(1, $$, yylval.node);
     $$->lineno = $$->child->lineno;
@@ -473,7 +473,7 @@ mulop:
   ;
 
 call:
-  id LP args RP {
+  id MYLP args MYRP {
     $$ = makeNode("Call");
     addChild(2, $$, $1, $3);
     $$->lineno = $1->lineno;
@@ -493,7 +493,7 @@ args:
   ;
 
 arg_list:
-  arg_list COMMA expression {
+  arg_list MYCOMMA expression {
     $$ = $1;
     addChild(1, $$, $3);
     $$->lineno = $1->lineno;
@@ -506,7 +506,7 @@ arg_list:
   ;
 
 id:
-  ID {
+  MYID {
     $$ = yylval.node;
   }
   | error {
