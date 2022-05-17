@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-17 14:27:55
+ * @LastEditTime: 2022-05-17 19:20:33
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -647,8 +647,6 @@ public:
     const string GetId() const { return id; }
     const vector<ASTExpr *> &GetArgList() const { return argList; }
 };
-
-void PrintASTNode(const ASTNode *curNode);
 
 /**
  * @brief Function call interface for printing AST
