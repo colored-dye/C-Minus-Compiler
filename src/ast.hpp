@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-17 10:33:31
+ * @LastEditTime: 2022-05-17 12:01:40
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -576,8 +576,10 @@ public:
  * @param {ASTExpr*} expr - NULL if is not expr.
  * @param {ASTVar*} var - NULL if is not var.
  * @param {ASTCall*} callExpr - NULL if is not callExpr.
- * @param {bool} isNum - false if is not num.
- * @param {ASTNUM} num - store the value of num.
+ * @param {bool} isNum - false if is not int num.
+ * @param {ASTNUM} numInt - store the value of int num.
+ * @param {bool} isReal - false if is not real num.
+ * @param {ASTNUM} numReal - store the value of real num.
  */
 class ASTFactor : public ASTNode
 {

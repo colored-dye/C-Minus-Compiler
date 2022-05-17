@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:29
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-17 11:18:43
+ * @LastEditTime: 2022-05-17 12:20:24
  * @FilePath: /C-Minus-Compiler/src/ast.cpp
  * @Description:
  *
@@ -216,6 +216,7 @@ void PrintASTNode(const ASTNode *curNode)
             printf("RelOp '%s'\n", relOp.c_str());
             PrintASTNode(simpleExpr->GetRightAddExpr());
         }
+
         break;
     }
     case ASTADDEXPR:
@@ -238,6 +239,7 @@ void PrintASTNode(const ASTNode *curNode)
                 term++;
             }
         }
+
         break;
     }
     case ASTTERM:
@@ -260,14 +262,39 @@ void PrintASTNode(const ASTNode *curNode)
                 factor++;
             }
         }
+
         break;
     }
     case ASTFACTOR:
     {
+        ASTFactor *factor = (ASTFactor *)curNode;
+        if (factor->IsInt())
+            printf("Factor <line:%d> 'Int' %d\n", factor->GetLineno(), factor->GetNumInt());
+        else if (factor->IsReal())
+            printf("Factor <line:%d> 'Real' %f\n", factor->GetLineno(), factor->GetNumReal());
+        else
+        {
+            printf("Factor <line:%d>\n", factor->GetLineno());
+            if (factor->GetExpr())
+                PrintASTNode(factor->GetExpr());
+            else if (factor->GetVar())
+                PrintASTNode(factor->GetVar());
+            else if (factor->GetCallExpr())
+                PrintASTNode(factor->GetCallExpr());
+        }
+
         break;
     }
     case ASTCALL:
     {
+        ASTCall *callExpr = (ASTCall *)curNode;
+        printf("FunDecl <line:%d> %s\n", callExpr->GetLineno(), callExpr->GetId().c_str());
+        vector<ASTExpr *>::const_iterator arg = callExpr->GetArgList().begin();
+        while (arg != callExpr->GetArgList().end())
+        {
+            PrintASTNode((*arg));
+            arg++;
+        }
         break;
     }
 
