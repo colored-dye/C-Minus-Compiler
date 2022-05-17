@@ -1,7 +1,8 @@
 Terminals unused in grammar
 
-    CHAR
-    ERROR
+    MYCHAR
+    MYELSE
+    MYERROR
 
 
 Grammar
@@ -16,25 +17,25 @@ Grammar
     4 declaration: var_declaration
     5            | fun_declaration
 
-    6 var_declaration: type_specifier id SEMI
-    7                | type_specifier id LC NUM RC SEMI
+    6 var_declaration: type_specifier id MYSEMI
+    7                | type_specifier id MYLC MYNUM MYRC MYSEMI
 
-    8 fun_declaration: type_specifier id LP params RP compound_stmt
+    8 fun_declaration: type_specifier id MYLP params MYRP compound_stmt
 
-    9 type_specifier: INT
-   10               | VOID
-   11               | REAL
+    9 type_specifier: MYINT
+   10               | MYVOID
+   11               | MYREAL
 
    12 params: param_list
-   13       | VOID
+   13       | MYVOID
 
    14 param_list: param
-   15           | param_list COMMA param
+   15           | param_list MYCOMMA param
 
    16 param: type_specifier id
-   17      | type_specifier id LC RC
+   17      | type_specifier id MYLC MYRC
 
-   18 compound_stmt: LB local_declarations statement_list RB
+   18 compound_stmt: MYLB local_declarations statement_list MYRB
 
    19 local_declarations: local_declarations var_declaration
    20                   | %empty
@@ -49,20 +50,20 @@ Grammar
    27          | for_stmt
    28          | return_stmt
 
-   29 expression_stmt: expression SEMI
-   30                | SEMI
+   29 expression_stmt: expression MYSEMI
+   30                | MYSEMI
 
    31 expression: assign
    32           | simple_expression
 
-   33 assign: var ASSIGN expression
+   33 assign: var MYASSIGN expression
 
-   34 selection_stmt: IF LP expression RP statement
-   35               | IF LP expression RP statement ELSE statement
+   34 selection_stmt: MYIF MYLP expression MYRP statement
+   35               | MYIF MYLP expression MYRP statement ELSE statement
 
-   36 while_stmt: WHILE LP expression RP statement
+   36 while_stmt: MYWHILE MYLP expression MYRP statement
 
-   37 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP statement
+   37 for_stmt: MYFOR MYLP for_param1 MYSEMI for_param2 MYSEMI for_param3 MYRP statement
 
    38 for_param1: %empty
    39           | assign
@@ -73,11 +74,11 @@ Grammar
    42 for_param3: %empty
    43           | assign
 
-   44 return_stmt: RETURN SEMI
-   45            | RETURN expression SEMI
+   44 return_stmt: MYRETURN MYSEMI
+   45            | MYRETURN expression MYSEMI
 
    46 var: id
-   47    | id LC expression RC
+   47    | id MYLC expression MYRC
 
    48 simple_expression: additive_expression relop additive_expression
    49                  | additive_expression
@@ -85,36 +86,36 @@ Grammar
    50 additive_expression: additive_expression addop term
    51                    | term
 
-   52 relop: LT
-   53      | LE
-   54      | GT
-   55      | GE
-   56      | EQ
-   57      | NE
+   52 relop: MYLT
+   53      | MYLE
+   54      | MYGT
+   55      | MYGE
+   56      | MYEQ
+   57      | MYNE
 
-   58 addop: ADD
-   59      | SUB
+   58 addop: MYADD
+   59      | MYSUB
 
    60 term: term mulop factor
    61     | factor
 
-   62 factor: LP expression RP
+   62 factor: MYLP expression MYRP
    63       | var
    64       | call
-   65       | NUM
+   65       | MYNUM
 
-   66 mulop: MUL
-   67      | DIV
+   66 mulop: MYMUL
+   67      | MYDIV
 
-   68 call: id LP args RP
+   68 call: id MYLP args MYRP
 
    69 args: arg_list
    70     | %empty
 
-   71 arg_list: arg_list COMMA expression
+   71 arg_list: arg_list MYCOMMA expression
    72         | expression
 
-   73 id: ID
+   73 id: MYID
    74   | error
 
 
@@ -122,147 +123,148 @@ Terminals, with rules where they appear
 
     $end (0) 0
     error (256) 74
-    ID (258) 73
-    NUM (259) 7 65
-    INT (260) 9
-    VOID (261) 10 13
-    REAL (262) 11
-    CHAR (263)
-    RETURN (264) 44 45
-    IF (265) 34 35
-    ELSE (266) 35
-    WHILE (267) 36
-    FOR (268) 37
-    GT <integer> (269) 54
-    LT <integer> (270) 52
-    GE <integer> (271) 55
-    LE <integer> (272) 53
-    NE <integer> (273) 57
-    EQ <integer> (274) 56
-    ADD <integer> (275) 58
-    SUB <integer> (276) 59
-    MUL <integer> (277) 66
-    DIV <integer> (278) 67
-    LP (279) 8 34 35 36 37 62 68
-    RP (280) 8 34 35 36 37 62 68
-    LB (281) 18
-    RB (282) 18
-    LC (283) 7 17 47
-    RC (284) 7 17 47
-    SEMI (285) 6 7 29 30 37 44 45
-    COMMA (286) 15 71
-    ASSIGN (287) 33
-    ERROR (288)
+    MYID (258) 73
+    MYNUM (259) 7 65
+    MYINT (260) 9
+    MYVOID (261) 10 13
+    MYREAL (262) 11
+    MYCHAR (263)
+    MYRETURN (264) 44 45
+    MYIF (265) 34 35
+    MYELSE (266)
+    MYWHILE (267) 36
+    MYFOR (268) 37
+    MYGT <integer> (269) 54
+    MYLT <integer> (270) 52
+    MYGE <integer> (271) 55
+    MYLE <integer> (272) 53
+    MYNE <integer> (273) 57
+    MYEQ <integer> (274) 56
+    MYADD <integer> (275) 58
+    MYSUB <integer> (276) 59
+    MYMUL <integer> (277) 66
+    MYDIV <integer> (278) 67
+    MYLP (279) 8 34 35 36 37 62 68
+    MYRP (280) 8 34 35 36 37 62 68
+    MYLB (281) 18
+    MYRB (282) 18
+    MYLC (283) 7 17 47
+    MYRC (284) 7 17 47
+    MYSEMI (285) 6 7 29 30 37 44 45
+    MYCOMMA (286) 15 71
+    MYASSIGN (287) 33
+    MYERROR (288)
     LOWER_THAN_ELSE (289)
+    ELSE (290) 35
 
 
 Nonterminals, with rules where they appear
 
-    $accept (35)
+    $accept (36)
         on left: 0
-    program <node> (36)
+    program <node> (37)
         on left: 1
         on right: 0
-    declaration_list <node> (37)
+    declaration_list <node> (38)
         on left: 2 3
         on right: 1 3
-    declaration <node> (38)
+    declaration <node> (39)
         on left: 4 5
         on right: 2 3
-    var_declaration <node> (39)
+    var_declaration <node> (40)
         on left: 6 7
         on right: 4 19
-    fun_declaration <node> (40)
+    fun_declaration <node> (41)
         on left: 8
         on right: 5
-    type_specifier <node> (41)
+    type_specifier <node> (42)
         on left: 9 10 11
         on right: 6 7 8 16 17
-    params <node> (42)
+    params <node> (43)
         on left: 12 13
         on right: 8
-    param_list <node> (43)
+    param_list <node> (44)
         on left: 14 15
         on right: 12 15
-    param <node> (44)
+    param <node> (45)
         on left: 16 17
         on right: 14 15
-    compound_stmt <node> (45)
+    compound_stmt <node> (46)
         on left: 18
         on right: 8 24
-    local_declarations <node> (46)
+    local_declarations <node> (47)
         on left: 19 20
         on right: 18 19
-    statement_list <node> (47)
+    statement_list <node> (48)
         on left: 21 22
         on right: 18 22
-    statement <node> (48)
+    statement <node> (49)
         on left: 23 24 25 26 27 28
         on right: 21 22 34 35 36 37
-    expression_stmt <node> (49)
+    expression_stmt <node> (50)
         on left: 29 30
         on right: 23
-    expression <node> (50)
+    expression <node> (51)
         on left: 31 32
         on right: 29 33 34 35 36 41 45 47 62 71 72
-    assign <node> (51)
+    assign <node> (52)
         on left: 33
         on right: 31 39 43
-    selection_stmt <node> (52)
+    selection_stmt <node> (53)
         on left: 34 35
         on right: 25
-    while_stmt <node> (53)
+    while_stmt <node> (54)
         on left: 36
         on right: 26
-    for_stmt <node> (54)
+    for_stmt <node> (55)
         on left: 37
         on right: 27
-    for_param1 <node> (55)
+    for_param1 <node> (56)
         on left: 38 39
         on right: 37
-    for_param2 <node> (56)
+    for_param2 <node> (57)
         on left: 40 41
         on right: 37
-    for_param3 <node> (57)
+    for_param3 <node> (58)
         on left: 42 43
         on right: 37
-    return_stmt <node> (58)
+    return_stmt <node> (59)
         on left: 44 45
         on right: 28
-    var <node> (59)
+    var <node> (60)
         on left: 46 47
         on right: 33 63
-    simple_expression <node> (60)
+    simple_expression <node> (61)
         on left: 48 49
         on right: 32
-    additive_expression <node> (61)
+    additive_expression <node> (62)
         on left: 50 51
         on right: 48 49 50
-    relop <node> (62)
+    relop <node> (63)
         on left: 52 53 54 55 56 57
         on right: 48
-    addop <node> (63)
+    addop <node> (64)
         on left: 58 59
         on right: 50
-    term <node> (64)
+    term <node> (65)
         on left: 60 61
         on right: 50 51 60
-    factor <node> (65)
+    factor <node> (66)
         on left: 62 63 64 65
         on right: 60 61
-    mulop <node> (66)
+    mulop <node> (67)
         on left: 66 67
         on right: 60
-    call <node> (67)
+    call <node> (68)
         on left: 68
         on right: 64
-    args <node> (68)
+    args <node> (69)
         on left: 69 70
         on right: 68
-    arg_list <node> (69)
+    arg_list <node> (70)
         on left: 71 72
         on right: 69 71
-    id <node> (70)
+    id <node> (71)
         on left: 73 74
         on right: 6 7 8 16 17 46 47 68
 
@@ -271,9 +273,9 @@ State 0
 
     0 $accept: . program $end
 
-    INT   shift, and go to state 1
-    VOID  shift, and go to state 2
-    REAL  shift, and go to state 3
+    MYINT   shift, and go to state 1
+    MYVOID  shift, and go to state 2
+    MYREAL  shift, and go to state 3
 
     program           go to state 4
     declaration_list  go to state 5
@@ -285,21 +287,21 @@ State 0
 
 State 1
 
-    9 type_specifier: INT .
+    9 type_specifier: MYINT .
 
     $default  reduce using rule 9 (type_specifier)
 
 
 State 2
 
-   10 type_specifier: VOID .
+   10 type_specifier: MYVOID .
 
     $default  reduce using rule 10 (type_specifier)
 
 
 State 3
 
-   11 type_specifier: REAL .
+   11 type_specifier: MYREAL .
 
     $default  reduce using rule 11 (type_specifier)
 
@@ -316,9 +318,9 @@ State 5
     1 program: declaration_list .
     3 declaration_list: declaration_list . declaration
 
-    INT   shift, and go to state 1
-    VOID  shift, and go to state 2
-    REAL  shift, and go to state 3
+    MYINT   shift, and go to state 1
+    MYVOID  shift, and go to state 2
+    MYREAL  shift, and go to state 3
 
     $default  reduce using rule 1 (program)
 
@@ -351,12 +353,12 @@ State 8
 
 State 9
 
-    6 var_declaration: type_specifier . id SEMI
-    7                | type_specifier . id LC NUM RC SEMI
-    8 fun_declaration: type_specifier . id LP params RP compound_stmt
+    6 var_declaration: type_specifier . id MYSEMI
+    7                | type_specifier . id MYLC MYNUM MYRC MYSEMI
+    8 fun_declaration: type_specifier . id MYLP params MYRP compound_stmt
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
+    MYID   shift, and go to state 13
 
     id  go to state 14
 
@@ -384,29 +386,29 @@ State 12
 
 State 13
 
-   73 id: ID .
+   73 id: MYID .
 
     $default  reduce using rule 73 (id)
 
 
 State 14
 
-    6 var_declaration: type_specifier id . SEMI
-    7                | type_specifier id . LC NUM RC SEMI
-    8 fun_declaration: type_specifier id . LP params RP compound_stmt
+    6 var_declaration: type_specifier id . MYSEMI
+    7                | type_specifier id . MYLC MYNUM MYRC MYSEMI
+    8 fun_declaration: type_specifier id . MYLP params MYRP compound_stmt
 
-    LP    shift, and go to state 15
-    LC    shift, and go to state 16
-    SEMI  shift, and go to state 17
+    MYLP    shift, and go to state 15
+    MYLC    shift, and go to state 16
+    MYSEMI  shift, and go to state 17
 
 
 State 15
 
-    8 fun_declaration: type_specifier id LP . params RP compound_stmt
+    8 fun_declaration: type_specifier id MYLP . params MYRP compound_stmt
 
-    INT   shift, and go to state 1
-    VOID  shift, and go to state 18
-    REAL  shift, and go to state 3
+    MYINT   shift, and go to state 1
+    MYVOID  shift, and go to state 18
+    MYREAL  shift, and go to state 3
 
     type_specifier  go to state 19
     params          go to state 20
@@ -416,51 +418,51 @@ State 15
 
 State 16
 
-    7 var_declaration: type_specifier id LC . NUM RC SEMI
+    7 var_declaration: type_specifier id MYLC . MYNUM MYRC MYSEMI
 
-    NUM  shift, and go to state 23
+    MYNUM  shift, and go to state 23
 
 
 State 17
 
-    6 var_declaration: type_specifier id SEMI .
+    6 var_declaration: type_specifier id MYSEMI .
 
     $default  reduce using rule 6 (var_declaration)
 
 
 State 18
 
-   10 type_specifier: VOID .
-   13 params: VOID .
+   10 type_specifier: MYVOID .
+   13 params: MYVOID .
 
-    RP        reduce using rule 13 (params)
+    MYRP      reduce using rule 13 (params)
     $default  reduce using rule 10 (type_specifier)
 
 
 State 19
 
    16 param: type_specifier . id
-   17      | type_specifier . id LC RC
+   17      | type_specifier . id MYLC MYRC
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
+    MYID   shift, and go to state 13
 
     id  go to state 24
 
 
 State 20
 
-    8 fun_declaration: type_specifier id LP params . RP compound_stmt
+    8 fun_declaration: type_specifier id MYLP params . MYRP compound_stmt
 
-    RP  shift, and go to state 25
+    MYRP  shift, and go to state 25
 
 
 State 21
 
    12 params: param_list .
-   15 param_list: param_list . COMMA param
+   15 param_list: param_list . MYCOMMA param
 
-    COMMA  shift, and go to state 26
+    MYCOMMA  shift, and go to state 26
 
     $default  reduce using rule 12 (params)
 
@@ -474,37 +476,37 @@ State 22
 
 State 23
 
-    7 var_declaration: type_specifier id LC NUM . RC SEMI
+    7 var_declaration: type_specifier id MYLC MYNUM . MYRC MYSEMI
 
-    RC  shift, and go to state 27
+    MYRC  shift, and go to state 27
 
 
 State 24
 
    16 param: type_specifier id .
-   17      | type_specifier id . LC RC
+   17      | type_specifier id . MYLC MYRC
 
-    LC  shift, and go to state 28
+    MYLC  shift, and go to state 28
 
     $default  reduce using rule 16 (param)
 
 
 State 25
 
-    8 fun_declaration: type_specifier id LP params RP . compound_stmt
+    8 fun_declaration: type_specifier id MYLP params MYRP . compound_stmt
 
-    LB  shift, and go to state 29
+    MYLB  shift, and go to state 29
 
     compound_stmt  go to state 30
 
 
 State 26
 
-   15 param_list: param_list COMMA . param
+   15 param_list: param_list MYCOMMA . param
 
-    INT   shift, and go to state 1
-    VOID  shift, and go to state 2
-    REAL  shift, and go to state 3
+    MYINT   shift, and go to state 1
+    MYVOID  shift, and go to state 2
+    MYREAL  shift, and go to state 3
 
     type_specifier  go to state 19
     param           go to state 31
@@ -512,21 +514,21 @@ State 26
 
 State 27
 
-    7 var_declaration: type_specifier id LC NUM RC . SEMI
+    7 var_declaration: type_specifier id MYLC MYNUM MYRC . MYSEMI
 
-    SEMI  shift, and go to state 32
+    MYSEMI  shift, and go to state 32
 
 
 State 28
 
-   17 param: type_specifier id LC . RC
+   17 param: type_specifier id MYLC . MYRC
 
-    RC  shift, and go to state 33
+    MYRC  shift, and go to state 33
 
 
 State 29
 
-   18 compound_stmt: LB . local_declarations statement_list RB
+   18 compound_stmt: MYLB . local_declarations statement_list MYRB
 
     $default  reduce using rule 20 (local_declarations)
 
@@ -535,50 +537,50 @@ State 29
 
 State 30
 
-    8 fun_declaration: type_specifier id LP params RP compound_stmt .
+    8 fun_declaration: type_specifier id MYLP params MYRP compound_stmt .
 
     $default  reduce using rule 8 (fun_declaration)
 
 
 State 31
 
-   15 param_list: param_list COMMA param .
+   15 param_list: param_list MYCOMMA param .
 
     $default  reduce using rule 15 (param_list)
 
 
 State 32
 
-    7 var_declaration: type_specifier id LC NUM RC SEMI .
+    7 var_declaration: type_specifier id MYLC MYNUM MYRC MYSEMI .
 
     $default  reduce using rule 7 (var_declaration)
 
 
 State 33
 
-   17 param: type_specifier id LC RC .
+   17 param: type_specifier id MYLC MYRC .
 
     $default  reduce using rule 17 (param)
 
 
 State 34
 
-   18 compound_stmt: LB local_declarations . statement_list RB
+   18 compound_stmt: MYLB local_declarations . statement_list MYRB
    19 local_declarations: local_declarations . var_declaration
 
-    error   shift, and go to state 12
-    ID      shift, and go to state 13
-    NUM     shift, and go to state 35
-    INT     shift, and go to state 1
-    VOID    shift, and go to state 2
-    REAL    shift, and go to state 3
-    RETURN  shift, and go to state 36
-    IF      shift, and go to state 37
-    WHILE   shift, and go to state 38
-    FOR     shift, and go to state 39
-    LP      shift, and go to state 40
-    LB      shift, and go to state 29
-    SEMI    shift, and go to state 41
+    error     shift, and go to state 12
+    MYID      shift, and go to state 13
+    MYNUM     shift, and go to state 35
+    MYINT     shift, and go to state 1
+    MYVOID    shift, and go to state 2
+    MYREAL    shift, and go to state 3
+    MYRETURN  shift, and go to state 36
+    MYIF      shift, and go to state 37
+    MYWHILE   shift, and go to state 38
+    MYFOR     shift, and go to state 39
+    MYLP      shift, and go to state 40
+    MYLB      shift, and go to state 29
+    MYSEMI    shift, and go to state 41
 
     var_declaration      go to state 42
     type_specifier       go to state 43
@@ -603,21 +605,21 @@ State 34
 
 State 35
 
-   65 factor: NUM .
+   65 factor: MYNUM .
 
     $default  reduce using rule 65 (factor)
 
 
 State 36
 
-   44 return_stmt: RETURN . SEMI
-   45            | RETURN . expression SEMI
+   44 return_stmt: MYRETURN . MYSEMI
+   45            | MYRETURN . expression MYSEMI
 
-    error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
-    SEMI   shift, and go to state 61
+    error   shift, and go to state 12
+    MYID    shift, and go to state 13
+    MYNUM   shift, and go to state 35
+    MYLP    shift, and go to state 40
+    MYSEMI  shift, and go to state 61
 
     expression           go to state 62
     assign               go to state 49
@@ -632,34 +634,34 @@ State 36
 
 State 37
 
-   34 selection_stmt: IF . LP expression RP statement
-   35               | IF . LP expression RP statement ELSE statement
+   34 selection_stmt: MYIF . MYLP expression MYRP statement
+   35               | MYIF . MYLP expression MYRP statement ELSE statement
 
-    LP  shift, and go to state 63
+    MYLP  shift, and go to state 63
 
 
 State 38
 
-   36 while_stmt: WHILE . LP expression RP statement
+   36 while_stmt: MYWHILE . MYLP expression MYRP statement
 
-    LP  shift, and go to state 64
+    MYLP  shift, and go to state 64
 
 
 State 39
 
-   37 for_stmt: FOR . LP for_param1 SEMI for_param2 SEMI for_param3 RP statement
+   37 for_stmt: MYFOR . MYLP for_param1 MYSEMI for_param2 MYSEMI for_param3 MYRP statement
 
-    LP  shift, and go to state 65
+    MYLP  shift, and go to state 65
 
 
 State 40
 
-   62 factor: LP . expression RP
+   62 factor: MYLP . expression MYRP
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
     expression           go to state 66
     assign               go to state 49
@@ -674,7 +676,7 @@ State 40
 
 State 41
 
-   30 expression_stmt: SEMI .
+   30 expression_stmt: MYSEMI .
 
     $default  reduce using rule 30 (expression_stmt)
 
@@ -688,11 +690,11 @@ State 42
 
 State 43
 
-    6 var_declaration: type_specifier . id SEMI
-    7                | type_specifier . id LC NUM RC SEMI
+    6 var_declaration: type_specifier . id MYSEMI
+    7                | type_specifier . id MYLC MYNUM MYRC MYSEMI
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
+    MYID   shift, and go to state 13
 
     id  go to state 67
 
@@ -706,20 +708,20 @@ State 44
 
 State 45
 
-   18 compound_stmt: LB local_declarations statement_list . RB
+   18 compound_stmt: MYLB local_declarations statement_list . MYRB
    22 statement_list: statement_list . statement
 
-    error   shift, and go to state 12
-    ID      shift, and go to state 13
-    NUM     shift, and go to state 35
-    RETURN  shift, and go to state 36
-    IF      shift, and go to state 37
-    WHILE   shift, and go to state 38
-    FOR     shift, and go to state 39
-    LP      shift, and go to state 40
-    LB      shift, and go to state 29
-    RB      shift, and go to state 68
-    SEMI    shift, and go to state 41
+    error     shift, and go to state 12
+    MYID      shift, and go to state 13
+    MYNUM     shift, and go to state 35
+    MYRETURN  shift, and go to state 36
+    MYIF      shift, and go to state 37
+    MYWHILE   shift, and go to state 38
+    MYFOR     shift, and go to state 39
+    MYLP      shift, and go to state 40
+    MYLB      shift, and go to state 29
+    MYRB      shift, and go to state 68
+    MYSEMI    shift, and go to state 41
 
     compound_stmt        go to state 44
     statement            go to state 69
@@ -755,9 +757,9 @@ State 47
 
 State 48
 
-   29 expression_stmt: expression . SEMI
+   29 expression_stmt: expression . MYSEMI
 
-    SEMI  shift, and go to state 70
+    MYSEMI  shift, and go to state 70
 
 
 State 49
@@ -797,10 +799,10 @@ State 53
 
 State 54
 
-   33 assign: var . ASSIGN expression
+   33 assign: var . MYASSIGN expression
    63 factor: var .
 
-    ASSIGN  shift, and go to state 71
+    MYASSIGN  shift, and go to state 71
 
     $default  reduce using rule 63 (factor)
 
@@ -818,14 +820,14 @@ State 56
    49                  | additive_expression .
    50 additive_expression: additive_expression . addop term
 
-    GT   shift, and go to state 72
-    LT   shift, and go to state 73
-    GE   shift, and go to state 74
-    LE   shift, and go to state 75
-    NE   shift, and go to state 76
-    EQ   shift, and go to state 77
-    ADD  shift, and go to state 78
-    SUB  shift, and go to state 79
+    MYGT   shift, and go to state 72
+    MYLT   shift, and go to state 73
+    MYGE   shift, and go to state 74
+    MYLE   shift, and go to state 75
+    MYNE   shift, and go to state 76
+    MYEQ   shift, and go to state 77
+    MYADD  shift, and go to state 78
+    MYSUB  shift, and go to state 79
 
     $default  reduce using rule 49 (simple_expression)
 
@@ -838,8 +840,8 @@ State 57
    51 additive_expression: term .
    60 term: term . mulop factor
 
-    MUL  shift, and go to state 82
-    DIV  shift, and go to state 83
+    MYMUL  shift, and go to state 82
+    MYDIV  shift, and go to state 83
 
     $default  reduce using rule 51 (additive_expression)
 
@@ -863,38 +865,38 @@ State 59
 State 60
 
    46 var: id .
-   47    | id . LC expression RC
-   68 call: id . LP args RP
+   47    | id . MYLC expression MYRC
+   68 call: id . MYLP args MYRP
 
-    LP  shift, and go to state 85
-    LC  shift, and go to state 86
+    MYLP  shift, and go to state 85
+    MYLC  shift, and go to state 86
 
     $default  reduce using rule 46 (var)
 
 
 State 61
 
-   44 return_stmt: RETURN SEMI .
+   44 return_stmt: MYRETURN MYSEMI .
 
     $default  reduce using rule 44 (return_stmt)
 
 
 State 62
 
-   45 return_stmt: RETURN expression . SEMI
+   45 return_stmt: MYRETURN expression . MYSEMI
 
-    SEMI  shift, and go to state 87
+    MYSEMI  shift, and go to state 87
 
 
 State 63
 
-   34 selection_stmt: IF LP . expression RP statement
-   35               | IF LP . expression RP statement ELSE statement
+   34 selection_stmt: MYIF MYLP . expression MYRP statement
+   35               | MYIF MYLP . expression MYRP statement ELSE statement
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
     expression           go to state 88
     assign               go to state 49
@@ -909,12 +911,12 @@ State 63
 
 State 64
 
-   36 while_stmt: WHILE LP . expression RP statement
+   36 while_stmt: MYWHILE MYLP . expression MYRP statement
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
     expression           go to state 89
     assign               go to state 49
@@ -929,12 +931,12 @@ State 64
 
 State 65
 
-   37 for_stmt: FOR LP . for_param1 SEMI for_param2 SEMI for_param3 RP statement
+   37 for_stmt: MYFOR MYLP . for_param1 MYSEMI for_param2 MYSEMI for_param3 MYRP statement
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
+    MYID   shift, and go to state 13
 
-    SEMI  reduce using rule 38 (for_param1)
+    MYSEMI  reduce using rule 38 (for_param1)
 
     assign      go to state 90
     for_param1  go to state 91
@@ -944,23 +946,23 @@ State 65
 
 State 66
 
-   62 factor: LP expression . RP
+   62 factor: MYLP expression . MYRP
 
-    RP  shift, and go to state 94
+    MYRP  shift, and go to state 94
 
 
 State 67
 
-    6 var_declaration: type_specifier id . SEMI
-    7                | type_specifier id . LC NUM RC SEMI
+    6 var_declaration: type_specifier id . MYSEMI
+    7                | type_specifier id . MYLC MYNUM MYRC MYSEMI
 
-    LC    shift, and go to state 16
-    SEMI  shift, and go to state 17
+    MYLC    shift, and go to state 16
+    MYSEMI  shift, and go to state 17
 
 
 State 68
 
-   18 compound_stmt: LB local_declarations statement_list RB .
+   18 compound_stmt: MYLB local_declarations statement_list MYRB .
 
     $default  reduce using rule 18 (compound_stmt)
 
@@ -974,19 +976,19 @@ State 69
 
 State 70
 
-   29 expression_stmt: expression SEMI .
+   29 expression_stmt: expression MYSEMI .
 
     $default  reduce using rule 29 (expression_stmt)
 
 
 State 71
 
-   33 assign: var ASSIGN . expression
+   33 assign: var MYASSIGN . expression
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
     expression           go to state 95
     assign               go to state 49
@@ -1001,56 +1003,56 @@ State 71
 
 State 72
 
-   54 relop: GT .
+   54 relop: MYGT .
 
     $default  reduce using rule 54 (relop)
 
 
 State 73
 
-   52 relop: LT .
+   52 relop: MYLT .
 
     $default  reduce using rule 52 (relop)
 
 
 State 74
 
-   55 relop: GE .
+   55 relop: MYGE .
 
     $default  reduce using rule 55 (relop)
 
 
 State 75
 
-   53 relop: LE .
+   53 relop: MYLE .
 
     $default  reduce using rule 53 (relop)
 
 
 State 76
 
-   57 relop: NE .
+   57 relop: MYNE .
 
     $default  reduce using rule 57 (relop)
 
 
 State 77
 
-   56 relop: EQ .
+   56 relop: MYEQ .
 
     $default  reduce using rule 56 (relop)
 
 
 State 78
 
-   58 addop: ADD .
+   58 addop: MYADD .
 
     $default  reduce using rule 58 (addop)
 
 
 State 79
 
-   59 addop: SUB .
+   59 addop: MYSUB .
 
     $default  reduce using rule 59 (addop)
 
@@ -1060,9 +1062,9 @@ State 80
    48 simple_expression: additive_expression relop . additive_expression
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
     var                  go to state 96
     additive_expression  go to state 97
@@ -1077,9 +1079,9 @@ State 81
    50 additive_expression: additive_expression addop . term
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
     var     go to state 96
     term    go to state 98
@@ -1090,14 +1092,14 @@ State 81
 
 State 82
 
-   66 mulop: MUL .
+   66 mulop: MYMUL .
 
     $default  reduce using rule 66 (mulop)
 
 
 State 83
 
-   67 mulop: DIV .
+   67 mulop: MYDIV .
 
     $default  reduce using rule 67 (mulop)
 
@@ -1107,9 +1109,9 @@ State 84
    60 term: term mulop . factor
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
     var     go to state 96
     factor  go to state 99
@@ -1119,14 +1121,14 @@ State 84
 
 State 85
 
-   68 call: id LP . args RP
+   68 call: id MYLP . args MYRP
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
-    RP  reduce using rule 70 (args)
+    MYRP  reduce using rule 70 (args)
 
     expression           go to state 100
     assign               go to state 49
@@ -1143,12 +1145,12 @@ State 85
 
 State 86
 
-   47 var: id LC . expression RC
+   47 var: id MYLC . expression MYRC
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
     expression           go to state 103
     assign               go to state 49
@@ -1163,24 +1165,24 @@ State 86
 
 State 87
 
-   45 return_stmt: RETURN expression SEMI .
+   45 return_stmt: MYRETURN expression MYSEMI .
 
     $default  reduce using rule 45 (return_stmt)
 
 
 State 88
 
-   34 selection_stmt: IF LP expression . RP statement
-   35               | IF LP expression . RP statement ELSE statement
+   34 selection_stmt: MYIF MYLP expression . MYRP statement
+   35               | MYIF MYLP expression . MYRP statement ELSE statement
 
-    RP  shift, and go to state 104
+    MYRP  shift, and go to state 104
 
 
 State 89
 
-   36 while_stmt: WHILE LP expression . RP statement
+   36 while_stmt: MYWHILE MYLP expression . MYRP statement
 
-    RP  shift, and go to state 105
+    MYRP  shift, and go to state 105
 
 
 State 90
@@ -1192,38 +1194,38 @@ State 90
 
 State 91
 
-   37 for_stmt: FOR LP for_param1 . SEMI for_param2 SEMI for_param3 RP statement
+   37 for_stmt: MYFOR MYLP for_param1 . MYSEMI for_param2 MYSEMI for_param3 MYRP statement
 
-    SEMI  shift, and go to state 106
+    MYSEMI  shift, and go to state 106
 
 
 State 92
 
-   33 assign: var . ASSIGN expression
+   33 assign: var . MYASSIGN expression
 
-    ASSIGN  shift, and go to state 71
+    MYASSIGN  shift, and go to state 71
 
 
 State 93
 
    46 var: id .
-   47    | id . LC expression RC
+   47    | id . MYLC expression MYRC
 
-    LC  shift, and go to state 86
+    MYLC  shift, and go to state 86
 
     $default  reduce using rule 46 (var)
 
 
 State 94
 
-   62 factor: LP expression RP .
+   62 factor: MYLP expression MYRP .
 
     $default  reduce using rule 62 (factor)
 
 
 State 95
 
-   33 assign: var ASSIGN expression .
+   33 assign: var MYASSIGN expression .
 
     $default  reduce using rule 33 (assign)
 
@@ -1240,8 +1242,8 @@ State 97
    48 simple_expression: additive_expression relop additive_expression .
    50 additive_expression: additive_expression . addop term
 
-    ADD  shift, and go to state 78
-    SUB  shift, and go to state 79
+    MYADD  shift, and go to state 78
+    MYSUB  shift, and go to state 79
 
     $default  reduce using rule 48 (simple_expression)
 
@@ -1253,8 +1255,8 @@ State 98
    50 additive_expression: additive_expression addop term .
    60 term: term . mulop factor
 
-    MUL  shift, and go to state 82
-    DIV  shift, and go to state 83
+    MYMUL  shift, and go to state 82
+    MYDIV  shift, and go to state 83
 
     $default  reduce using rule 50 (additive_expression)
 
@@ -1277,43 +1279,43 @@ State 100
 
 State 101
 
-   68 call: id LP args . RP
+   68 call: id MYLP args . MYRP
 
-    RP  shift, and go to state 107
+    MYRP  shift, and go to state 107
 
 
 State 102
 
    69 args: arg_list .
-   71 arg_list: arg_list . COMMA expression
+   71 arg_list: arg_list . MYCOMMA expression
 
-    COMMA  shift, and go to state 108
+    MYCOMMA  shift, and go to state 108
 
     $default  reduce using rule 69 (args)
 
 
 State 103
 
-   47 var: id LC expression . RC
+   47 var: id MYLC expression . MYRC
 
-    RC  shift, and go to state 109
+    MYRC  shift, and go to state 109
 
 
 State 104
 
-   34 selection_stmt: IF LP expression RP . statement
-   35               | IF LP expression RP . statement ELSE statement
+   34 selection_stmt: MYIF MYLP expression MYRP . statement
+   35               | MYIF MYLP expression MYRP . statement ELSE statement
 
-    error   shift, and go to state 12
-    ID      shift, and go to state 13
-    NUM     shift, and go to state 35
-    RETURN  shift, and go to state 36
-    IF      shift, and go to state 37
-    WHILE   shift, and go to state 38
-    FOR     shift, and go to state 39
-    LP      shift, and go to state 40
-    LB      shift, and go to state 29
-    SEMI    shift, and go to state 41
+    error     shift, and go to state 12
+    MYID      shift, and go to state 13
+    MYNUM     shift, and go to state 35
+    MYRETURN  shift, and go to state 36
+    MYIF      shift, and go to state 37
+    MYWHILE   shift, and go to state 38
+    MYFOR     shift, and go to state 39
+    MYLP      shift, and go to state 40
+    MYLB      shift, and go to state 29
+    MYSEMI    shift, and go to state 41
 
     compound_stmt        go to state 44
     statement            go to state 110
@@ -1335,18 +1337,18 @@ State 104
 
 State 105
 
-   36 while_stmt: WHILE LP expression RP . statement
+   36 while_stmt: MYWHILE MYLP expression MYRP . statement
 
-    error   shift, and go to state 12
-    ID      shift, and go to state 13
-    NUM     shift, and go to state 35
-    RETURN  shift, and go to state 36
-    IF      shift, and go to state 37
-    WHILE   shift, and go to state 38
-    FOR     shift, and go to state 39
-    LP      shift, and go to state 40
-    LB      shift, and go to state 29
-    SEMI    shift, and go to state 41
+    error     shift, and go to state 12
+    MYID      shift, and go to state 13
+    MYNUM     shift, and go to state 35
+    MYRETURN  shift, and go to state 36
+    MYIF      shift, and go to state 37
+    MYWHILE   shift, and go to state 38
+    MYFOR     shift, and go to state 39
+    MYLP      shift, and go to state 40
+    MYLB      shift, and go to state 29
+    MYSEMI    shift, and go to state 41
 
     compound_stmt        go to state 44
     statement            go to state 111
@@ -1368,14 +1370,14 @@ State 105
 
 State 106
 
-   37 for_stmt: FOR LP for_param1 SEMI . for_param2 SEMI for_param3 RP statement
+   37 for_stmt: MYFOR MYLP for_param1 MYSEMI . for_param2 MYSEMI for_param3 MYRP statement
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
-    SEMI  reduce using rule 40 (for_param2)
+    MYSEMI  reduce using rule 40 (for_param2)
 
     expression           go to state 112
     assign               go to state 49
@@ -1391,19 +1393,19 @@ State 106
 
 State 107
 
-   68 call: id LP args RP .
+   68 call: id MYLP args MYRP .
 
     $default  reduce using rule 68 (call)
 
 
 State 108
 
-   71 arg_list: arg_list COMMA . expression
+   71 arg_list: arg_list MYCOMMA . expression
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
-    NUM    shift, and go to state 35
-    LP     shift, and go to state 40
+    MYID   shift, and go to state 13
+    MYNUM  shift, and go to state 35
+    MYLP   shift, and go to state 40
 
     expression           go to state 114
     assign               go to state 49
@@ -1418,15 +1420,15 @@ State 108
 
 State 109
 
-   47 var: id LC expression RC .
+   47 var: id MYLC expression MYRC .
 
     $default  reduce using rule 47 (var)
 
 
 State 110
 
-   34 selection_stmt: IF LP expression RP statement .
-   35               | IF LP expression RP statement . ELSE statement
+   34 selection_stmt: MYIF MYLP expression MYRP statement .
+   35               | MYIF MYLP expression MYRP statement . ELSE statement
 
     ELSE  shift, and go to state 115
 
@@ -1435,7 +1437,7 @@ State 110
 
 State 111
 
-   36 while_stmt: WHILE LP expression RP statement .
+   36 while_stmt: MYWHILE MYLP expression MYRP statement .
 
     $default  reduce using rule 36 (while_stmt)
 
@@ -1449,32 +1451,32 @@ State 112
 
 State 113
 
-   37 for_stmt: FOR LP for_param1 SEMI for_param2 . SEMI for_param3 RP statement
+   37 for_stmt: MYFOR MYLP for_param1 MYSEMI for_param2 . MYSEMI for_param3 MYRP statement
 
-    SEMI  shift, and go to state 116
+    MYSEMI  shift, and go to state 116
 
 
 State 114
 
-   71 arg_list: arg_list COMMA expression .
+   71 arg_list: arg_list MYCOMMA expression .
 
     $default  reduce using rule 71 (arg_list)
 
 
 State 115
 
-   35 selection_stmt: IF LP expression RP statement ELSE . statement
+   35 selection_stmt: MYIF MYLP expression MYRP statement ELSE . statement
 
-    error   shift, and go to state 12
-    ID      shift, and go to state 13
-    NUM     shift, and go to state 35
-    RETURN  shift, and go to state 36
-    IF      shift, and go to state 37
-    WHILE   shift, and go to state 38
-    FOR     shift, and go to state 39
-    LP      shift, and go to state 40
-    LB      shift, and go to state 29
-    SEMI    shift, and go to state 41
+    error     shift, and go to state 12
+    MYID      shift, and go to state 13
+    MYNUM     shift, and go to state 35
+    MYRETURN  shift, and go to state 36
+    MYIF      shift, and go to state 37
+    MYWHILE   shift, and go to state 38
+    MYFOR     shift, and go to state 39
+    MYLP      shift, and go to state 40
+    MYLB      shift, and go to state 29
+    MYSEMI    shift, and go to state 41
 
     compound_stmt        go to state 44
     statement            go to state 117
@@ -1496,12 +1498,12 @@ State 115
 
 State 116
 
-   37 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI . for_param3 RP statement
+   37 for_stmt: MYFOR MYLP for_param1 MYSEMI for_param2 MYSEMI . for_param3 MYRP statement
 
     error  shift, and go to state 12
-    ID     shift, and go to state 13
+    MYID   shift, and go to state 13
 
-    RP  reduce using rule 42 (for_param3)
+    MYRP  reduce using rule 42 (for_param3)
 
     assign      go to state 118
     for_param3  go to state 119
@@ -1511,7 +1513,7 @@ State 116
 
 State 117
 
-   35 selection_stmt: IF LP expression RP statement ELSE statement .
+   35 selection_stmt: MYIF MYLP expression MYRP statement ELSE statement .
 
     $default  reduce using rule 35 (selection_stmt)
 
@@ -1525,25 +1527,25 @@ State 118
 
 State 119
 
-   37 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 . RP statement
+   37 for_stmt: MYFOR MYLP for_param1 MYSEMI for_param2 MYSEMI for_param3 . MYRP statement
 
-    RP  shift, and go to state 120
+    MYRP  shift, and go to state 120
 
 
 State 120
 
-   37 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP . statement
+   37 for_stmt: MYFOR MYLP for_param1 MYSEMI for_param2 MYSEMI for_param3 MYRP . statement
 
-    error   shift, and go to state 12
-    ID      shift, and go to state 13
-    NUM     shift, and go to state 35
-    RETURN  shift, and go to state 36
-    IF      shift, and go to state 37
-    WHILE   shift, and go to state 38
-    FOR     shift, and go to state 39
-    LP      shift, and go to state 40
-    LB      shift, and go to state 29
-    SEMI    shift, and go to state 41
+    error     shift, and go to state 12
+    MYID      shift, and go to state 13
+    MYNUM     shift, and go to state 35
+    MYRETURN  shift, and go to state 36
+    MYIF      shift, and go to state 37
+    MYWHILE   shift, and go to state 38
+    MYFOR     shift, and go to state 39
+    MYLP      shift, and go to state 40
+    MYLB      shift, and go to state 29
+    MYSEMI    shift, and go to state 41
 
     compound_stmt        go to state 44
     statement            go to state 121
@@ -1565,6 +1567,6 @@ State 120
 
 State 121
 
-   37 for_stmt: FOR LP for_param1 SEMI for_param2 SEMI for_param3 RP statement .
+   37 for_stmt: MYFOR MYLP for_param1 MYSEMI for_param2 MYSEMI for_param3 MYRP statement .
 
     $default  reduce using rule 37 (for_stmt)

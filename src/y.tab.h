@@ -49,73 +49,75 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    ID = 258,
-    NUM = 259,
-    INT = 260,
-    VOID = 261,
-    REAL = 262,
-    CHAR = 263,
-    RETURN = 264,
-    IF = 265,
-    ELSE = 266,
-    WHILE = 267,
-    FOR = 268,
-    GT = 269,
-    LT = 270,
-    GE = 271,
-    LE = 272,
-    NE = 273,
-    EQ = 274,
-    ADD = 275,
-    SUB = 276,
-    MUL = 277,
-    DIV = 278,
-    LP = 279,
-    RP = 280,
-    LB = 281,
-    RB = 282,
-    LC = 283,
-    RC = 284,
-    SEMI = 285,
-    COMMA = 286,
-    ASSIGN = 287,
-    ERROR = 288,
-    LOWER_THAN_ELSE = 289
+    MYID = 258,
+    MYNUM = 259,
+    MYINT = 260,
+    MYVOID = 261,
+    MYREAL = 262,
+    MYCHAR = 263,
+    MYRETURN = 264,
+    MYIF = 265,
+    MYELSE = 266,
+    MYWHILE = 267,
+    MYFOR = 268,
+    MYGT = 269,
+    MYLT = 270,
+    MYGE = 271,
+    MYLE = 272,
+    MYNE = 273,
+    MYEQ = 274,
+    MYADD = 275,
+    MYSUB = 276,
+    MYMUL = 277,
+    MYDIV = 278,
+    MYLP = 279,
+    MYRP = 280,
+    MYLB = 281,
+    MYRB = 282,
+    MYLC = 283,
+    MYRC = 284,
+    MYSEMI = 285,
+    MYCOMMA = 286,
+    MYASSIGN = 287,
+    MYERROR = 288,
+    LOWER_THAN_ELSE = 289,
+    ELSE = 290
   };
 #endif
 /* Tokens.  */
-#define ID 258
-#define NUM 259
-#define INT 260
-#define VOID 261
-#define REAL 262
-#define CHAR 263
-#define RETURN 264
-#define IF 265
-#define ELSE 266
-#define WHILE 267
-#define FOR 268
-#define GT 269
-#define LT 270
-#define GE 271
-#define LE 272
-#define NE 273
-#define EQ 274
-#define ADD 275
-#define SUB 276
-#define MUL 277
-#define DIV 278
-#define LP 279
-#define RP 280
-#define LB 281
-#define RB 282
-#define LC 283
-#define RC 284
-#define SEMI 285
-#define COMMA 286
-#define ASSIGN 287
-#define ERROR 288
+#define MYID 258
+#define MYNUM 259
+#define MYINT 260
+#define MYVOID 261
+#define MYREAL 262
+#define MYCHAR 263
+#define MYRETURN 264
+#define MYIF 265
+#define MYELSE 266
+#define MYWHILE 267
+#define MYFOR 268
+#define MYGT 269
+#define MYLT 270
+#define MYGE 271
+#define MYLE 272
+#define MYNE 273
+#define MYEQ 274
+#define MYADD 275
+#define MYSUB 276
+#define MYMUL 277
+#define MYDIV 278
+#define MYLP 279
+#define MYRP 280
+#define MYLB 281
+#define MYRB 282
+#define MYLC 283
+#define MYRC 284
+#define MYSEMI 285
+#define MYCOMMA 286
+#define MYASSIGN 287
+#define MYERROR 288
 #define LOWER_THAN_ELSE 289
+#define ELSE 290
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -127,7 +129,7 @@ union YYSTYPE
   int integer;
   float real;
 
-#line 131 "y.tab.h"
+#line 133 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

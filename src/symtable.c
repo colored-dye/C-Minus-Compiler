@@ -17,13 +17,13 @@ BasicType str2BasicType(const char* s) {
   return bt;
 }
 
-struct Type* createType(TypeKind typeK) {
-  struct Type* ret = (struct Type*)malloc(sizeof(struct Type));
+struct Type_* createType(TypeKind typeK) {
+  struct Type_* ret = (struct Type_*)malloc(sizeof(struct Type_));
   ret->typeKind = typeK;
   return ret;
 }
 
-void setBasic(struct Type* type, BasicType basic) {
+void setBasic(struct Type_* type, BasicType basic) {
   memset(&type->basic, 0, sizeof(type->array));
   type->basic = basic;
 }
@@ -98,7 +98,7 @@ int isFuncArgMatch(struct FuncArgList* funcArg1, struct FuncArgList* funcArg2) {
   return 1;
 }
 
-int isTypeMatch(struct Type* t1, struct Type* t2) {
+int isTypeMatch(struct Type_* t1, struct Type_* t2) {
   int match = 1;
 
   if((!!t1) != (!!t2))
@@ -133,7 +133,7 @@ int isTypeMatch(struct Type* t1, struct Type* t2) {
   return match;
 }
 
-char* Type2Str(struct Type* type) {
+char* Type2Str(struct Type_* type) {
   char* ret = (char*)malloc(STRING_LENGTH), *tmp = NULL;
   struct FuncArgList* argp = NULL;
   switch (type->typeKind) {
@@ -217,7 +217,7 @@ void printSymNode(struct SymNode* symNode) {
   printType(symNode->symType);
 }
 
-void printType(struct Type* type) {
+void printType(struct Type_* type) {
   printf("%s\n", Type2Str(type));
 }
 

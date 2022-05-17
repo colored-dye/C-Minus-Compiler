@@ -877,7 +877,7 @@ YY_RULE_SETUP
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return INT;
+  return MYINT;
   }
 	YY_BREAK
 case 2:
@@ -892,7 +892,7 @@ YY_RULE_SETUP
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return VOID;
+  return MYVOID;
   }
 	YY_BREAK
 case 3:
@@ -907,38 +907,38 @@ YY_RULE_SETUP
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return REAL;
+  return MYREAL;
   }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 83 "lexer.l"
-{return CHAR;}
+{return MYCHAR;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 84 "lexer.l"
-{return RETURN;}
+{return MYRETURN;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 85 "lexer.l"
-{return IF;}
+{return MYIF;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 86 "lexer.l"
-{return ELSE;}
+{return MYELSE;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 87 "lexer.l"
-{return WHILE;}
+{return MYWHILE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 88 "lexer.l"
-{return FOR;}
+{return MYFOR;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
@@ -948,11 +948,11 @@ YY_RULE_SETUP
   // tmp->nodeK = GT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = GT;
+  tmp->int_term = MYGT;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return GT;
+  return MYGT;
   }
 	YY_BREAK
 case 11:
@@ -963,11 +963,11 @@ YY_RULE_SETUP
   // tmp->nodeK = LT;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = LT;
+  tmp->int_term = MYLT;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return LT;
+  return MYLT;
   }
 	YY_BREAK
 case 12:
@@ -978,11 +978,11 @@ YY_RULE_SETUP
   // tmp->nodeK = GE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = GE;
+  tmp->int_term = MYGE;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return GE;
+  return MYGE;
   }
 	YY_BREAK
 case 13:
@@ -993,11 +993,11 @@ YY_RULE_SETUP
   // tmp->nodeK = LE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = LE;
+  tmp->int_term = MYLE;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return LE;
+  return MYLE;
   }
 	YY_BREAK
 case 14:
@@ -1008,11 +1008,11 @@ YY_RULE_SETUP
   // tmp->nodeK = NE;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = NE;
+  tmp->int_term = MYNE;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return NE;
+  return MYNE;
   }
 	YY_BREAK
 case 15:
@@ -1023,53 +1023,53 @@ YY_RULE_SETUP
   // tmp->nodeK = EQ;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = EQ;
+  tmp->int_term = MYEQ;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return EQ;
+  return MYEQ;
   }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 155 "lexer.l"
-{return LP;}
+{return MYLP;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 156 "lexer.l"
-{return RP;}
+{return MYRP;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 157 "lexer.l"
-{return LB;}
+{return MYLB;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 158 "lexer.l"
-{return RB;}
+{return MYRB;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 159 "lexer.l"
-{return LC;}
+{return MYLC;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 160 "lexer.l"
-{return RC;}
+{return MYRC;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 161 "lexer.l"
-{return COMMA;}
+{return MYCOMMA;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 162 "lexer.l"
 {
-  return SEMI;
+  return MYSEMI;
   }
 	YY_BREAK
 case 24:
@@ -1080,11 +1080,11 @@ YY_RULE_SETUP
   // tmp->nodeK = ADD;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = ADD;
+  tmp->int_term = MYADD;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return ADD;
+  return MYADD;
   }
 	YY_BREAK
 case 25:
@@ -1095,11 +1095,11 @@ YY_RULE_SETUP
   // tmp->nodeK = SUB;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = SUB;
+  tmp->int_term = MYSUB;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return SUB;
+  return MYSUB;
   }
 	YY_BREAK
 case 26:
@@ -1110,11 +1110,11 @@ YY_RULE_SETUP
   // tmp->nodeK = MUL;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = MUL;
+  tmp->int_term = MYMUL;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return MUL;
+  return MYMUL;
   }
 	YY_BREAK
 case 27:
@@ -1125,11 +1125,11 @@ YY_RULE_SETUP
   // tmp->nodeK = DIV;
   tmp->is_terminal = 1;
   tmp->termKind = TermKOp;
-  tmp->int_term = DIV;
+  tmp->int_term = MYDIV;
   tmp->lineno = yylineno;
   tmp->column = yylloc.first_column;
   yylval.node = tmp;
-  return DIV;
+  return MYDIV;
   }
 	YY_BREAK
 case 28:
@@ -1143,7 +1143,7 @@ YY_RULE_SETUP
   // tmp->lineno = yylineno;
   // tmp->column = yylloc.first_column;
   // yylval.node = tmp;
-  return ASSIGN;
+  return MYASSIGN;
   }
 	YY_BREAK
 case 29:
@@ -1159,7 +1159,7 @@ YY_RULE_SETUP
   node->column = yylloc.first_column;
   node->lineno = yylineno;
   yylval.node = node;
-  return NUM;
+  return MYNUM;
 }
 	YY_BREAK
 case 30:
@@ -1175,7 +1175,7 @@ YY_RULE_SETUP
   node->column = yylloc.first_column;
   node->lineno = yylineno;
   yylval.node = node;
-  return NUM;
+  return MYNUM;
 }
 	YY_BREAK
 case 31:
@@ -1191,7 +1191,7 @@ YY_RULE_SETUP
   node->column = yylloc.first_column;
   node->lineno = yylineno;
   yylval.node = node;
-  return NUM;
+  return MYNUM;
 }
 	YY_BREAK
 case 32:
@@ -1207,7 +1207,7 @@ YY_RULE_SETUP
   node->column = yylloc.first_column;
   node->lineno = yylineno;
   yylval.node = node;
-  return NUM;
+  return MYNUM;
 }
 	YY_BREAK
 case 33:
@@ -1242,7 +1242,7 @@ YY_RULE_SETUP
   id->column = yylloc.first_column;
   id->lineno = yylineno;
   yylval.node = id;
-  return ID;
+  return MYID;
   }
 	YY_BREAK
 case 36:
@@ -1261,7 +1261,7 @@ YY_RULE_SETUP
 #line 291 "lexer.l"
 {
   fprintf(stderr, "Error at line: %d\n", yylineno);
-  return ERROR;
+  return MYERROR;
   }
 	YY_BREAK
 case 39:

@@ -13,26 +13,26 @@ extern struct SymTable* g_SymTableStackBottom;
 typedef enum { BasicK, ArrayK, FuncK, ErrorK } TypeKind;
 typedef enum { Void, Int, Real } BasicType;
 
-struct Type {
+struct Type_ {
   TypeKind typeKind;
   union {
     BasicType basic;
-    struct { struct Type *arrType; int size; } array;
+    struct { struct Type_ *arrType; int size; } array;
     struct FuncArgList* func; // 函数: 第一个结点为返回值,后面的是参数
   };
 };
 
-struct Type* createType(TypeKind typeK);
+struct Type_* createType(TypeKind typeK);
 BasicType str2BasicType(const char* s);
-void setBasic(struct Type* type, BasicType basic);
-int isTypeMatch(struct Type* t1, struct Type* t2);
-char* Type2Str(struct Type* type);
+void setBasic(struct Type_* type, BasicType basic);
+int isTypeMatch(struct Type_* t1, struct Type_* t2);
+char* Type2Str(struct Type_* type);
 
 /***************************************************/
 
 struct FuncArgList {
   char argName[NAME_LENGTH];
-  struct Type* argType;
+  struct Type_* argType;
   struct FuncArgList* nextArg;
 };
 
@@ -43,7 +43,7 @@ int isFuncArgMatch(struct FuncArgList* funcArg1, struct FuncArgList* funcArg2);
 /***************************************************/
 
 struct SymNode {
-  struct Type* symType;
+  struct Type_* symType;
   // char symName[NAME_LENGTH];
   char *symName;
   struct SymNode* nextSym;
@@ -71,7 +71,7 @@ void insert(struct SymTable* symTable, struct SymNode* node);
 #ifdef SEMANTIC_DEBUG
 void printSymTable(struct SymTable* symTable);
 void printSymNode(struct SymNode* symNode);
-void printType(struct Type* type);
+void printType(struct Type_* type);
 #endif
 
 #endif

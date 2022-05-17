@@ -7,10 +7,10 @@
 struct SymTable* g_SymTableStackTop = NULL;
 struct SymTable* g_SymTableStackBottom = NULL;
 
-struct Type g_FuncReturnType;
+struct Type_ g_FuncReturnType;
 
 struct Node *g_SENode1, *g_SENode2;
-struct Type *g_SEType1, *g_SEType2;
+struct Type_ *g_SEType1, *g_SEType2;
 
 int g_firstPassError = 0;
 int g_secondPassError = 0;
@@ -201,10 +201,10 @@ void VarDecl(struct Node* node, int global, int first_pass) {
     }
   }
 
-  struct Type* type = TypeSpec(node->child);
+  struct Type_* type = TypeSpec(node->child);
   if(node->child->next_sib->next_sib) {
     // 如果id后还有参数，就是array
-    struct Type* array = createType(ArrayK);
+    struct Type_* array = createType(ArrayK);
     array->array.arrType = type;
 
     if(node->child->next_sib->next_sib->termKind != TermKNum || !node->child->next_sib->next_sib->is_int) {
@@ -222,12 +222,12 @@ void VarDecl(struct Node* node, int global, int first_pass) {
   insert(g_SymTableStackTop, sym);
 }
 
-struct Type* TypeSpec(struct Node* node) {
+struct Type_* TypeSpec(struct Node* node) {
   // type_specifier -> INT | VOID | REAL
   #ifdef SEMANTIC_DEBUG
   printf("TypeSpec(%d)\n", node->lineno);
   #endif
-  struct Type* type = createType(BasicK);
+  struct Type_* type = createType(BasicK);
   setBasic(type, str2BasicType(node->child->str_term));
   return type;
 }
@@ -240,7 +240,7 @@ void FuncDecl(struct Node* node, int first_pass) {
   char* id = node->child->next_sib->str_term;
   struct SymNode* sym = NULL;
   struct FuncArgList* params = NULL;
-  struct Type* type, *rettype = NULL;
+  struct Type_* type, *rettype = NULL;
 
   if(first_pass) {
     if(lookupCurrent(node->child->next_sib->str_term)) {
@@ -350,11 +350,11 @@ struct FuncArgList* Param(struct Node* node) {
   
   node = node->child;
   struct FuncArgList* arg = NULL;
-  struct Type* type = TypeSpec(node);
+  struct Type_* type = TypeSpec(node);
   arg = createFuncArg(node->next_sib->str_term);
   if(node->next_sib->next_sib) {
     // Array
-    struct Type* array = createType(ArrayK);
+    struct Type_* array = createType(ArrayK);
     array->array.arrType = type;
     array->array.size = -1;
     type = array;
@@ -454,7 +454,7 @@ void SelectionStmt(struct Node* node) {
   #ifdef SEMANTIC_DEBUG
   printf("SelectionStmt(%d)\n", node->lineno);
   #endif
-  struct Type* exprType = Expr(node->child);
+  struct Type_* exprType = Expr(node->child);
   if(exprType->typeKind != BasicK || exprType->basic == Void) {
     SemanticError(node->child->lineno, node->child->column, SEConditionNotNum);
     g_secondPassError = 1;
@@ -470,7 +470,7 @@ void WhileStmt(struct Node* node) {
   #ifdef SEMANTIC_DEBUG
   printf("WhileStmt(%d)\n", node->lineno);
   #endif
-  struct Type* exprType = Expr(node->child);
+  struct Type_* exprType = Expr(node->child);
   if(exprType->typeKind != BasicK || exprType->basic == Void) {
     SemanticError(node->child->lineno, node->child->column, SEConditionNotNum);
     g_secondPassError = 1;
@@ -515,7 +515,7 @@ void ReturnStmt(struct Node* node) {
       g_secondPassError = 1;
     }
   } else {
-    struct Type* retType = Expr(node->child);
+    struct Type_* retType = Expr(node->child);
     int match = 1;
     if(!isTypeMatch(retType, &g_FuncReturnType)) {
       g_SEType2 = &g_FuncReturnType;
@@ -526,13 +526,13 @@ void ReturnStmt(struct Node* node) {
   }
 }
 
-struct Type* Expr(struct Node* node) {
+struct Type_* Expr(struct Node* node) {
   // expression -> var ASSIGN expression | simple_expression
   #ifdef SEMANTIC_DEBUG
   printf("Expr(%d)\n", node->lineno);
   #endif
   node = node->child;
-  struct Type* type = NULL;
+  struct Type_* type = NULL;
   if(!strncmp(node->name, "Var", 3)) {
     type = Assign(node);
   } else if(!strncmp(node->name, "SimpleExpr", 10)) {
@@ -541,14 +541,14 @@ struct Type* Expr(struct Node* node) {
   return type;
 }
 
-struct Type* Assign(struct Node* node) {
+struct Type_* Assign(struct Node* node) {
   // assign -> var ASSIGN expression
   #ifdef SEMANTIC_DEBUG
   printf("Assign(%d)\n", node->lineno);
   #endif
   node = node->child;
-  struct Type* varType = Var(node);
-  struct Type* exprType = Expr(node->next_sib);
+  struct Type_* varType = Var(node);
+  struct Type_* exprType = Expr(node->next_sib);
 
   // 非法左值
   // if(varType->) {
@@ -565,7 +565,7 @@ struct Type* Assign(struct Node* node) {
   return varType;
 }
 
-struct Type* Var(struct Node* node) {
+struct Type_* Var(struct Node* node) {
   // var -> ID | ID [ expression ]
   #ifdef SEMANTIC_DEBUG
   printf("Var(%d)\n", node->lineno);
@@ -578,7 +578,7 @@ struct Type* Var(struct Node* node) {
     g_secondPassError = 1;
     return NULL;
   }
-  struct Type* varType = varSym->symType;
+  struct Type_* varType = varSym->symType;
 
   if(node->next_sib) {
     // ID [ expression ]
@@ -588,7 +588,7 @@ struct Type* Var(struct Node* node) {
       g_secondPassError = 1;
     }
 
-    struct Type* exprType = Expr(node->next_sib);
+    struct Type_* exprType = Expr(node->next_sib);
     if(exprType->typeKind != BasicK || exprType->basic != Int) {
       SemanticError(node->lineno, node->column, SEInvalidIndex);
       g_secondPassError = 1;
@@ -600,17 +600,17 @@ struct Type* Var(struct Node* node) {
   return varType;
 }
 
-struct Type* SimpleExpr(struct Node* node) {
+struct Type_* SimpleExpr(struct Node* node) {
   // simple_expression -> additive_expression
   //                    | additive_expression relop additive_expression
   #ifdef SEMANTIC_DEBUG
   printf("SimpleExpr(%d)\n", node->lineno);
   #endif
   node = node->child;
-  struct Type* addExprType1 = AdditiveExpr(node);
+  struct Type_* addExprType1 = AdditiveExpr(node);
   if(node->next_sib) {
     // additive_expression relop additive_expression
-    struct Type* addExprType2 = AdditiveExpr(node->next_sib->next_sib);
+    struct Type_* addExprType2 = AdditiveExpr(node->next_sib->next_sib);
     if(!isTypeMatch(addExprType1, addExprType2)) {
       g_SEType1 = addExprType1;
       g_SEType2 = addExprType2;
@@ -622,19 +622,19 @@ struct Type* SimpleExpr(struct Node* node) {
   return addExprType1;
 }
 
-struct Type* AdditiveExpr(struct Node* node) {
+struct Type_* AdditiveExpr(struct Node* node) {
   // additive_expression -> term | additive_expression addop term
   #ifdef SEMANTIC_DEBUG
   printf("AdditiveExpr(%d)\n", node->lineno);
   #endif
   node = node->child;
-  struct Type* type1 = NULL;
+  struct Type_* type1 = NULL;
   if(!strncmp(node->name, "Term", 4)) {
     type1 = Term(node);
   } else if(node->next_sib) {
     // additive_expression addop term
     type1 = AdditiveExpr(node);
-    struct Type* type2 = Term(node->next_sib->next_sib);
+    struct Type_* type2 = Term(node->next_sib->next_sib);
     if(!isTypeMatch(type1, type2)) {
       g_SEType1 = type1;
       g_SEType2 = type2;
@@ -646,18 +646,18 @@ struct Type* AdditiveExpr(struct Node* node) {
   return type1;
 }
 
-struct Type* Term(struct Node* node) {
+struct Type_* Term(struct Node* node) {
   // term -> term mulop factor | factor
   #ifdef SEMANTIC_DEBUG
   printf("Term(%d)\n", node->lineno);
   #endif
   node = node->child;
-  struct Type* type1 = NULL;
+  struct Type_* type1 = NULL;
   if(!strncmp(node->name, "Factor", 6)) {
     type1 = Factor(node);
   } else if(node->next_sib) {
     type1 = Term(node);
-    struct Type* type2 = Factor(node->next_sib->next_sib);
+    struct Type_* type2 = Factor(node->next_sib->next_sib);
     if(!isTypeMatch(type1, type2)) {
       g_SEType1 = type1;
       g_SEType2 = type2;
@@ -669,13 +669,13 @@ struct Type* Term(struct Node* node) {
   return type1;
 }
 
-struct Type* Factor(struct Node* node) {
+struct Type_* Factor(struct Node* node) {
   // factor -> ( expression ) | var | call | NUM
   #ifdef SEMANTIC_DEBUG
   printf("Factor(%d)\n", node->lineno);
   #endif
   node = node->child;
-  struct Type* type = NULL;
+  struct Type_* type = NULL;
 
   if(!strncmp(node->name, "Expr", 4)) {
     type = Expr(node);
@@ -696,7 +696,7 @@ struct Type* Factor(struct Node* node) {
   return type;
 }
 
-struct Type* Call(struct Node* node) {
+struct Type_* Call(struct Node* node) {
   // call -> ID ( args )
   #ifdef SEMANTIC_DEBUG
   printf("Call(%d)\n", node->lineno);
@@ -715,7 +715,7 @@ struct Type* Call(struct Node* node) {
       g_secondPassError = 1;
       return IDSym->symType;
     } else {
-      struct Type* funcType = IDSym->symType;
+      struct Type_* funcType = IDSym->symType;
       struct FuncArgList* argsList = Args(node->next_sib);
       if(!isFuncArgListMatch(funcType->func->nextArg, argsList)) {
         g_SENode1 = node;
@@ -754,7 +754,7 @@ struct FuncArgList* ArgList(struct Node* node) {
   head = tail = NULL;
   struct Node* p = node;
   while(p) {
-    struct Type* exprType = Expr(p);
+    struct Type_* exprType = Expr(p);
     struct FuncArgList* tmp = createFuncArg("");
     tmp->argType = exprType;
     if(!head && !tail) {
