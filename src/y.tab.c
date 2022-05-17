@@ -1884,7 +1884,7 @@ yyreduce:
 #line 233 "parser.y"
          {
     (yyval.node) = makeNode("ExprStmt");
-    (yyval.node)->lineno = 0;
+    (yyval.node)->lineno = yylineno;
   }
 #line 1890 "y.tab.c"
     break;

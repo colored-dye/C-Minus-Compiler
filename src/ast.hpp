@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-16 23:59:01
+ * @LastEditTime: 2022-05-17 10:33:31
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -468,7 +468,7 @@ public:
 
     const string GetId() const { return id; }
     bool HaveSubscript() const { return haveSubscript; }
-    const ASTExpr *GetExpr() const { return subscript; }
+    const ASTExpr *GetSubscript() const { return subscript; }
 };
 
 /**

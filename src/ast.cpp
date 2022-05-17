@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:29
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-17 09:53:24
+ * @LastEditTime: 2022-05-17 11:18:43
  * @FilePath: /C-Minus-Compiler/src/ast.cpp
  * @Description:
  *
@@ -152,27 +152,114 @@ void PrintASTNode(const ASTNode *curNode)
             PrintASTNode(forStmt->GetExpr3());
         }
         PrintASTNode(forStmt->GetStmt());
-        
+
         break;
     }
     case ASTRETURNSTMT:
     {
+        ASTReturnStmt *returnStmt = (ASTReturnStmt *)curNode;
+        printf("ReturnStmt <line:%d>\n", returnStmt->GetLineno());
+        if (!returnStmt->IsVoid())
+            PrintASTNode(returnStmt->GetExpr());
+
         break;
     }
     case ASTVAR:
     {
+        ASTVar *var = (ASTVar *)curNode;
+        printf("Var <line:%d> %s", var->GetLineno(), var->GetId().c_str());
+        if (var->HaveSubscript())
+        {
+            printf(" subscript:\n");
+            PrintASTNode(var->GetSubscript());
+        }
+        else
+            printf("\n");
+
         break;
     }
     case ASTSIMPLEEXPR:
     {
+        ASTSimpleExpr *simpleExpr = (ASTSimpleExpr *)curNode;
+        printf("SimpleExpr <line:%d>\n", simpleExpr->GetLineno());
+        PrintASTNode(simpleExpr->GetLeftAddExpr());
+        if (simpleExpr->HaveRightAddExpr())
+        {
+            string relOp;
+            switch (simpleExpr->GetRelOp())
+            {
+            case ASTLE:
+                relOp = "<=";
+                break;
+            case ASTLT:
+                relOp = "<";
+                break;
+            case ASTGT:
+                relOp = ">";
+                break;
+            case ASTGE:
+                relOp = ">=";
+                break;
+            case ASTEQ:
+                relOp = "==";
+                break;
+            case ASTNE:
+                relOp = "!=";
+                break;
+
+            default:
+                break;
+            }
+
+            for (int i = 0; i < (indent + 1) * 2; i++) // control indentation
+                printf(" ");
+            printf("RelOp '%s'\n", relOp.c_str());
+            PrintASTNode(simpleExpr->GetRightAddExpr());
+        }
         break;
     }
     case ASTADDEXPR:
     {
+        ASTAddExpr *addExpr = (ASTAddExpr *)curNode;
+        printf("AddExpr <line:%d>\n", addExpr->GetLineno());
+        PrintASTNode(addExpr->GetFirstTerm());
+        if (addExpr->AreMultipleTerms())
+        {
+            vector<ASTAddOp>::const_iterator addOp = addExpr->GetAddOpList().begin();
+            vector<ASTTerm *>::const_iterator term = addExpr->GetTermList().begin();
+            while (addOp != addExpr->GetAddOpList().end() && term != addExpr->GetTermList().end())
+            {
+                string addOpStr = ((*addOp) == ASTADD) ? "Add" : "Minus";
+                for (int i = 0; i < (indent + 1) * 2; i++) // control indentation
+                    printf(" ");
+                printf("AddOp '%s'\n", addOpStr.c_str());
+                PrintASTNode((*term));
+                addOp++;
+                term++;
+            }
+        }
         break;
     }
     case ASTTERM:
     {
+        ASTTerm *term = (ASTTerm *)curNode;
+        printf("Term <line:%d>\n", term->GetLineno());
+        PrintASTNode(term->GetFirstFactor());
+        if (term->AreMultipleFactors())
+        {
+            vector<ASTMulOp>::const_iterator mulOp = term->GetMulOpList().begin();
+            vector<ASTFactor *>::const_iterator factor = term->GetFactorList().begin();
+            while (mulOp != term->GetMulOpList().end() && factor != term->GetFactorList().end())
+            {
+                string mulOpStr = ((*mulOp) == ASTMUL) ? "Mul" : "Div";
+                for (int i = 0; i < (indent + 1) * 2; i++) // control indentation
+                    printf(" ");
+                printf("MulOp '%s'\n", mulOpStr.c_str());
+                PrintASTNode((*factor));
+                mulOp++;
+                factor++;
+            }
+        }
         break;
     }
     case ASTFACTOR:
@@ -187,7 +274,9 @@ void PrintASTNode(const ASTNode *curNode)
     default:
         break;
     }
+
     indent--;
+
     return;
 }
 
