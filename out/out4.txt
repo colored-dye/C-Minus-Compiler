@@ -1,4 +1,136 @@
 No error found in Syntax Analysis~
+No error found in Semantic Analysis~
+
+================= AST ===================
+Program <line:1>
+  FunDecl <line:1> fib 'int'
+    Param <line:1> n 'int'
+    CompoundStmt <line:3>
+      VarDecl <line:3> used result 'int'
+      SelectStmt <line:4>
+        Expr <line:4>
+          SimpleExpr <line:4>
+            AddExpr <line:4>
+              Term <line:4>
+                Factor <line:4>
+                  Var <line:4> 'n'
+            RelOp '<'
+            AddExpr <line:4>
+              Term <line:4>
+                Factor <line:4> 'Int' 2
+        ReturnStmt <line:5>
+          Expr <line:5>
+            SimpleExpr <line:5>
+              AddExpr <line:5>
+                Term <line:5>
+                  Factor <line:5>
+                    Var <line:5> 'n'
+      Expr <line:7>
+        Var <line:7> 'result'
+        Expr <line:7>
+          SimpleExpr <line:7>
+            AddExpr <line:7>
+              Term <line:7>
+                Factor <line:7>
+                  CallExpr <line:7> 'fib'
+                    Expr <line:7>
+                      SimpleExpr <line:7>
+                        AddExpr <line:7>
+                          Term <line:7>
+                            Factor <line:7>
+                              Var <line:7> 'n'
+                          AddOp 'Minus'
+                          Term <line:7>
+                            Factor <line:7> 'Int' 1
+              AddOp 'Minus'
+              Term <line:7>
+                Factor <line:7>
+                  CallExpr <line:7> 'fib'
+                    Expr <line:7>
+                      SimpleExpr <line:7>
+                        AddExpr <line:7>
+                          Term <line:7>
+                            Factor <line:7>
+                              Var <line:7> 'n'
+                          AddOp 'Minus'
+                          Term <line:7>
+                            Factor <line:7> 'Int' 2
+      ReturnStmt <line:8>
+        Expr <line:8>
+          SimpleExpr <line:8>
+            AddExpr <line:8>
+              Term <line:8>
+                Factor <line:8>
+                  Var <line:8> 'result'
+  FunDecl <line:11> main 'int (void)'
+    CompoundStmt <line:13>
+      VarDecl <line:13> used n 'int'
+      VarDecl <line:13> used i 'int'
+      Expr <line:14>
+        Var <line:14> 'i'
+        Expr <line:14>
+          SimpleExpr <line:14>
+            AddExpr <line:14>
+              Term <line:14>
+                Factor <line:14> 'Int' 0
+      Expr <line:15>
+        Var <line:15> 'n'
+        Expr <line:15>
+          SimpleExpr <line:15>
+            AddExpr <line:15>
+              Term <line:15>
+                Factor <line:15>
+                  CallExpr <line:15> 'input'
+      WhileStmt <line:16>
+        Expr <line:16>
+          SimpleExpr <line:16>
+            AddExpr <line:16>
+              Term <line:16>
+                Factor <line:16>
+                  Var <line:16> 'i'
+            RelOp '<='
+            AddExpr <line:16>
+              Term <line:16>
+                Factor <line:16>
+                  Var <line:16> 'n'
+        CompoundStmt <line:17>
+          Expr <line:17>
+            SimpleExpr <line:17>
+              AddExpr <line:17>
+                Term <line:17>
+                  Factor <line:17>
+                    CallExpr <line:17> 'output'
+                      Expr <line:17>
+                        SimpleExpr <line:17>
+                          AddExpr <line:17>
+                            Term <line:17>
+                              Factor <line:17>
+                                CallExpr <line:17> 'fib'
+                                  Expr <line:17>
+                                    SimpleExpr <line:17>
+                                      AddExpr <line:17>
+                                        Term <line:17>
+                                          Factor <line:17>
+                                            Var <line:17> 'i'
+          Expr <line:18>
+            Var <line:18> 'i'
+            Expr <line:18>
+              SimpleExpr <line:18>
+                AddExpr <line:18>
+                  Term <line:18>
+                    Factor <line:18>
+                      Var <line:18> 'i'
+                  AddOp 'Minus'
+                  Term <line:18>
+                    Factor <line:18> 'Int' 1
+      ReturnStmt <line:21>
+        Expr <line:21>
+          SimpleExpr <line:21>
+            AddExpr <line:21>
+              Term <line:21>
+                Factor <line:21> 'Int' 0
+
+============= Parser Tree ===============
 Program (1)
   GlobalDeclList (1)
     Decl (1)

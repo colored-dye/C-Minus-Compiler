@@ -1,4 +1,406 @@
 No error found in Syntax Analysis~
+No error found in Semantic Analysis~
+
+================= AST ===================
+Program <line:1>
+  VarDecl <line:1> used x 'int [10]'
+  FunDecl <line:3> main 'int (void)'
+    CompoundStmt <line:5>
+      VarDecl <line:5> used i 'int'
+      Expr <line:6>
+        Var <line:6> 'i'
+        Expr <line:6>
+          SimpleExpr <line:6>
+            AddExpr <line:6>
+              Term <line:6>
+                Factor <line:6> 'Int' 0
+      WhileStmt <line:7>
+        Expr <line:7>
+          SimpleExpr <line:7>
+            AddExpr <line:7>
+              Term <line:7>
+                Factor <line:7>
+                  Var <line:7> 'i'
+            RelOp '<'
+            AddExpr <line:7>
+              Term <line:7>
+                Factor <line:7> 'Int' 10
+        CompoundStmt <line:8>
+          Expr <line:8>
+            Var <line:8> 'x' have subscript
+              Expr <line:8>
+                SimpleExpr <line:8>
+                  AddExpr <line:8>
+                    Term <line:8>
+                      Factor <line:8>
+                        Var <line:8> 'i'
+            Expr <line:8>
+              SimpleExpr <line:8>
+                AddExpr <line:8>
+                  Term <line:8>
+                    Factor <line:8>
+                      CallExpr <line:8> 'input'
+          Expr <line:9>
+            Var <line:9> 'i'
+            Expr <line:9>
+              SimpleExpr <line:9>
+                AddExpr <line:9>
+                  Term <line:9>
+                    Factor <line:9>
+                      Var <line:9> 'i'
+                  AddOp 'Minus'
+                  Term <line:9>
+                    Factor <line:9> 'Int' 1
+      Expr <line:11>
+        SimpleExpr <line:11>
+          AddExpr <line:11>
+            Term <line:11>
+              Factor <line:11>
+                CallExpr <line:11> 'sort'
+                  Expr <line:11>
+                    SimpleExpr <line:11>
+                      AddExpr <line:11>
+                        Term <line:11>
+                          Factor <line:11>
+                            Var <line:11> 'x'
+                  Expr <line:11>
+                    SimpleExpr <line:11>
+                      AddExpr <line:11>
+                        Term <line:11>
+                          Factor <line:11> 'Int' 0
+                  Expr <line:11>
+                    SimpleExpr <line:11>
+                      AddExpr <line:11>
+                        Term <line:11>
+                          Factor <line:11> 'Int' 10
+      Expr <line:12>
+        Var <line:12> 'i'
+        Expr <line:12>
+          SimpleExpr <line:12>
+            AddExpr <line:12>
+              Term <line:12>
+                Factor <line:12> 'Int' 0
+      WhileStmt <line:13>
+        Expr <line:13>
+          SimpleExpr <line:13>
+            AddExpr <line:13>
+              Term <line:13>
+                Factor <line:13>
+                  Var <line:13> 'i'
+            RelOp '<'
+            AddExpr <line:13>
+              Term <line:13>
+                Factor <line:13> 'Int' 10
+        CompoundStmt <line:14>
+          Expr <line:14>
+            SimpleExpr <line:14>
+              AddExpr <line:14>
+                Term <line:14>
+                  Factor <line:14>
+                    CallExpr <line:14> 'output'
+                      Expr <line:14>
+                        SimpleExpr <line:14>
+                          AddExpr <line:14>
+                            Term <line:14>
+                              Factor <line:14>
+                                Var <line:14> 'x' have subscript
+                                  Expr <line:14>
+                                    SimpleExpr <line:14>
+                                      AddExpr <line:14>
+                                        Term <line:14>
+                                          Factor <line:14>
+                                            Var <line:14> 'i'
+          Expr <line:15>
+            Var <line:15> 'i'
+            Expr <line:15>
+              SimpleExpr <line:15>
+                AddExpr <line:15>
+                  Term <line:15>
+                    Factor <line:15>
+                      Var <line:15> 'i'
+                  AddOp 'Minus'
+                  Term <line:15>
+                    Factor <line:15> 'Int' 1
+      Expr <line:17>
+        SimpleExpr <line:17>
+          AddExpr <line:17>
+            Term <line:17>
+              Factor <line:17>
+                CallExpr <line:17> 'f'
+                  Expr <line:17>
+                    SimpleExpr <line:17>
+                      AddExpr <line:17>
+                        Term <line:17>
+                          Factor <line:17> 'Int' 123
+      ReturnStmt <line:18>
+        Expr <line:18>
+          SimpleExpr <line:18>
+            AddExpr <line:18>
+              Term <line:18>
+                Factor <line:18> 'Int' 0
+  FunDecl <line:26> minloc 'int'
+    Param <line:26> a 'int []'
+    Param <line:26> low 'int'
+    Param <line:26> high 'int'
+    CompoundStmt <line:28>
+      VarDecl <line:28> used i 'int'
+      VarDecl <line:29> used x 'int'
+      VarDecl <line:30> used k 'int'
+      Expr <line:31>
+        Var <line:31> 'k'
+        Expr <line:31>
+          SimpleExpr <line:31>
+            AddExpr <line:31>
+              Term <line:31>
+                Factor <line:31>
+                  Var <line:31> 'low'
+      Expr <line:32>
+        Var <line:32> 'x'
+        Expr <line:32>
+          SimpleExpr <line:32>
+            AddExpr <line:32>
+              Term <line:32>
+                Factor <line:32>
+                  Var <line:32> 'a' have subscript
+                    Expr <line:32>
+                      SimpleExpr <line:32>
+                        AddExpr <line:32>
+                          Term <line:32>
+                            Factor <line:32>
+                              Var <line:32> 'low'
+      Expr <line:33>
+        Var <line:33> 'i'
+        Expr <line:33>
+          SimpleExpr <line:33>
+            AddExpr <line:33>
+              Term <line:33>
+                Factor <line:33>
+                  Var <line:33> 'low'
+              AddOp 'Minus'
+              Term <line:33>
+                Factor <line:33> 'Int' 1
+      WhileStmt <line:34>
+        Expr <line:34>
+          SimpleExpr <line:34>
+            AddExpr <line:34>
+              Term <line:34>
+                Factor <line:34>
+                  Var <line:34> 'i'
+            RelOp '<'
+            AddExpr <line:34>
+              Term <line:34>
+                Factor <line:34>
+                  Var <line:34> 'high'
+        CompoundStmt <line:35>
+          SelectStmt <line:35>
+            Expr <line:35>
+              SimpleExpr <line:35>
+                AddExpr <line:35>
+                  Term <line:35>
+                    Factor <line:35>
+                      Var <line:35> 'a' have subscript
+                        Expr <line:35>
+                          SimpleExpr <line:35>
+                            AddExpr <line:35>
+                              Term <line:35>
+                                Factor <line:35>
+                                  Var <line:35> 'i'
+                RelOp '<'
+                AddExpr <line:35>
+                  Term <line:35>
+                    Factor <line:35>
+                      Var <line:35> 'x'
+            CompoundStmt <line:36>
+              VarDecl <line:36> used tmp 'int'
+              Expr <line:37>
+                Var <line:37> 'x'
+                Expr <line:37>
+                  SimpleExpr <line:37>
+                    AddExpr <line:37>
+                      Term <line:37>
+                        Factor <line:37>
+                          Var <line:37> 'a' have subscript
+                            Expr <line:37>
+                              SimpleExpr <line:37>
+                                AddExpr <line:37>
+                                  Term <line:37>
+                                    Factor <line:37>
+                                      Var <line:37> 'i'
+              Expr <line:38>
+                Var <line:38> 'k'
+                Expr <line:38>
+                  SimpleExpr <line:38>
+                    AddExpr <line:38>
+                      Term <line:38>
+                        Factor <line:38>
+                          Var <line:38> 'i'
+          Expr <line:40>
+            Var <line:40> 'i'
+            Expr <line:40>
+              SimpleExpr <line:40>
+                AddExpr <line:40>
+                  Term <line:40>
+                    Factor <line:40>
+                      Var <line:40> 'i'
+                  AddOp 'Minus'
+                  Term <line:40>
+                    Factor <line:40> 'Int' 1
+      ReturnStmt <line:43>
+        Expr <line:43>
+          SimpleExpr <line:43>
+            AddExpr <line:43>
+              Term <line:43>
+                Factor <line:43>
+                  Var <line:43> 'k'
+  FunDecl <line:46> sort 'void'
+    Param <line:46> a 'int []'
+    Param <line:46> low 'int'
+    Param <line:46> high 'int'
+    CompoundStmt <line:48>
+      VarDecl <line:48> used i 'int'
+      VarDecl <line:49> used k 'int'
+      VarDecl <line:50> used t 'int'
+      Expr <line:51>
+        Var <line:51> 'i'
+        Expr <line:51>
+          SimpleExpr <line:51>
+            AddExpr <line:51>
+              Term <line:51>
+                Factor <line:51>
+                  Var <line:51> 'low'
+      WhileStmt <line:52>
+        Expr <line:52>
+          SimpleExpr <line:52>
+            AddExpr <line:52>
+              Term <line:52>
+                Factor <line:52>
+                  Var <line:52> 'i'
+            RelOp '<'
+            AddExpr <line:52>
+              Term <line:52>
+                Factor <line:52>
+                  Var <line:52> 'high'
+              AddOp 'Minus'
+              Term <line:52>
+                Factor <line:52> 'Int' 1
+        CompoundStmt <line:53>
+          Expr <line:53>
+            Var <line:53> 'k'
+            Expr <line:53>
+              SimpleExpr <line:53>
+                AddExpr <line:53>
+                  Term <line:53>
+                    Factor <line:53>
+                      CallExpr <line:53> 'minloc'
+                        Expr <line:53>
+                          SimpleExpr <line:53>
+                            AddExpr <line:53>
+                              Term <line:53>
+                                Factor <line:53>
+                                  Var <line:53> 'a'
+                        Expr <line:53>
+                          SimpleExpr <line:53>
+                            AddExpr <line:53>
+                              Term <line:53>
+                                Factor <line:53>
+                                  Var <line:53> 'i'
+                        Expr <line:53>
+                          SimpleExpr <line:53>
+                            AddExpr <line:53>
+                              Term <line:53>
+                                Factor <line:53>
+                                  Var <line:53> 'high'
+          Expr <line:54>
+            Var <line:54> 't'
+            Expr <line:54>
+              SimpleExpr <line:54>
+                AddExpr <line:54>
+                  Term <line:54>
+                    Factor <line:54>
+                      Var <line:54> 'a' have subscript
+                        Expr <line:54>
+                          SimpleExpr <line:54>
+                            AddExpr <line:54>
+                              Term <line:54>
+                                Factor <line:54>
+                                  Var <line:54> 'k'
+          Expr <line:55>
+            Var <line:55> 'a' have subscript
+              Expr <line:55>
+                SimpleExpr <line:55>
+                  AddExpr <line:55>
+                    Term <line:55>
+                      Factor <line:55>
+                        Var <line:55> 'k'
+            Expr <line:55>
+              SimpleExpr <line:55>
+                AddExpr <line:55>
+                  Term <line:55>
+                    Factor <line:55>
+                      Var <line:55> 'a' have subscript
+                        Expr <line:55>
+                          SimpleExpr <line:55>
+                            AddExpr <line:55>
+                              Term <line:55>
+                                Factor <line:55>
+                                  Var <line:55> 'i'
+          Expr <line:56>
+            Var <line:56> 'a' have subscript
+              Expr <line:56>
+                SimpleExpr <line:56>
+                  AddExpr <line:56>
+                    Term <line:56>
+                      Factor <line:56>
+                        Var <line:56> 'i'
+            Expr <line:56>
+              SimpleExpr <line:56>
+                AddExpr <line:56>
+                  Term <line:56>
+                    Factor <line:56>
+                      Var <line:56> 't'
+          Expr <line:57>
+            Var <line:57> 'i'
+            Expr <line:57>
+              SimpleExpr <line:57>
+                AddExpr <line:57>
+                  Term <line:57>
+                    Factor <line:57>
+                      Var <line:57> 'i'
+                  AddOp 'Minus'
+                  Term <line:57>
+                    Factor <line:57> 'Int' 1
+  FunDecl <line:61> f 'void'
+    Param <line:61> xyz 'int'
+    CompoundStmt <line:62>
+      Expr <line:62>
+        SimpleExpr <line:62>
+          AddExpr <line:62>
+            Term <line:62>
+              Factor <line:62>
+                CallExpr <line:62> 'output'
+                  Expr <line:62>
+                    SimpleExpr <line:62>
+                      AddExpr <line:62>
+                        Term <line:62>
+                          Factor <line:62>
+                            Var <line:62> 'xyz'
+                          MulOp 'Mul'
+                          Factor <line:62> 'Int' 100
+  FunDecl <line:67> g 'void (void)'
+    CompoundStmt <line:68>
+      Expr <line:68>
+        SimpleExpr <line:68>
+          AddExpr <line:68>
+            Term <line:68>
+              Factor <line:68>
+                CallExpr <line:68> 'output'
+                  Expr <line:68>
+                    SimpleExpr <line:68>
+                      AddExpr <line:68>
+                        Term <line:68>
+                          Factor <line:68> 'Int' 999
+
+============= Parser Tree ===============
 Program (1)
   GlobalDeclList (1)
     Decl (1)

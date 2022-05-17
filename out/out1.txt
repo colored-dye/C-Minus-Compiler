@@ -1,0 +1,475 @@
+No error found in Syntax Analysis~
+No error found in Semantic Analysis~
+
+================= AST ===================
+Program <line:1>
+  FunDecl <line:1> gcd 'int'
+    Param <line:1> u 'int'
+    Param <line:1> v 'int'
+    CompoundStmt <line:3>
+      SelectStmt <line:3>
+        Expr <line:3>
+          SimpleExpr <line:3>
+            AddExpr <line:3>
+              Term <line:3>
+                Factor <line:3>
+                  Var <line:3> 'v'
+            RelOp '=='
+            AddExpr <line:3>
+              Term <line:3>
+                Factor <line:3> 'Int' 0
+        ReturnStmt <line:4>
+          Expr <line:4>
+            SimpleExpr <line:4>
+              AddExpr <line:4>
+                Term <line:4>
+                  Factor <line:4>
+                    Var <line:4> 'u'
+        ReturnStmt <line:6>
+          Expr <line:6>
+            SimpleExpr <line:6>
+              AddExpr <line:6>
+                Term <line:6>
+                  Factor <line:6>
+                    CallExpr <line:6> 'gcd'
+                      Expr <line:6>
+                        SimpleExpr <line:6>
+                          AddExpr <line:6>
+                            Term <line:6>
+                              Factor <line:6>
+                                Var <line:6> 'v'
+                      Expr <line:6>
+                        SimpleExpr <line:6>
+                          AddExpr <line:6>
+                            Term <line:6>
+                              Factor <line:6>
+                                Var <line:6> 'u'
+                            AddOp 'Minus'
+                            Term <line:6>
+                              Factor <line:6>
+                                Var <line:6> 'u'
+                              MulOp 'Div'
+                              Factor <line:6>
+                                Var <line:6> 'v'
+                              MulOp 'Mul'
+                              Factor <line:6>
+                                Var <line:6> 'v'
+        ReturnStmt <line:6>
+          Expr <line:6>
+            SimpleExpr <line:6>
+              AddExpr <line:6>
+                Term <line:6>
+                  Factor <line:6>
+                    CallExpr <line:6> 'gcd'
+                      Expr <line:6>
+                        SimpleExpr <line:6>
+                          AddExpr <line:6>
+                            Term <line:6>
+                              Factor <line:6>
+                                Var <line:6> 'v'
+                      Expr <line:6>
+                        SimpleExpr <line:6>
+                          AddExpr <line:6>
+                            Term <line:6>
+                              Factor <line:6>
+                                Var <line:6> 'u'
+                            AddOp 'Minus'
+                            Term <line:6>
+                              Factor <line:6>
+                                Var <line:6> 'u'
+                              MulOp 'Div'
+                              Factor <line:6>
+                                Var <line:6> 'v'
+                              MulOp 'Mul'
+                              Factor <line:6>
+                                Var <line:6> 'v'
+  FunDecl <line:8> f 'int (void)'
+    CompoundStmt <line:9>
+      Expr <line:9>
+        SimpleExpr <line:9>
+          AddExpr <line:9>
+            Term <line:9>
+              Factor <line:9>
+                CallExpr <line:9> 'output'
+                  Expr <line:9>
+                    SimpleExpr <line:9>
+                      AddExpr <line:9>
+                        Term <line:9>
+                          Factor <line:9> 'Int' 456
+  FunDecl <line:11> main 'int (void)'
+    CompoundStmt <line:13>
+      VarDecl <line:13> used x 'int'
+      VarDecl <line:14> used y 'int'
+      Expr <line:15>
+        Var <line:15> 'x'
+        Expr <line:15>
+          SimpleExpr <line:15>
+            AddExpr <line:15>
+              Term <line:15>
+                Factor <line:15>
+                  CallExpr <line:15> 'input'
+      Expr <line:16>
+        Var <line:16> 'y'
+        Expr <line:16>
+          SimpleExpr <line:16>
+            AddExpr <line:16>
+              Term <line:16>
+                Factor <line:16>
+                  CallExpr <line:16> 'input'
+      Expr <line:17>
+        SimpleExpr <line:17>
+          AddExpr <line:17>
+            Term <line:17>
+              Factor <line:17>
+                CallExpr <line:17> 'output'
+                  Expr <line:17>
+                    SimpleExpr <line:17>
+                      AddExpr <line:17>
+                        Term <line:17>
+                          Factor <line:17>
+                            CallExpr <line:17> 'gcd'
+                              Expr <line:17>
+                                SimpleExpr <line:17>
+                                  AddExpr <line:17>
+                                    Term <line:17>
+                                      Factor <line:17>
+                                        Var <line:17> 'x'
+                              Expr <line:17>
+                                SimpleExpr <line:17>
+                                  AddExpr <line:17>
+                                    Term <line:17>
+                                      Factor <line:17>
+                                        Var <line:17> 'y'
+      SelectStmt <line:18>
+        Expr <line:18>
+          SimpleExpr <line:18>
+            AddExpr <line:18>
+              Term <line:18>
+                Factor <line:18> 'Int' 1
+        CompoundStmt <line:19>
+          VarDecl <line:19> used x 'real [2]'
+          SelectStmt <line:20>
+            Expr <line:20>
+              SimpleExpr <line:20>
+                AddExpr <line:20>
+                  Term <line:20>
+                    Factor <line:20> 'Int' 2
+            Expr <line:21>
+              SimpleExpr <line:21>
+                AddExpr <line:21>
+                  Term <line:21>
+                    Factor <line:21>
+                      CallExpr <line:21> 'output'
+                        Expr <line:21>
+                          SimpleExpr <line:21>
+                            AddExpr <line:21>
+                              Term <line:21>
+                                Factor <line:21> 'Int' 123
+            Expr <line:23>
+              SimpleExpr <line:23>
+                AddExpr <line:23>
+                  Term <line:23>
+                    Factor <line:23>
+                      CallExpr <line:23> 'output'
+                        Expr <line:23>
+                          SimpleExpr <line:23>
+                            AddExpr <line:23>
+                              Term <line:23>
+                                Factor <line:23> 'Int' 456
+            Expr <line:23>
+              SimpleExpr <line:23>
+                AddExpr <line:23>
+                  Term <line:23>
+                    Factor <line:23>
+                      CallExpr <line:23> 'output'
+                        Expr <line:23>
+                          SimpleExpr <line:23>
+                            AddExpr <line:23>
+                              Term <line:23>
+                                Factor <line:23> 'Int' 456
+      Expr <line:26>
+        SimpleExpr <line:26>
+          AddExpr <line:26>
+            Term <line:26>
+              Factor <line:26>
+                CallExpr <line:26> 'f'
+      ReturnStmt <line:28>
+        Expr <line:28>
+          SimpleExpr <line:28>
+            AddExpr <line:28>
+              Term <line:28>
+                Factor <line:28> 'Int' 0
+
+============= Parser Tree ===============
+Program (1)
+  GlobalDeclList (1)
+    Decl (1)
+      FunDecl (1)
+        TypeSpec (1)
+            [Type: INT]
+        ID  [Id: gcd]
+        Params (1)
+          ParamList (1)
+            Param (1)
+              TypeSpec (1)
+                  [Type: INT]
+              ID  [Id: u]
+            Param (1)
+              TypeSpec (1)
+                  [Type: INT]
+              ID  [Id: v]
+        CompoundStmt (3)
+          LocalDecl (0)
+          StmtList (3)
+            Stmt (3)
+              SelectionStmt (3)
+                Expr (3)
+                  SimpleExpr (3)
+                    AddExpr (3)
+                      Term (3)
+                        Factor (3)
+                          Var (3)
+                            ID  [Id: v]
+                    RelOp (3)
+                        [Op: 274]
+                    AddExpr (3)
+                      Term (3)
+                        Factor (3)
+                          NUM  [Num: 0]
+                Stmt (4)
+                  ReturnStmt (4)
+                    Expr (4)
+                      SimpleExpr (4)
+                        AddExpr (4)
+                          Term (4)
+                            Factor (4)
+                              Var (4)
+                                ID  [Id: u]
+                Stmt (6)
+                  ReturnStmt (6)
+                    Expr (6)
+                      SimpleExpr (6)
+                        AddExpr (6)
+                          Term (6)
+                            Factor (6)
+                              Call (6)
+                                ID  [Id: gcd]
+                                Args (6)
+                                  ArgList (6)
+                                    Expr (6)
+                                      SimpleExpr (6)
+                                        AddExpr (6)
+                                          Term (6)
+                                            Factor (6)
+                                              Var (6)
+                                                ID  [Id: v]
+                                    Expr (6)
+                                      SimpleExpr (6)
+                                        AddExpr (6)
+                                          AddExpr (6)
+                                            Term (6)
+                                              Factor (6)
+                                                Var (6)
+                                                  ID  [Id: u]
+                                          AddOp (6)
+                                              [Op: 276]
+                                          Term (6)
+                                            Term (6)
+                                              Term (6)
+                                                Factor (6)
+                                                  Var (6)
+                                                    ID  [Id: u]
+                                              MulOp (6)
+                                                  [Op: 278]
+                                              Factor (6)
+                                                Var (6)
+                                                  ID  [Id: v]
+                                            MulOp (6)
+                                                [Op: 277]
+                                            Factor (6)
+                                              Var (6)
+                                                ID  [Id: v]
+    Decl (8)
+      FunDecl (8)
+        TypeSpec (8)
+            [Type: INT]
+        ID  [Id: f]
+        Params (8)
+            [Type: VOID]
+        CompoundStmt (9)
+          LocalDecl (0)
+          StmtList (9)
+            Stmt (9)
+              ExprStmt (9)
+                Expr (9)
+                  SimpleExpr (9)
+                    AddExpr (9)
+                      Term (9)
+                        Factor (9)
+                          Call (9)
+                            ID  [Id: output]
+                            Args (9)
+                              ArgList (9)
+                                Expr (9)
+                                  SimpleExpr (9)
+                                    AddExpr (9)
+                                      Term (9)
+                                        Factor (9)
+                                          NUM  [Num: 456]
+    Decl (11)
+      FunDecl (11)
+        TypeSpec (11)
+            [Type: INT]
+        ID  [Id: main]
+        Params (11)
+            [Type: VOID]
+        CompoundStmt (13)
+          LocalDecl (13)
+            VarDecl (13)
+              TypeSpec (13)
+                  [Type: INT]
+              ID  [Id: x]
+            VarDecl (14)
+              TypeSpec (14)
+                  [Type: INT]
+              ID  [Id: y]
+          StmtList (15)
+            Stmt (15)
+              ExprStmt (15)
+                Expr (15)
+                  Assign (15)
+                    Var (15)
+                      ID  [Id: x]
+                    Expr (15)
+                      SimpleExpr (15)
+                        AddExpr (15)
+                          Term (15)
+                            Factor (15)
+                              Call (15)
+                                ID  [Id: input]
+                                Args (0)
+            Stmt (16)
+              ExprStmt (16)
+                Expr (16)
+                  Assign (16)
+                    Var (16)
+                      ID  [Id: y]
+                    Expr (16)
+                      SimpleExpr (16)
+                        AddExpr (16)
+                          Term (16)
+                            Factor (16)
+                              Call (16)
+                                ID  [Id: input]
+                                Args (0)
+            Stmt (17)
+              ExprStmt (17)
+                Expr (17)
+                  SimpleExpr (17)
+                    AddExpr (17)
+                      Term (17)
+                        Factor (17)
+                          Call (17)
+                            ID  [Id: output]
+                            Args (17)
+                              ArgList (17)
+                                Expr (17)
+                                  SimpleExpr (17)
+                                    AddExpr (17)
+                                      Term (17)
+                                        Factor (17)
+                                          Call (17)
+                                            ID  [Id: gcd]
+                                            Args (17)
+                                              ArgList (17)
+                                                Expr (17)
+                                                  SimpleExpr (17)
+                                                    AddExpr (17)
+                                                      Term (17)
+                                                        Factor (17)
+                                                          Var (17)
+                                                            ID  [Id: x]
+                                                Expr (17)
+                                                  SimpleExpr (17)
+                                                    AddExpr (17)
+                                                      Term (17)
+                                                        Factor (17)
+                                                          Var (17)
+                                                            ID  [Id: y]
+            Stmt (18)
+              SelectionStmt (18)
+                Expr (18)
+                  SimpleExpr (18)
+                    AddExpr (18)
+                      Term (18)
+                        Factor (18)
+                          NUM  [Num: 1]
+                Stmt (19)
+                  CompoundStmt (19)
+                    LocalDecl (19)
+                      VarDecl (19)
+                        TypeSpec (19)
+                            [Type: REAL]
+                        ID  [Id: x]
+                        NUM  [Num: 2]
+                    StmtList (20)
+                      Stmt (20)
+                        SelectionStmt (20)
+                          Expr (20)
+                            SimpleExpr (20)
+                              AddExpr (20)
+                                Term (20)
+                                  Factor (20)
+                                    NUM  [Num: 2]
+                          Stmt (21)
+                            ExprStmt (21)
+                              Expr (21)
+                                SimpleExpr (21)
+                                  AddExpr (21)
+                                    Term (21)
+                                      Factor (21)
+                                        Call (21)
+                                          ID  [Id: output]
+                                          Args (21)
+                                            ArgList (21)
+                                              Expr (21)
+                                                SimpleExpr (21)
+                                                  AddExpr (21)
+                                                    Term (21)
+                                                      Factor (21)
+                                                        NUM  [Num: 123]
+                          Stmt (23)
+                            ExprStmt (23)
+                              Expr (23)
+                                SimpleExpr (23)
+                                  AddExpr (23)
+                                    Term (23)
+                                      Factor (23)
+                                        Call (23)
+                                          ID  [Id: output]
+                                          Args (23)
+                                            ArgList (23)
+                                              Expr (23)
+                                                SimpleExpr (23)
+                                                  AddExpr (23)
+                                                    Term (23)
+                                                      Factor (23)
+                                                        NUM  [Num: 456]
+            Stmt (26)
+              ExprStmt (26)
+                Expr (26)
+                  SimpleExpr (26)
+                    AddExpr (26)
+                      Term (26)
+                        Factor (26)
+                          Call (26)
+                            ID  [Id: f]
+                            Args (0)
+            Stmt (28)
+              ReturnStmt (28)
+                Expr (28)
+                  SimpleExpr (28)
+                    AddExpr (28)
+                      Term (28)
+                        Factor (28)
+                          NUM  [Num: 0]

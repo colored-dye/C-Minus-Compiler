@@ -1,5 +1,0 @@
-int test2(int b[])
-{
-    int a;
-    return a;
-}

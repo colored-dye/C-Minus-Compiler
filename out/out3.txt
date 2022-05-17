@@ -1,62 +1,220 @@
+No error found in Syntax Analysis~
+Error found in Semantic Analysis
+
+================= AST ===================
+Program <line:1>
+  FunDecl <line:1> main 'int (void)'
+    CompoundStmt <line:3>
+      VarDecl <line:3> used i 'int'
+      VarDecl <line:3> used sum 'int'
+      VarDecl <line:3> used r 'real'
+      Expr <line:4>
+        Var <line:4> 'i'
+        Expr <line:4>
+          SimpleExpr <line:4>
+            AddExpr <line:4>
+              Term <line:4>
+                Factor <line:4> 'Int' 1
+      Expr <line:4>
+        Var <line:4> 'sum'
+        Expr <line:4>
+          SimpleExpr <line:4>
+            AddExpr <line:4>
+              Term <line:4>
+                Factor <line:4> 'Int' 0
+      Expr <line:4>
+        Var <line:4> 'r'
+        Expr <line:4>
+          SimpleExpr <line:4>
+            AddExpr <line:4>
+              Term <line:4>
+                Factor <line:4> 'Real' 10.000000
+      WhileStmt <line:6>
+        Expr <line:6>
+          SimpleExpr <line:6>
+            AddExpr <line:6>
+              Term <line:6>
+                Factor <line:6>
+                  Var <line:6> 'i'
+            RelOp '<='
+            AddExpr <line:6>
+              Term <line:6>
+                Factor <line:6> 'Int' 100
+        CompoundStmt <line:7>
+          Expr <line:7>
+            Var <line:7> 'sum'
+            Expr <line:7>
+              SimpleExpr <line:7>
+                AddExpr <line:7>
+                  Term <line:7>
+                    Factor <line:7>
+                      Var <line:7> 'sum'
+                  AddOp 'Minus'
+                  Term <line:7>
+                    Factor <line:7>
+                      Var <line:7> 'i'
+          Expr <line:8>
+            Var <line:8> 'i'
+            Expr <line:8>
+              SimpleExpr <line:8>
+                AddExpr <line:8>
+                  Term <line:8>
+                    Factor <line:8>
+                      Var <line:8> 'i'
+                  AddOp 'Minus'
+                  Term <line:8>
+                    Factor <line:8> 'Int' 1
+      Expr <line:10>
+        SimpleExpr <line:10>
+          AddExpr <line:10>
+            Term <line:10>
+              Factor <line:10>
+                CallExpr <line:10> 'output'
+                  Expr <line:10>
+                    SimpleExpr <line:10>
+                      AddExpr <line:10>
+                        Term <line:10>
+                          Factor <line:10>
+                            Var <line:10> 'sum'
+      Expr <line:11>
+        Var <line:11> 'sum'
+        Expr <line:11>
+          SimpleExpr <line:11>
+            AddExpr <line:11>
+              Term <line:11>
+                Factor <line:11> 'Int' 0
+      ForStmt <line:12>
+        Var <line:12> 'i'
+        Expr <line:12>
+          SimpleExpr <line:12>
+            AddExpr <line:12>
+              Term <line:12>
+                Factor <line:12> 'Int' 0
+        Expr <line:12>
+          SimpleExpr <line:12>
+            AddExpr <line:12>
+              Term <line:12>
+                Factor <line:12>
+                  Var <line:12> 'i'
+            RelOp '<'
+            AddExpr <line:12>
+              Term <line:12>
+                Factor <line:12> 'Int' 10
+        Var <line:12> 'i'
+        Expr <line:12>
+          SimpleExpr <line:12>
+            AddExpr <line:12>
+              Term <line:12>
+                Factor <line:12>
+                  Var <line:12> 'i'
+              AddOp 'Minus'
+              Term <line:12>
+                Factor <line:12> 'Int' 1
+        CompoundStmt <line:13>
+          Expr <line:13>
+            Var <line:13> 'sum'
+            Expr <line:13>
+              SimpleExpr <line:13>
+                AddExpr <line:13>
+                  Term <line:13>
+                    Factor <line:13>
+                      Var <line:13> 'sum'
+                  AddOp 'Minus'
+                  Term <line:13>
+                    Factor <line:13>
+                      Var <line:13> 'i'
+      Expr <line:15>
+        SimpleExpr <line:15>
+          AddExpr <line:15>
+            Term <line:15>
+              Factor <line:15>
+                CallExpr <line:15> 'output'
+                  Expr <line:15>
+                    SimpleExpr <line:15>
+                      AddExpr <line:15>
+                        Term <line:15>
+                          Factor <line:15>
+                            Var <line:15> 'sum'
+      Expr <line:18>
+        SimpleExpr <line:18>
+          AddExpr <line:18>
+            Term <line:18>
+              Factor <line:18>
+                CallExpr <line:18> 'output'
+                  Expr <line:18>
+                    SimpleExpr <line:18>
+                      AddExpr <line:18>
+                        Term <line:18>
+                          Factor <line:18>
+                            Var <line:18> 'r'
+      ReturnStmt <line:20>
+        Expr <line:20>
+          SimpleExpr <line:20>
+            AddExpr <line:20>
+              Term <line:20>
+                Factor <line:20> 'Int' 0
+
+============= Parser Tree ===============
 Program (1)
   GlobalDeclList (1)
     Decl (1)
       FunDecl (1)
         TypeSpec (1)
-          INT (1)  [Type: INT]
-        ID (1)  [Id: main]
+            [Type: INT]
+        ID  [Id: main]
         Params (1)
-          VOID (1)  [Type: VOID]
-    Decl (4)
-      FunDecl (4)
-        CompountStmt (4)
-          LocalDecl (0)
+            [Type: VOID]
+        CompoundStmt (3)
+          LocalDecl (3)
             VarDecl (3)
               TypeSpec (3)
-                INT (3)  [Type: INT]
-              ID (3)  [Id: i]
+                  [Type: INT]
+              ID  [Id: i]
             VarDecl (3)
               TypeSpec (3)
-                INT (3)  [Type: INT]
-              ID (3)  [Id: sum]
+                  [Type: INT]
+              ID  [Id: sum]
             VarDecl (3)
               TypeSpec (3)
-                REAL (3)  [Type: REAL]
-              ID (3)  [Id: r]
+                  [Type: REAL]
+              ID  [Id: r]
           StmtList (4)
             Stmt (4)
               ExprStmt (4)
                 Expr (4)
-                  Var (4)
-                    ID (4)  [Id: i]
-                  Expr (4)
-                    SimpleExpr (4)
-                      AddExpr (4)
-                        Term (4)
-                          Factor (4)
-                            NUM (4)  [Num: 1]
+                  Assign (4)
+                    Var (4)
+                      ID  [Id: i]
+                    Expr (4)
+                      SimpleExpr (4)
+                        AddExpr (4)
+                          Term (4)
+                            Factor (4)
+                              NUM  [Num: 1]
             Stmt (4)
               ExprStmt (4)
                 Expr (4)
-                  Var (4)
-                    ID (4)  [Id: sum]
-                  Expr (4)
-                    SimpleExpr (4)
-                      AddExpr (4)
-                        Term (4)
-                          Factor (4)
-                            NUM (4)  [Num: 0]
+                  Assign (4)
+                    Var (4)
+                      ID  [Id: sum]
+                    Expr (4)
+                      SimpleExpr (4)
+                        AddExpr (4)
+                          Term (4)
+                            Factor (4)
+                              NUM  [Num: 0]
             Stmt (4)
               ExprStmt (4)
                 Expr (4)
-                  Var (4)
-                    ID (4)  [Id: r]
-                  Expr (4)
-                    SimpleExpr (4)
-                      AddExpr (4)
-                        Term (4)
-                          Factor (4)
-                            NUM (4)  [Num: 10.000]
+                  Assign (4)
+                    Var (4)
+                      ID  [Id: r]
+                    Expr (4)
+                      SimpleExpr (4)
+                        AddExpr (4)
+                          Term (4)
+                            Factor (4)
+                              NUM  [Num: 10.000]
             Stmt (6)
               WhileStmt (6)
                 Expr (6)
@@ -65,54 +223,56 @@ Program (1)
                       Term (6)
                         Factor (6)
                           Var (6)
-                            ID (6)  [Id: i]
+                            ID  [Id: i]
                     RelOp (6)
-                      <= (6)  [Op: 272]
+                        [Op: 272]
                     AddExpr (6)
                       Term (6)
                         Factor (6)
-                          NUM (6)  [Num: 100]
+                          NUM  [Num: 100]
                 Stmt (7)
-                  CompountStmt (7)
+                  CompoundStmt (7)
                     LocalDecl (0)
                     StmtList (7)
                       Stmt (7)
                         ExprStmt (7)
                           Expr (7)
-                            Var (7)
-                              ID (7)  [Id: sum]
-                            Expr (7)
-                              SimpleExpr (7)
-                                AddExpr (7)
+                            Assign (7)
+                              Var (7)
+                                ID  [Id: sum]
+                              Expr (7)
+                                SimpleExpr (7)
                                   AddExpr (7)
+                                    AddExpr (7)
+                                      Term (7)
+                                        Factor (7)
+                                          Var (7)
+                                            ID  [Id: sum]
+                                    AddOp (7)
+                                        [Op: 275]
                                     Term (7)
                                       Factor (7)
                                         Var (7)
-                                          ID (7)  [Id: sum]
-                                  AddOp (7)
-                                    + (7)  [Op: 275]
-                                  Term (7)
-                                    Factor (7)
-                                      Var (7)
-                                        ID (7)  [Id: i]
+                                          ID  [Id: i]
                       Stmt (8)
                         ExprStmt (8)
                           Expr (8)
-                            Var (8)
-                              ID (8)  [Id: i]
-                            Expr (8)
-                              SimpleExpr (8)
-                                AddExpr (8)
+                            Assign (8)
+                              Var (8)
+                                ID  [Id: i]
+                              Expr (8)
+                                SimpleExpr (8)
                                   AddExpr (8)
+                                    AddExpr (8)
+                                      Term (8)
+                                        Factor (8)
+                                          Var (8)
+                                            ID  [Id: i]
+                                    AddOp (8)
+                                        [Op: 275]
                                     Term (8)
                                       Factor (8)
-                                        Var (8)
-                                          ID (8)  [Id: i]
-                                  AddOp (8)
-                                    + (8)  [Op: 275]
-                                  Term (8)
-                                    Factor (8)
-                                      NUM (8)  [Num: 1]
+                                        NUM  [Num: 1]
             Stmt (10)
               ExprStmt (10)
                 Expr (10)
@@ -121,7 +281,7 @@ Program (1)
                       Term (10)
                         Factor (10)
                           Call (10)
-                            ID (10)  [Id: output]
+                            ID  [Id: output]
                             Args (10)
                               ArgList (10)
                                 Expr (10)
@@ -130,29 +290,31 @@ Program (1)
                                       Term (10)
                                         Factor (10)
                                           Var (10)
-                                            ID (10)  [Id: sum]
+                                            ID  [Id: sum]
             Stmt (11)
               ExprStmt (11)
                 Expr (11)
-                  Var (11)
-                    ID (11)  [Id: sum]
-                  Expr (11)
-                    SimpleExpr (11)
-                      AddExpr (11)
-                        Term (11)
-                          Factor (11)
-                            NUM (11)  [Num: 0]
+                  Assign (11)
+                    Var (11)
+                      ID  [Id: sum]
+                    Expr (11)
+                      SimpleExpr (11)
+                        AddExpr (11)
+                          Term (11)
+                            Factor (11)
+                              NUM  [Num: 0]
             Stmt (12)
               ForStmt (12)
                 For_param1 (12)
-                  Var (12)
-                    ID (12)  [Id: i]
-                  Expr (12)
-                    SimpleExpr (12)
-                      AddExpr (12)
-                        Term (12)
-                          Factor (12)
-                            NUM (12)  [Num: 0]
+                  Assign (12)
+                    Var (12)
+                      ID  [Id: i]
+                    Expr (12)
+                      SimpleExpr (12)
+                        AddExpr (12)
+                          Term (12)
+                            Factor (12)
+                              NUM  [Num: 0]
                 For_param2 (12)
                   Expr (12)
                     SimpleExpr (12)
@@ -160,52 +322,54 @@ Program (1)
                         Term (12)
                           Factor (12)
                             Var (12)
-                              ID (12)  [Id: i]
+                              ID  [Id: i]
                       RelOp (12)
-                        < (12)  [Op: 270]
+                          [Op: 270]
                       AddExpr (12)
                         Term (12)
                           Factor (12)
-                            NUM (12)  [Num: 10]
+                            NUM  [Num: 10]
                 For_param3 (12)
-                  Var (12)
-                    ID (12)  [Id: i]
-                  Expr (12)
-                    SimpleExpr (12)
-                      AddExpr (12)
+                  Assign (12)
+                    Var (12)
+                      ID  [Id: i]
+                    Expr (12)
+                      SimpleExpr (12)
                         AddExpr (12)
+                          AddExpr (12)
+                            Term (12)
+                              Factor (12)
+                                Var (12)
+                                  ID  [Id: i]
+                          AddOp (12)
+                              [Op: 275]
                           Term (12)
                             Factor (12)
-                              Var (12)
-                                ID (12)  [Id: i]
-                        AddOp (12)
-                          + (12)  [Op: 275]
-                        Term (12)
-                          Factor (12)
-                            NUM (12)  [Num: 1]
+                              NUM  [Num: 1]
                 Stmt (13)
-                  CompountStmt (13)
+                  CompoundStmt (13)
                     LocalDecl (0)
                     StmtList (13)
                       Stmt (13)
                         ExprStmt (13)
                           Expr (13)
-                            Var (13)
-                              ID (13)  [Id: sum]
-                            Expr (13)
-                              SimpleExpr (13)
-                                AddExpr (13)
+                            Assign (13)
+                              Var (13)
+                                ID  [Id: sum]
+                              Expr (13)
+                                SimpleExpr (13)
                                   AddExpr (13)
+                                    AddExpr (13)
+                                      Term (13)
+                                        Factor (13)
+                                          Var (13)
+                                            ID  [Id: sum]
+                                    AddOp (13)
+                                        [Op: 275]
                                     Term (13)
                                       Factor (13)
                                         Var (13)
-                                          ID (13)  [Id: sum]
-                                  AddOp (13)
-                                    + (13)  [Op: 275]
-                                  Term (13)
-                                    Factor (13)
-                                      Var (13)
-                                        ID (13)  [Id: i]
+                                          ID  [Id: i]
             Stmt (15)
               ExprStmt (15)
                 Expr (15)
@@ -214,7 +378,7 @@ Program (1)
                       Term (15)
                         Factor (15)
                           Call (15)
-                            ID (15)  [Id: output]
+                            ID  [Id: output]
                             Args (15)
                               ArgList (15)
                                 Expr (15)
@@ -223,7 +387,7 @@ Program (1)
                                       Term (15)
                                         Factor (15)
                                           Var (15)
-                                            ID (15)  [Id: sum]
+                                            ID  [Id: sum]
             Stmt (18)
               ExprStmt (18)
                 Expr (18)
@@ -232,7 +396,7 @@ Program (1)
                       Term (18)
                         Factor (18)
                           Call (18)
-                            ID (18)  [Id: output]
+                            ID  [Id: output]
                             Args (18)
                               ArgList (18)
                                 Expr (18)
@@ -241,7 +405,7 @@ Program (1)
                                       Term (18)
                                         Factor (18)
                                           Var (18)
-                                            ID (18)  [Id: r]
+                                            ID  [Id: r]
             Stmt (20)
               ReturnStmt (20)
                 Expr (20)
@@ -249,4 +413,4 @@ Program (1)
                     AddExpr (20)
                       Term (20)
                         Factor (20)
-                          NUM (20)  [Num: 0]
+                          NUM  [Num: 0]
