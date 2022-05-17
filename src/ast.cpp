@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:29
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-17 12:20:24
+ * @LastEditTime: 2022-05-17 14:54:03
  * @FilePath: /C-Minus-Compiler/src/ast.cpp
  * @Description:
  *
@@ -93,11 +93,17 @@ void PrintASTNode(const ASTNode *curNode)
     {
         ASTCompoundStmt *compoundStmt = (ASTCompoundStmt *)curNode;
         printf("CompoundStmt <line:%d>\n", compoundStmt->GetLineno());
-        vector<ASTNode *>::const_iterator declOrStmt = compoundStmt->GetDeclStmtList().begin();
-        while (declOrStmt != compoundStmt->GetDeclStmtList().end())
+        vector<ASTVarDecl *>::const_iterator decl = compoundStmt->GetDeclList().begin();
+        while (decl != compoundStmt->GetDeclList().end())
         {
-            PrintASTNode(*declOrStmt);
-            declOrStmt++;
+            PrintASTNode(*decl);
+            decl++;
+        }
+        vector<ASTNode *>::const_iterator stmt = compoundStmt->GetStmtList().begin();
+        while (stmt != compoundStmt->GetStmtList().end())
+        {
+            PrintASTNode(*stmt);
+            stmt++;
         }
         break;
     }
@@ -167,10 +173,10 @@ void PrintASTNode(const ASTNode *curNode)
     case ASTVAR:
     {
         ASTVar *var = (ASTVar *)curNode;
-        printf("Var <line:%d> %s", var->GetLineno(), var->GetId().c_str());
+        printf("Var <line:%d> '%s'", var->GetLineno(), var->GetId().c_str());
         if (var->HaveSubscript())
         {
-            printf(" subscript:\n");
+            printf(" have subscript\n");
             PrintASTNode(var->GetSubscript());
         }
         else
@@ -288,7 +294,7 @@ void PrintASTNode(const ASTNode *curNode)
     case ASTCALL:
     {
         ASTCall *callExpr = (ASTCall *)curNode;
-        printf("FunDecl <line:%d> %s\n", callExpr->GetLineno(), callExpr->GetId().c_str());
+        printf("FunDecl <line:%d> '%s'\n", callExpr->GetLineno(), callExpr->GetId().c_str());
         vector<ASTExpr *>::const_iterator arg = callExpr->GetArgList().begin();
         while (arg != callExpr->GetArgList().end())
         {

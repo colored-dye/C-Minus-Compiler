@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-17 12:01:40
+ * @LastEditTime: 2022-05-17 14:27:55
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -270,15 +270,17 @@ public:
  */
 class ASTCompoundStmt : public ASTNode
 {
-    vector<ASTNode *> declStmtList;
+    vector<ASTVarDecl *> declList;
+    vector<ASTNode *> stmtList;
 
 public:
     ASTCompoundStmt() { SetNodeType(ASTCOMPOUNDSTMT); }
     ~ASTCompoundStmt() {}
 
-    void AddDecl(ASTNode *decl) { declStmtList.push_back(decl); };
-    void AddStmt(ASTNode *stmt) { declStmtList.push_back(stmt); };
-    const vector<ASTNode *> &GetDeclStmtList() const { return declStmtList; }
+    void AddDecl(ASTVarDecl *decl) { declList.push_back(decl); };
+    void AddStmt(ASTNode *stmt) { stmtList.push_back(stmt); };
+    const vector<ASTVarDecl *> &GetDeclList() const { return declList; }
+    const vector<ASTNode *> &GetStmtList() const { return stmtList; }
 };
 
 /**
