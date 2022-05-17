@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:35
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-16 23:37:07
+ * @LastEditTime: 2022-05-16 23:59:01
  * @FilePath: /C-Minus-Compiler/src/ast.hpp
  * @Description: AST for subsequent LLVM operations.
  *
@@ -278,6 +278,7 @@ public:
 
     void AddDecl(ASTNode *decl) { declStmtList.push_back(decl); };
     void AddStmt(ASTNode *stmt) { declStmtList.push_back(stmt); };
+    const vector<ASTNode *> &GetDeclStmtList() const { return declStmtList; }
 };
 
 /**

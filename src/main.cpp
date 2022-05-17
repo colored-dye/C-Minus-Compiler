@@ -2,7 +2,7 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-16 23:22:26
+ * @LastEditTime: 2022-05-17 10:10:15
  * @FilePath: /C-Minus-Compiler/src/main.cpp
  * @Description:
  *
@@ -54,12 +54,13 @@ int main(int argc, char *argv[])
     puts("Error found in Semantic Analysis");
   }
 
-  // 文字形式输出语法树
-  printTree(g_root);
-
+  printf("\n================= AST ===================\n");
   ASTProgram *progarmAST = NULL;
   progarmAST = (ASTProgram *)ParserTreeToAST(g_root);
   PrintAST(progarmAST);
 
+  // 文字形式输出语法树
+  printf("\n============= Parser Tree ===============\n");
+  printTree(g_root);
   return 0;
 }

@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:29
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-16 23:21:27
+ * @LastEditTime: 2022-05-17 09:53:24
  * @FilePath: /C-Minus-Compiler/src/ast.cpp
  * @Description:
  *
@@ -21,8 +21,8 @@ void PrintASTNode(const ASTNode *curNode)
         return;
 
     indent++;
-    // control indentation
-    for (int i = 0; i < indent * 2; i++)
+
+    for (int i = 0; i < indent * 2; i++) // control indentation
         printf(" ");
 
     switch (curNode->GetNodeType())
@@ -32,15 +32,14 @@ void PrintASTNode(const ASTNode *curNode)
     case ASTPROGRAM:
     {
         ASTProgram *program = (ASTProgram *)curNode;
-        printf("ASTProgram <line:%d>\n", program->GetLineno());
+        printf("Program <line:%d>\n", program->GetLineno());
         vector<ASTNode *>::const_iterator decl = program->GetDeclList().begin();
-        // indent++;
         while (decl != program->GetDeclList().end())
         {
             PrintASTNode(*decl);
             decl++;
         }
-        // indent--;
+
         break;
     }
     case ASTVARDECL:
@@ -48,9 +47,10 @@ void PrintASTNode(const ASTNode *curNode)
         ASTVarDecl *varDecl = (ASTVarDecl *)curNode;
         string typeSpecStr = (varDecl->GetTypeSpec() == ASTINT) ? "int" : "real";
         if (varDecl->IsArray())
-            printf("ASTVarDecl <line:%d> used %s '%s [%d]'\n", varDecl->GetLineno(), varDecl->GetId().c_str(), typeSpecStr.c_str(), varDecl->GetArrayLength());
+            printf("VarDecl <line:%d> used %s '%s [%d]'\n", varDecl->GetLineno(), varDecl->GetId().c_str(), typeSpecStr.c_str(), varDecl->GetArrayLength());
         else
-            printf("ASTVarDecl <line:%d> used %s '%s'\n", varDecl->GetLineno(), varDecl->GetId().c_str(), typeSpecStr.c_str());
+            printf("VarDecl <line:%d> used %s '%s'\n", varDecl->GetLineno(), varDecl->GetId().c_str(), typeSpecStr.c_str());
+
         break;
     }
     case ASTFUNDECL:
@@ -61,23 +61,18 @@ void PrintASTNode(const ASTNode *curNode)
                                                                    : "void";
         if (funDecl->HaveParam())
         {
-            printf("ASTFunDecl <line:%d> %s '%s'\n", funDecl->GetLineno(), funDecl->GetId().c_str(), typeSpecStr.c_str());
+            printf("FunDecl <line:%d> %s '%s'\n", funDecl->GetLineno(), funDecl->GetId().c_str(), typeSpecStr.c_str());
             vector<ASTParam *>::const_iterator param = funDecl->GetParamList().begin();
-            // indent++;
             while (param != funDecl->GetParamList().end())
             {
                 PrintASTNode(*param);
                 param++;
             }
-            // indent--;
         }
         else
-        {
-            printf("ASTFunDecl <line:%d> %s '%s (void)'\n", funDecl->GetLineno(), funDecl->GetId().c_str(), typeSpecStr.c_str());
-        }
-        // indent++;
+            printf("FunDecl <line:%d> %s '%s (void)'\n", funDecl->GetLineno(), funDecl->GetId().c_str(), typeSpecStr.c_str());
+
         PrintASTNode(funDecl->GetCompoundStmt());
-        // indent--;
 
         break;
     }
@@ -88,29 +83,76 @@ void PrintASTNode(const ASTNode *curNode)
                              : (param->GetTypeSpec() == ASTREAL) ? "real"
                                                                  : "void";
         if (param->IsArray())
-            printf("ASTParam <line:%d> %s '%s []'\n", param->GetLineno(), param->GetId().c_str(), typeSpecStr.c_str());
+            printf("Param <line:%d> %s '%s []'\n", param->GetLineno(), param->GetId().c_str(), typeSpecStr.c_str());
         else
-            printf("ASTParam <line:%d> %s '%s'\n", param->GetLineno(), param->GetId().c_str(), typeSpecStr.c_str());
+            printf("Param <line:%d> %s '%s'\n", param->GetLineno(), param->GetId().c_str(), typeSpecStr.c_str());
+
         break;
     }
     case ASTCOMPOUNDSTMT:
     {
+        ASTCompoundStmt *compoundStmt = (ASTCompoundStmt *)curNode;
+        printf("CompoundStmt <line:%d>\n", compoundStmt->GetLineno());
+        vector<ASTNode *>::const_iterator declOrStmt = compoundStmt->GetDeclStmtList().begin();
+        while (declOrStmt != compoundStmt->GetDeclStmtList().end())
+        {
+            PrintASTNode(*declOrStmt);
+            declOrStmt++;
+        }
         break;
     }
     case ASTEXPR:
     {
+        ASTExpr *expr = (ASTExpr *)curNode;
+        printf("Expr <line:%d>\n", expr->GetLineno());
+        if (expr->IsAssignStmt())
+        {
+            PrintASTNode(expr->GetVar());
+            PrintASTNode(expr->GetExpr());
+        }
+        else
+            PrintASTNode(expr->GetSimpleExpr());
+
         break;
     }
     case ASTSELECTSTMT:
     {
+        ASTSelectStmt *selectStmt = (ASTSelectStmt *)curNode;
+        printf("SelectStmt <line:%d>\n", selectStmt->GetLineno());
+        PrintASTNode(selectStmt->GetExpr());
+        PrintASTNode(selectStmt->GetTrueStmt());
+        PrintASTNode(selectStmt->GetFalseStmt());
+        if (selectStmt->HaveElse())
+            PrintASTNode(selectStmt->GetFalseStmt());
+
         break;
     }
     case ASTWHILESTMT:
     {
+        ASTWhileStmt *whileStmt = (ASTWhileStmt *)curNode;
+        printf("WhileStmt <line:%d>\n", whileStmt->GetLineno());
+        PrintASTNode(whileStmt->GetExpr());
+        PrintASTNode(whileStmt->GetStmt());
+
         break;
     }
     case ASTFORSTMT:
     {
+        ASTForStmt *forStmt = (ASTForStmt *)curNode;
+        printf("ForStmt <line:%d>\n", forStmt->GetLineno());
+        if (forStmt->HaveForParam1())
+        {
+            PrintASTNode(forStmt->GetVar1());
+            PrintASTNode(forStmt->GetExpr1());
+        }
+        PrintASTNode(forStmt->GetExpr2());
+        if (forStmt->HaveForParam3())
+        {
+            PrintASTNode(forStmt->GetVar3());
+            PrintASTNode(forStmt->GetExpr3());
+        }
+        PrintASTNode(forStmt->GetStmt());
+        
         break;
     }
     case ASTRETURNSTMT:
@@ -151,5 +193,6 @@ void PrintASTNode(const ASTNode *curNode)
 
 void PrintAST(const ASTProgram *program)
 {
-    PrintASTNode(program);
+    if (program->GetNodeType() == ASTPROGRAM)
+        PrintASTNode(program);
 }

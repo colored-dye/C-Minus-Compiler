@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:29
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-16 23:23:18
+ * @LastEditTime: 2022-05-17 10:06:32
  * @FilePath: /C-Minus-Compiler/src/asttest.cpp
  * @Description:
  *
@@ -30,6 +30,10 @@ int main()
     ASTParam param1(ASTINT, "b", true);
     param1.SetCoordinate(4, 1);
     funDecl1.AddParam(&param1);
+
+    ASTCompoundStmt compoundStmt1;
+    compoundStmt1.SetCoordinate(5, 1);
+    funDecl1.AddCompoundStmt(&compoundStmt1);
 
     // bool isArray = varDecl1.IsArray();
     // bool haveParam = funDecl1.HaveParam();
