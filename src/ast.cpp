@@ -2,7 +2,7 @@
  * @Author: SiO-2
  * @Date: 2022-05-09 10:31:29
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-17 14:54:03
+ * @LastEditTime: 2022-05-17 16:38:24
  * @FilePath: /C-Minus-Compiler/src/ast.cpp
  * @Description:
  *
@@ -294,7 +294,7 @@ void PrintASTNode(const ASTNode *curNode)
     case ASTCALL:
     {
         ASTCall *callExpr = (ASTCall *)curNode;
-        printf("FunDecl <line:%d> '%s'\n", callExpr->GetLineno(), callExpr->GetId().c_str());
+        printf("CallExpr <line:%d> '%s'\n", callExpr->GetLineno(), callExpr->GetId().c_str());
         vector<ASTExpr *>::const_iterator arg = callExpr->GetArgList().begin();
         while (arg != callExpr->GetArgList().end())
         {
