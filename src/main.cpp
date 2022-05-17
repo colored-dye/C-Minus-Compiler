@@ -2,17 +2,17 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-14 20:00:24
- * @FilePath: /C-Minus-Compiler/src/main.c
+ * @LastEditTime: 2022-05-17 10:10:15
+ * @FilePath: /C-Minus-Compiler/src/main.cpp
  * @Description:
  *
  * Copyright (c) 2022 by colored-dye, All Rights Reserved.
  */
-
-#include <stdio.h>
+#include "ast.hpp"
 #include "node.hpp"
 #include "semantic.h"
 #include "y.tab.h"
+#include <stdio.h>
 
 extern int yydebug;
 extern FILE *yyin;
@@ -54,8 +54,13 @@ int main(int argc, char *argv[])
     puts("Error found in Semantic Analysis");
   }
 
-  // 文字形式输出语法树
-  printTree(g_root);
+  printf("\n================= AST ===================\n");
+  ASTProgram *progarmAST = NULL;
+  progarmAST = (ASTProgram *)ParserTreeToAST(g_root);
+  PrintAST(progarmAST);
 
+  // 文字形式输出语法树
+  printf("\n============= Parser Tree ===============\n");
+  printTree(g_root);
   return 0;
 }

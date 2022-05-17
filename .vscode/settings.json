@@ -5,6 +5,8 @@
         "semantic.h": "c",
         "node.hpp": "c",
         "symtable.h": "c",
-        "ast.hpp": "c"
+        "ast.hpp": "c",
+        "string": "cpp",
+        "stdio.h": "c"
     }
 }
