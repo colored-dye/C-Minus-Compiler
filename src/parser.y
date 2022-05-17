@@ -232,7 +232,7 @@ expression_stmt:
   }
   | SEMI {
     $$ = makeNode("ExprStmt");
-    $$->lineno = 0;
+    $$->lineno = yylineno;
   }
   ;
 
