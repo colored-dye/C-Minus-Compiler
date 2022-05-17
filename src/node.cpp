@@ -416,14 +416,14 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
 
     if (pFor_param1->child != NULL)
     {
-      ASTNode *var1 = ParserTreeToAST(pFor_param1->child);
-      ASTNode *expr1 = ParserTreeToAST(pFor_param1->child->next_sib);
+      ASTNode *var1 = ParserTreeToAST(pFor_param1->child->child);
+      ASTNode *expr1 = ParserTreeToAST(pFor_param1->child->child->next_sib);
       ((ASTForStmt *)curASTNode)->AddForParam1((ASTVar *)var1, (ASTExpr *)expr1);
     }
     if (pFor_param3->child != NULL)
     {
-      ASTNode *var3 = ParserTreeToAST(pFor_param1->child);
-      ASTNode *expr3 = ParserTreeToAST(pFor_param1->child->next_sib);
+      ASTNode *var3 = ParserTreeToAST(pFor_param3->child->child);
+      ASTNode *expr3 = ParserTreeToAST(pFor_param3->child->child->next_sib);
       ((ASTForStmt *)curASTNode)->AddForParam3((ASTVar *)var3, (ASTExpr *)expr3);
     }
   }
@@ -512,12 +512,12 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
      */
     struct Node *p = parserNode;
     vector<Node *> stack;
-    while (strncasecmp(p->child->name, "AddExpr", 7) == 0)
+    while (strncasecmp(p->name, "AddExpr", 7) == 0)
     {
       stack.push_back(p->child);
       p = p->child;
     }
-    curASTNode = new ASTAddExpr((ASTTerm *)ParserTreeToAST(p->child));
+    curASTNode = new ASTAddExpr((ASTTerm *)ParserTreeToAST(p));
     stack.pop_back();
     while (!stack.empty())
     {
@@ -536,19 +536,19 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
      */
     struct Node *p = parserNode;
     vector<Node *> stack;
-    while (strncasecmp(p->child->name, "Term", 4) == 0)
+    while (strncasecmp(p->name, "Term", 4) == 0)
     {
       stack.push_back(p);
       p = p->child;
     }
-    curASTNode = new ASTTerm((ASTFactor *)ParserTreeToAST(p->child));
+    curASTNode = new ASTTerm((ASTFactor *)ParserTreeToAST(p));
     stack.pop_back();
     while (!stack.empty())
     {
       p = stack.back();
       stack.pop_back();
-      ASTMulOp mulop = (p->next_sib->int_term == MUL) ? ASTMUL : ASTDIV;
-      ((ASTTerm *)curASTNode)->AddFactor(mulop, (ASTFactor *)ParserTreeToAST(p->next_sib->next_sib));
+      ASTMulOp mulop = (p->child->next_sib->child->int_term == MUL) ? ASTMUL : ASTDIV;
+      ((ASTTerm *)curASTNode)->AddFactor(mulop, (ASTFactor *)ParserTreeToAST(p->child->next_sib->next_sib));
     }
   }
   else if (strncasecmp(parserNode->name, "Factor", 6) == 0)
@@ -590,11 +590,13 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
          -> Args -- ArgList --> Expr
      */
     curASTNode = new ASTCall(parserNode->child->str_term);
-    struct Node *p = parserNode->child->next_sib;
-    while (p)
-    {
-      ((ASTCall *)curASTNode)->AddArg((ASTExpr *)ParserTreeToAST(p));
-      p = p->next_sib;
+    if (parserNode->child->next_sib->child) {
+      struct Node *p = parserNode->child->next_sib->child->child;
+      while (p)
+      {
+        ((ASTCall *)curASTNode)->AddArg((ASTExpr *)ParserTreeToAST(p));
+        p = p->next_sib;
+      }
     }
   }
 
