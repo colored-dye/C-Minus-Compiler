@@ -2,7 +2,7 @@
  * @Author: colored-dye
  * @Date: 2022-05-08 14:51:44
  * @LastEditors: SiO-2
- * @LastEditTime: 2022-05-17 16:44:49
+ * @LastEditTime: 2022-05-17 17:25:47
  * @FilePath: /C-Minus-Compiler/src/node.cpp
  * @Description:
  *
@@ -474,7 +474,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     else
     {
       ASTRelOp relOp;
-      switch (pRelOp->int_term)
+      switch (pRelOp->child->int_term)
       {
       case LE:
         relOp = ASTLE;
@@ -510,23 +510,21 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
             -- AddOp
             -> Term
      */
-    if (strncasecmp(parserNode->child->name, "Term", 4) == 0)
+    struct Node *p = parserNode;
+    vector<Node *> stack;
+    while (strncasecmp(p->child->name, "AddExpr", 7) == 0)
     {
-      struct Node *pTerm = parserNode->child;
-      ASTNode *term = ParserTreeToAST(pTerm);
-      curASTNode = new ASTAddExpr((ASTTerm *)term);
+      stack.push_back(p->child);
+      p = p->child;
     }
-    else if (strncasecmp(parserNode->child->name, "AddExpr", 7) == 0)
+    curASTNode = new ASTAddExpr((ASTTerm *)ParserTreeToAST(p->child));
+    stack.pop_back();
+    while (!stack.empty())
     {
-      struct Node *pAddExpr = parserNode->child;
-      ASTNode *firstTerm = ParserTreeToAST(pAddExpr->child);
-      curASTNode = new ASTAddExpr((ASTTerm *)firstTerm);
-
-      struct Node *pAddOp = pAddExpr->next_sib;
-      ASTAddOp addOp = (pAddOp->int_term == ADD) ? ASTADD : ASTMINUS;
-      struct Node *pTerm = parserNode->child;
-      ASTNode *term = ParserTreeToAST(pTerm);
-      ((ASTAddExpr *)curASTNode)->AddTerm(addOp, (ASTTerm *)term);
+      p = stack.back();
+      stack.pop_back();
+      ASTAddOp addOp = (p->next_sib->int_term == ADD) ? ASTADD : ASTMINUS;
+      ((ASTAddExpr *)curASTNode)->AddTerm(addOp, (ASTTerm *)ParserTreeToAST(p->next_sib->next_sib));
     }
   }
   else if (strncasecmp(parserNode->name, "Term", 4) == 0)
@@ -536,23 +534,21 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
          -- MulOp
          -> Factor
      */
-    if (strncasecmp(parserNode->child->name, "Factor", 6) == 0)
+    struct Node *p = parserNode;
+    vector<Node *> stack;
+    while (strncasecmp(p->child->name, "Term", 4) == 0)
     {
-      struct Node *pFactor = parserNode->child;
-      ASTNode *factor = ParserTreeToAST(pFactor);
-      curASTNode = new ASTTerm((ASTFactor *)factor);
+      stack.push_back(p);
+      p = p->child;
     }
-    else if (strncasecmp(parserNode->child->name, "Term", 4) == 0)
+    curASTNode = new ASTTerm((ASTFactor *)ParserTreeToAST(p->child));
+    stack.pop_back();
+    while (!stack.empty())
     {
-      struct Node *pTerm = parserNode->child;
-      ASTNode *firstFactor = ParserTreeToAST(pTerm->child);
-      curASTNode = new ASTTerm((ASTFactor *)firstFactor);
-
-      struct Node *pMulOp = pTerm->next_sib;
-      ASTMulOp addOp = (pMulOp->int_term == MUL) ? ASTMUL : ASTDIV;
-      struct Node *pFactor = parserNode->child;
-      ASTNode *factor = ParserTreeToAST(pFactor);
-      ((ASTTerm *)curASTNode)->AddFactor(addOp, (ASTFactor *)factor);
+      p = stack.back();
+      stack.pop_back();
+      ASTMulOp mulop = (p->next_sib->int_term == MUL) ? ASTMUL : ASTDIV;
+      ((ASTTerm *)curASTNode)->AddFactor(mulop, (ASTFactor *)ParserTreeToAST(p->next_sib->next_sib));
     }
   }
   else if (strncasecmp(parserNode->name, "Factor", 6) == 0)
@@ -601,7 +597,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
       p = p->next_sib;
     }
   }
- 
+
   if (curASTNode != NULL)
     curASTNode->SetCoordinate(parserNode->lineno, parserNode->column);
 
