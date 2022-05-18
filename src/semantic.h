@@ -18,6 +18,7 @@ typedef enum {
   , SENotFunction // 变量被当作函数
   , SEInvalidLVal // 非法左值
   , SEInvalidArraySize // 数组定义时size非整型
+  , SENoReturn // 函数声明的返回值类型非空,但没有return语句
   ,
 } SemanticErrorKind;
 

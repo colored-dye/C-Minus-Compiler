@@ -39,7 +39,7 @@
 
 %start program
 %nonassoc LOWER_THAN_ELSE
-%nonassoc ELSE
+%nonassoc MYELSE
 
 %%
 
@@ -263,7 +263,7 @@ selection_stmt:
     addChild(2, $$, $3, $5);
     $$->lineno = $3->lineno;
   }
-  | MYIF MYLP expression MYRP statement ELSE statement {
+  | MYIF MYLP expression MYRP statement MYELSE statement {
     $$ = makeNode("SelectionStmt");
     addChild(3, $$, $3, $5, $7);
     $$->lineno = $3->lineno;
@@ -325,7 +325,7 @@ for_param3:
 return_stmt:
   MYRETURN MYSEMI {
     $$ = makeNode("ReturnStmt");
-    $$->lineno = yylval.integer;
+    $$->lineno = yylineno;
   }
   | MYRETURN expression MYSEMI {
     $$ = makeNode("ReturnStmt");

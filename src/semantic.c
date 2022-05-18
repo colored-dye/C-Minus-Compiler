@@ -15,6 +15,8 @@ struct Type_ *g_SEType1, *g_SEType2;
 int g_firstPassError = 0;
 int g_secondPassError = 0;
 
+int g_hasReturn = 0; // 函数体是否有返回语句
+
 void SemanticError(int lineno, int column, SemanticErrorKind errK) {
   fprintf(stderr, "Error at line %d: ", lineno);
   const int speclen = 256;
@@ -25,7 +27,7 @@ void SemanticError(int lineno, int column, SemanticErrorKind errK) {
   case SEReturnType:
     type1 = Type2Str(g_SEType1);
     type2 = Type2Str(g_SEType2);
-    snprintf(spec, speclen, "Return type `%s' function's return type `%s'.", type1, type2);
+    snprintf(spec, speclen, "Return type `%s' does not match return type `%s' for function `%s'.", type1, g_SENode1->str_term, type2);
     break;
   case SEConditionNotNum:
     snprintf(spec, speclen, "Condition value should be `int' or `real'.");
@@ -66,6 +68,9 @@ void SemanticError(int lineno, int column, SemanticErrorKind errK) {
     break;
   case SEInvalidArraySize:
     snprintf(spec, speclen, "`%s' is not a valid array size.", g_SENode1->name);
+    break;
+  case SENoReturn:
+    snprintf(spec, speclen, "Function `%s' has non-void return value, but no return statement found.", g_SENode1->str_term);
     break;
   // default:
   //   break;
@@ -299,11 +304,21 @@ void FuncDecl(struct Node* node, int first_pass) {
     g_FuncReturnType = *rettype;
 
     // Check compound_stmt
+    g_SENode1 = node->child->next_sib;
     CompoundStmt(node->child->next_sib->next_sib->next_sib);
     if(has_symTable) {
       // 删除函数的符号表
       popSymTable();
     }
+    g_SENode1 = NULL;
+
+    // 如果函数返回类型不是void,需要检查是否有return语句
+    if((rettype->typeKind != BasicK || rettype->basic != Void) && !g_hasReturn) {
+      g_SENode1 = node->child->next_sib;
+      SemanticError(node->lineno, node->column, SENoReturn);
+      g_secondPassError = 1;
+    }
+    g_hasReturn = 0;
   }
 }
 
@@ -505,6 +520,7 @@ void ReturnStmt(struct Node* node) {
   #ifdef SEMANTIC_DEBUG
   printf("ReturnStmt(%d)\n", node->lineno);
   #endif
+  g_hasReturn = 1;
   if(!node->child) {
     // No return value indicates void
     if(g_FuncReturnType.typeKind != BasicK || g_FuncReturnType.basic != Void) {
