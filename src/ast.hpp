@@ -11,13 +11,32 @@
 
 #ifndef CMinusCompiler_AST_H_
 #define CMinusCompiler_AST_H_
-
-#include <vector>
+#include "llvm/ADT/APFloat.h"
+#include "llvm/ADT/STLExtras.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/Verifier.h"
+#include <algorithm>
+#include <cctype>
+#include <cstdio>
+#include <cstdlib>
+#include <map>
+#include <memory>
 #include <string>
+#include <vector>
+#include <iostream>
 
 using namespace std;
-
+using namespace llvm;
 extern const char *NodeNames[];
+
+#define YJJDEBUG
 
 /**
  * @brief Support three types void, int, real (ie float), respectively ASTVOID = 0, ASTINT = 1, ASTFLOAT = 2.
@@ -103,6 +122,12 @@ class ASTAddExpr;
 class ASTTerm;
 class ASTFactor;
 class ASTCall;
+class CodeGenBlcok;
+class CodeGenContext;
+
+
+
+
 
 /**
  * @brief Base class for all expression nodes. The target AST is a LC-RS binary tree.
@@ -116,10 +141,12 @@ class ASTNode
     ASTNodeType nodeType;
 
 public:
+
     ASTNode(int lineno = -1, int column = -1, ASTNodeType nodeType = ASTNODE)
         : lineno(lineno), column(column), nodeType(nodeType) {}
     virtual ~ASTNode() {}
 
+    virtual llvm::Value* Codegen(CodeGenContext& context)=0;
     /**
      * @brief To set the coordinate of a node, it needs to be called manually every time a node is created.
      * @param {int} lineno
@@ -156,7 +183,7 @@ class ASTProgram : public ASTNode
 public:
     ASTProgram() { SetNodeType(ASTPROGRAM); }
     ~ASTProgram() {}
-
+    virtual llvm::Value* Codegen(CodeGenContext& context);
     void AddDecl(ASTNode *decl) { declList.push_back(decl); }
     const vector<ASTNode *> &GetDeclList() const { return declList; }
 };
@@ -187,6 +214,8 @@ public:
         : typeSpec(typeSpec), id(id), isArray(true), arrayLength(arrayLength) { SetNodeType(ASTVARDECL); }
 
     ~ASTVarDecl(){};
+
+    virtual llvm::Value* Codegen(CodeGenContext& context);
 
     ASTTypeSpec GetTypeSpec() const { return typeSpec; }
     const string GetId() const { return id; }
@@ -220,6 +249,8 @@ public:
     }
 
     ~ASTFunDecl() {}
+
+    virtual llvm::Value* Codegen(CodeGenContext& context);
 
     void AddParam(ASTParam *param)
     {
@@ -259,6 +290,8 @@ public:
 
     ~ASTParam(){};
 
+    virtual llvm::Value* Codegen(CodeGenContext& context);
+
     ASTTypeSpec GetTypeSpec() const { return typeSpec; }
     const string GetId() const { return id; }
     bool IsArray() const { return isArray; }
@@ -276,6 +309,8 @@ class ASTCompoundStmt : public ASTNode
 public:
     ASTCompoundStmt() { SetNodeType(ASTCOMPOUNDSTMT); }
     ~ASTCompoundStmt() {}
+
+    virtual llvm::Value* Codegen(CodeGenContext& context);
 
     void AddDecl(ASTVarDecl *decl) { declList.push_back(decl); };
     void AddStmt(ASTNode *stmt) { stmtList.push_back(stmt); };
@@ -305,7 +340,10 @@ public:
     ASTExpr(ASTVar *var, ASTExpr *expr)
         : isAssignStmt(true), var(var), expr(expr), simpleExpr(NULL) { SetNodeType(ASTEXPR); }
 
+    
     ~ASTExpr() {}
+
+    virtual llvm::Value* Codegen(CodeGenContext& context);
 
     bool IsAssignStmt() const { return isAssignStmt; }
     const ASTVar *GetVar() const { return var; }
@@ -336,6 +374,8 @@ public:
         : expr(expr), trueStmt(trueStmt), haveElse(true), falseStmt(falseStmt) { SetNodeType(ASTSELECTSTMT); }
     ~ASTSelectStmt() {}
 
+    virtual llvm::Value* Codegen(CodeGenContext& context);
+
     const ASTExpr *GetExpr() const { return expr; }
     const ASTNode *GetTrueStmt() const { return trueStmt; }
     bool HaveElse() const { return haveElse; }
@@ -357,6 +397,8 @@ class ASTWhileStmt : public ASTNode
 public:
     ASTWhileStmt(ASTExpr *expr, ASTNode *stmt) : expr(expr), stmt(stmt) { SetNodeType(ASTWHILESTMT); }
     ~ASTWhileStmt() {}
+
+    virtual llvm::Value* Codegen(CodeGenContext& context);
 
     const ASTExpr *GetExpr() const { return expr; }
     const ASTNode *GetStmt() const { return stmt; }
@@ -392,6 +434,8 @@ public:
         : haveForParam1(false), var1(NULL), expr1(NULL), expr2(expr2),
           haveForParam3(false), var3(NULL), expr3(NULL), stmt(stmt) { SetNodeType(ASTFORSTMT); }
     ~ASTForStmt() {}
+
+    virtual llvm::Value* Codegen(CodeGenContext& context);
 
     void AddForParam1(ASTVar *var1, ASTExpr *expr1)
     {
@@ -438,6 +482,8 @@ public:
     ASTReturnStmt() : isVoid(true), expr(NULL) { SetNodeType(ASTRETURNSTMT); }
     ~ASTReturnStmt() {}
 
+    virtual llvm::Value* Codegen(CodeGenContext& context);
+
     void AddExpr(ASTExpr *expr)
     {
         if (isVoid)
@@ -467,6 +513,8 @@ public:
     ASTVar(string id, ASTExpr *subscript) : id(id), haveSubscript(true), subscript(subscript) { SetNodeType(ASTVAR); }
 
     ~ASTVar() {}
+
+    virtual llvm::Value* Codegen(CodeGenContext& context);
 
     const string GetId() const { return id; }
     bool HaveSubscript() const { return haveSubscript; }
@@ -500,6 +548,8 @@ public:
 
     ~ASTSimpleExpr() {}
 
+    virtual llvm::Value* Codegen(CodeGenContext& context);
+
     const ASTAddExpr *GetLeftAddExpr() const { return leftAddExpr; }
     bool HaveRightAddExpr() const { return haveRightAddExpr; }
     ASTRelOp GetRelOp() const { return relOp; }
@@ -523,6 +573,8 @@ class ASTAddExpr : public ASTNode
 public:
     ASTAddExpr(ASTTerm *firstTerm) : firstTerm(firstTerm), areMultipleTerms(false) { SetNodeType(ASTADDEXPR); }
     ~ASTAddExpr() {}
+
+    virtual llvm::Value* Codegen(CodeGenContext& context);
 
     void AddTerm(ASTAddOp addOp, ASTTerm *term)
     {
@@ -556,6 +608,8 @@ class ASTTerm : public ASTNode
 public:
     ASTTerm(ASTFactor *firstFactor) : firstFactor(firstFactor), areMultipleFactors(false) { SetNodeType(ASTTERM); }
     ~ASTTerm() {}
+
+    virtual llvm::Value* Codegen(CodeGenContext& context);
 
     void AddFactor(ASTMulOp mulOp, ASTFactor *factor)
     {
@@ -619,6 +673,8 @@ public:
 
     ~ASTFactor() {}
 
+    virtual llvm::Value* Codegen(CodeGenContext& context);
+
     const ASTExpr *GetExpr() const { return expr; }
     const ASTVar *GetVar() const { return var; }
     const ASTCall *GetCallExpr() const { return callExpr; }
@@ -642,6 +698,8 @@ public:
     ASTCall(string id) : id(id) { SetNodeType(ASTCALL); }
     ~ASTCall() {}
 
+    virtual llvm::Value* Codegen(CodeGenContext& context);
+
     void AddArg(ASTExpr *arg) { argList.push_back(arg); }
 
     const string GetId() const { return id; }
@@ -653,5 +711,7 @@ public:
  * @param {ASTProgram*} program
  */
 void PrintAST(const ASTProgram *program);
-
+std::unique_ptr<ASTNode*> LogError(const char *str);
+llvm::Value *LogErrorV(string str);
+llvm::Value *LogErrorV(const char *str);
 #endif

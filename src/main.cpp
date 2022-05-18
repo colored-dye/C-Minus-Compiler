@@ -13,11 +13,14 @@
 #include "semantic.h"
 #include "y.tab.h"
 #include <stdio.h>
-
+#include "codegen.h"
 extern int yydebug;
 extern FILE *yyin;
 extern struct Node *g_root;
 extern int g_syntaxError;
+
+#define FFDEBUG
+#define BBDEBUG
 
 int main(int argc, char *argv[])
 {
@@ -57,10 +60,16 @@ int main(int argc, char *argv[])
   printf("\n================= AST ===================\n");
   ASTProgram *progarmAST = NULL;
   progarmAST = (ASTProgram *)ParserTreeToAST(g_root);
-  PrintAST(progarmAST);
-
+  #ifdef FFDEBUG
+    PrintAST(progarmAST);
+  #endif
   // 文字形式输出语法树
-  printf("\n============= Parser Tree ===============\n");
-  printTree(g_root);
+  #ifdef BBDEBUG
+    printf("\n============= Parser Tree ===============\n");
+    printTree(g_root);
+  #endif
+  CodeGenContext context;
+  context.generateCode(*progarmAST);
+  context.theModule->print(errs(), nullptr);
   return 0;
 }

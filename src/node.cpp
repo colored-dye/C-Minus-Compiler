@@ -507,7 +507,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
   {
     /*
     AddExpr -- AddExpr
-            -- AddOp
+            -- AddOp -> op
             -> Term
      */
     struct Node *p = parserNode;
@@ -523,7 +523,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
     {
       p = stack.back();
       stack.pop_back();
-      ASTAddOp addOp = (p->next_sib->int_term == MYADD) ? ASTADD : ASTMINUS;
+      ASTAddOp addOp = (p->next_sib->child->int_term == MYADD) ? ASTADD : ASTMINUS;
       ((ASTAddExpr *)curASTNode)->AddTerm(addOp, (ASTTerm *)ParserTreeToAST(p->next_sib->next_sib));
     }
   }
@@ -531,7 +531,7 @@ ASTNode *ParserTreeToAST(struct Node *parserNode)
   {
     /*
     Term -- Term
-         -- MulOp
+         -- MulOp -> op 
          -> Factor
      */
     struct Node *p = parserNode;

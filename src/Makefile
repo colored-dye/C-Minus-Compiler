@@ -2,7 +2,7 @@ CXX = g++
 LEX = flex
 YACC = bison
 
-CFLAGS := -g
+CFLAGS := -g `llvm-config --cxxflags` `llvm-config --ldflags` `llvm-config --libs` -lpthread
 ifneq ($(DEBUG), )
 CFLAGS += $(DEBUG)
 endif
@@ -15,7 +15,7 @@ all: $(TARGET)
 # $(TARGET): main.c lex.yy.c y.tab.c node.c node.h semantic.c semantic.h symtable.c symtable.h
 # 	$(CC) -o $@ $^ $(CFLAGS)
 
-$(TARGET): main.cpp y.tab.c lex.yy.c node.cpp node.hpp semantic.c semantic.h symtable.c symtable.h ast.cpp ast.hpp
+$(TARGET): main.cpp y.tab.c lex.yy.c node.cpp node.hpp semantic.c semantic.h symtable.c symtable.h ast.cpp ast.hpp codegen.h codegen.cpp
 	$(CXX) -o $@ $^ $(CFLAGS)
 
 lex.yy.c: lexer.l
