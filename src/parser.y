@@ -345,10 +345,10 @@ var:
     addChild(2, $$, $1, $3);
     $$->lineno = $1->lineno;
   }
-  /* | error {
+  | error {
     fprintf(stderr, "Error at line %d: `%s' is not a variable\n", yylval.node->lineno, yylval.node->name);
     g_syntaxError++;
-  } */
+  }
   ;
 
 simple_expression:
@@ -509,10 +509,10 @@ id:
   MYID {
     $$ = yylval.node;
   }
-  | error {
+  /* | error {
     fprintf(stderr, "Error at line %d: `%s' is not a valid identifier.\n", yylval.node->lineno, yylval.node->name);
     g_syntaxError++;
-  }
+  } */
   ;
 
 %%
