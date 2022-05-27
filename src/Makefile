@@ -2,7 +2,7 @@ CXX = g++
 LEX = flex
 YACC = bison
 
-CFLAGS := -g `llvm-config --cxxflags` `llvm-config --ldflags` `llvm-config --libs` -lpthread
+CFLAGS := -g `llvm-config --cxxflags` `llvm-config --ldflags` `llvm-config --libs` -lpthread -lz -ldl
 ifneq ($(DEBUG), )
 CFLAGS += $(DEBUG)
 endif

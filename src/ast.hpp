@@ -328,12 +328,12 @@ public:
  */
 class ASTExpr : public ASTNode
 {
+    public:
     bool isAssignStmt; // Is it an assignment statement. By default it is not.
     ASTVar *var;
     ASTExpr *expr;
     ASTSimpleExpr *simpleExpr;
 
-public:
     ASTExpr(ASTSimpleExpr *simpleExpr)
         : isAssignStmt(false), var(NULL), expr(NULL), simpleExpr(simpleExpr) { SetNodeType(ASTEXPR); }
 
@@ -504,11 +504,12 @@ public:
  */
 class ASTVar : public ASTNode
 {
+        public:
     string id;
     bool haveSubscript;
     ASTExpr *subscript;
 
-public:
+
     ASTVar(string id) : id(id), haveSubscript(false), subscript(NULL) { SetNodeType(ASTVAR); }
     ASTVar(string id, ASTExpr *subscript) : id(id), haveSubscript(true), subscript(subscript) { SetNodeType(ASTVAR); }
 

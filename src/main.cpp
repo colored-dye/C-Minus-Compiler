@@ -70,6 +70,10 @@ int main(int argc, char *argv[])
   #endif
   CodeGenContext context;
   context.generateCode(*progarmAST);
-  context.theModule->print(errs(), nullptr);
+  #ifdef YJJDEBUG
+    context.theModule->print(errs(), nullptr);
+  #endif
+  const string s = "output.o";
+  ObjGen(context, s);
   return 0;
 }

@@ -1,5 +1,37 @@
 #include "ast.hpp"
 
+#include "llvm/ADT/APFloat.h"
+#include "llvm/ADT/Optional.h"
+#include "llvm/ADT/STLExtras.h"
+#include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/Function.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/LegacyPassManager.h"
+#include "llvm/IR/Module.h"
+#include "llvm/IR/Type.h"
+#include "llvm/IR/Verifier.h"
+#include "llvm/MC/TargetRegistry.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/Host.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Target/TargetOptions.h"
+#include <algorithm>
+#include <cassert>
+#include <cctype>
+#include <cstdio>
+#include <cstdlib>
+#include <map>
+#include <memory>
+#include <string>
+#include <system_error>
+#include <utility>
+
 using namespace std;
 
 using namespace llvm;
@@ -12,7 +44,7 @@ class CodeGenBlock
         std::map<string, llvm::Value*> locals;
         std::map<string, int> types;     // type name string of vars
         std::map<string, bool> isFuncArg;
-        std::map<string, std::vector<uint64_t>> arraySizes;
+        std::map<string, int> arraySizes;
 };
 
 /*我们在CodeGenContext类来告诉我们生成中间代码的位置。*/
@@ -37,6 +69,12 @@ public:
 
     llvm::Function* createPrintf();
     llvm::Function* createScanf();
+    //创建 函数input() 读入一个int32数，并返回其值
+    llvm::Function* createInput();
+    llvm::Function* createInputf();
+    //创建 函数output(int) 输出int32数，并返回void
+    llvm::Function* createOutput();
+    llvm::Function* createOutputf();
 
     llvm::Value* getSymbolValue(string name) const{
         for(auto it=blockStack.rbegin(); it!=blockStack.rend(); it++){
@@ -106,13 +144,13 @@ public:
         return blockStack.back()->returnValue;
     }
 
-    void setArraySize(string name, std::vector<uint64_t> value){
-        std::cout << "setArraySize: " << name << ": " << value.size() << endl;
+    void setArraySize(string name, int value){
+     //   std::cout << "setArraySize: " << name << ": " << value.size() << endl;
         blockStack.back()->arraySizes[name] = value;
 //        cout << "blockStack.back()->arraySizes.size()" << blockStack.back()->arraySizes.size() << endl;
     }
 
-    std::vector<uint64_t> getArraySize(string name){
+    int getArraySize(string name){
         for(auto it=blockStack.rbegin(); it!=blockStack.rend(); it++){
             if( (*it)->arraySizes.find(name) != (*it)->arraySizes.end() ){
                 return (*it)->arraySizes[name];
@@ -139,8 +177,12 @@ public:
             cout << "Generating IR code" << endl;
 
         #endif
-        this->createPrintf();
-        this->createScanf();
+        //this->createPrintf();
+        //this->createScanf();
+        this->createInput();
+        this->createOutput();
+        this->createInputf();
+        this->createOutputf();
         Value* retValue = root.Codegen(*this);
         /*
         std::vector<Type*> sysArgs;
@@ -160,3 +202,5 @@ public:
         */
     }
 };
+
+void ObjGen(CodeGenContext & context, const string& filename);
