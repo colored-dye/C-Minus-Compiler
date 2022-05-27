@@ -603,11 +603,11 @@ llvm::Value* ASTFunDecl::Codegen(CodeGenContext& context)
         origin_arg++;
     }
     this->compoundStmt->Codegen(context);
-  ///  cout<<"U!!! SUCK!!!!!!!!"<<endl;
     if( !context.getCurrentReturnValue() )
     {
         #ifdef YJJDEBUG
             cout << "!!!!!end block has no ret" << endl;
+        #endif
         if ( this->typeSpec == ASTINT)
             context.builder.CreateRet(
                 ConstantInt::get(llvm::Type::getInt32Ty(context.llvmContext), 0, true));
@@ -616,9 +616,8 @@ llvm::Value* ASTFunDecl::Codegen(CodeGenContext& context)
                 ConstantInt::get(llvm::Type::getFloatTy(context.llvmContext), 0.0, true));
         else if ( this->typeSpec == ASTVOID)
             context.builder.CreateRetVoid();
-        #endif
+
     } 
-  //  cout<<"SUCK!!!!!!!!"<<endl;
     context.popBlock();
     return function;
 }

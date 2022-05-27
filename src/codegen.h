@@ -95,17 +95,6 @@ public:
         }
         return -1;
     }
-/*
-    bool isFuncArg(string name) const{
-
-        for(auto it=blockStack.rbegin(); it!=blockStack.rend(); it++){
-            if( (*it)->isFuncArg.find(name) != (*it)->isFuncArg.end() ){
-                return (*it)->isFuncArg[name];
-            }
-        }
-        return false;
-    }
-*/
     void setSymbolValue(string name, llvm::Value* value){
         blockStack.back()->locals[name] = value;
     }
@@ -145,9 +134,7 @@ public:
     }
 
     void setArraySize(string name, int value){
-     //   std::cout << "setArraySize: " << name << ": " << value.size() << endl;
         blockStack.back()->arraySizes[name] = value;
-//        cout << "blockStack.back()->arraySizes.size()" << blockStack.back()->arraySizes.size() << endl;
     }
 
     int getArraySize(string name){
@@ -158,48 +145,18 @@ public:
         }
         return blockStack.back()->arraySizes[name];
     }
-/*
-    void PrintSymTable() const{
-        cout << "======= Print Symbol Table ========" << endl;
-        string prefix = "";
-        for(auto it=blockStack.begin(); it!=blockStack.end(); it++){
-            for(auto it2=(*it)->locals.begin(); it2!=(*it)->locals.end(); it2++){
-                cout << prefix << it2->first << " = " << it2->second << ": " << this->getSymbolType(it2->first) << endl;
-            }
-            prefix += "\t";
-        }
-        cout << "===================================" << endl;
-    }
-*/
+
     void generateCode(ASTNode& root)
     {
         #ifdef YJJDEBUG
             cout << "Generating IR code" << endl;
 
         #endif
-        //this->createPrintf();
-        //this->createScanf();
         this->createInput();
         this->createOutput();
         this->createInputf();
         this->createOutputf();
         Value* retValue = root.Codegen(*this);
-        /*
-        std::vector<Type*> sysArgs;
-        FunctionType* mainFuncType = FunctionType::get(Type::getVoidTy(this->llvmContext), makeArrayRef(sysArgs), false);
-        Function* mainFunc = Function::Create(mainFuncType, GlobalValue::ExternalLinkage, "main");
-        BasicBlock* block = BasicBlock::Create(this->llvmContext, "entry");
-
-        pushBlock(block);
-        Value* retValue = root.codeGen(*this);
-        popBlock();
-
-        cout << "Code generate success" << endl;
-
-        PassManager passManager;
-        passManager.add(createPrintModulePass(outs()));
-        passManager.run(*(this->theModule.get()));
-        */
     }
 };
 
